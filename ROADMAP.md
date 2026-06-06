@@ -4,12 +4,22 @@ Phases toward `1.0.0` (MVP). Each phase is released as `0.N.0`.
 
 ---
 
-## Phase 0.1 — Foundation & search
+## Phase 0.1 — Project scaffold
+
+**Goal**: empty-but-working project skeleton that passes the full quality gate.
+
+Deliverables:
+- `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime, dev, unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
+- Minimal `src/bgg_search/__init__.py` (version only).
+- `tox` passing clean with no source to check yet.
+
+---
+
+## Phase 0.2 — Search
 
 **Goal**: working project with a functional search command.
 
 Deliverables:
-- Project scaffold: `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime, dev, unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
 - Domain core: `models.py` (game data structures), `exceptions.py`.
 - HTTP layer: `_protocol.py` (`BggClientProtocol`), `_client.py` implementing the `search` and `thing` endpoints.
 - Use-case layer: `search.py` — `search_games(query)` and `get_game(id)`.
@@ -19,7 +29,7 @@ Deliverables:
 
 ---
 
-## Phase 0.2 — Collection
+## Phase 0.3 — Collection
 
 **Goal**: retrieve and display a user's owned game collection.
 
@@ -31,7 +41,7 @@ Deliverables:
 
 ---
 
-## Phase 0.3 — Filtering & polish
+## Phase 0.4 — Filtering & polish
 
 **Goal**: filtering/sorting capabilities and production-quality polish for MVP.
 
@@ -50,7 +60,8 @@ Deliverables:
 
 | Version | Phase |
 |---------|-------|
-| `0.1.0` | Foundation & search |
-| `0.2.0` | Collection |
-| `0.3.0` | Filtering & polish |
-| `1.0.0` | MVP tag (after `0.3.0`) |
+| `0.1.0` | Project scaffold |
+| `0.2.0` | Search |
+| `0.3.0` | Collection |
+| `0.4.0` | Filtering & polish |
+| `1.0.0` | MVP tag (after `0.4.0`) |
