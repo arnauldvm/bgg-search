@@ -94,7 +94,7 @@ All tasks run through **tox**, which executes each step in an isolated virtualen
 | Dependency audit (pip-audit) | `tox -e audit` |
 | Re-lock all dependencies | `tox -e lock` |
 
-Run `tox` before every commit.
+The pre-commit hook runs `tox` automatically before every commit and blocks if any check fails.
 Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
 
 To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
@@ -114,9 +114,7 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    - Edit code and adapt tests.
    - If the change is user-facing, add an entry to `CHANGELOG.md` under `## [Unreleased]`.
    - Review the changes.
-   - Run `tox` (full quality gate).
-   - Loop until clean.
-   - Commit.
+   - Commit — the pre-commit hook runs `tox` automatically and blocks if any check fails; fix issues and retry.
 5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
 6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch (`git branch -d <branch>`).
 7. **Run integration tests**: `tox -e integ`; loop until clean.
@@ -129,7 +127,7 @@ Every change (feature, bug fix, refactoring, …) follows this process:
 Each step (commit) must be:
 - **Localized**: touch as few files as possible — ideally one; as few sections within that file as possible.
 - **Consistent**: all changes in the step serve a single, coherent purpose.
-- **Clean**: the codebase must pass `tox` at the end of every step, with no known errors left behind.
+- **Clean**: the codebase must pass `tox` at the end of every step (enforced by the pre-commit hook), with no known errors left behind.
 
 `PLAN.md` is branch-local and must **not** be merged into `main` (enforced by step 5 above).
 
