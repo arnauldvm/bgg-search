@@ -34,7 +34,7 @@ Standard Python gitignore covering:
 - Virtualenvs: `.venv/`
 - Build artifacts: `dist/`, `*.egg-info/`
 - Caches: `__pycache__/`, `.mypy_cache/`, `.ruff_cache/`, `.tox/`
-- Editor files: `.vscode/`, `.idea/`
+- No editor-specific entries — those belong in each developer's global `~/.gitignore_global`.
 
 ---
 
