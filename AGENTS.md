@@ -105,7 +105,7 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    - Loop until clean.
    - Commit.
 5. **Run integration tests**: `tox -e integ`; loop until clean.
-6. **Release**: bump to next patch version (`Z` in `X.Y.Z`), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
+6. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
 
 ### Step quality rules
 
@@ -204,13 +204,13 @@ Use commits of the form `<action>(<scope>):<description>`, where:
 Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
 
 - **MAJOR**: incompatible API change.
-- **MINOR**: new backward-compatible feature.
-- **PATCH**: backward-compatible bug fix.
+- **MINOR**: new feature, or a significant fix on the latest version.
+- **PATCH**: hotfix backported to a past version (branch cut from an old release tag, not `main`).
 
 Between releases the version carries the `.dev0` suffix (PEP 440), signalling that the code is not yet a stable build. The canonical workflow:
 
 1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit, tag `version/X.Y.Z`.
-2. After release: immediately bump to `X.Y.(Z+1).dev0` (or the appropriate next segment) and commit.
+2. After release: immediately bump to `X.(Y+1).0.dev0` and commit.
 
 The version is declared once, in `pyproject.toml` (`version = "..."`); the package exposes it via `importlib.metadata`:
 
