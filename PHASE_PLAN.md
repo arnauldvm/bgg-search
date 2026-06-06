@@ -22,11 +22,12 @@ From modification 14 onward, run `tox` before every commit.
 | 12 | `requirements/unit.in`, `.coveragerc`, `tox.ini`         | Test coverage measurement (95% floor)   |
 | 13 | `tests/unit/test_version.py`                             | Minimal unit test — satisfies 95% floor |
 | 14 | `requirements/*.txt` (5 files)                           | Locked deps — first `tox` clean pass ✓  |
-| 15 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
-| 16 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
-| 17 | *(manual — no commit)*                                   | GitHub repository configuration          |
-| 18 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
-| 19 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
+| 15 | `requirements/dev.in`, `.pre-commit-config.yaml`, `requirements/dev.txt` | pre-commit hook (runs tox) |
+| 16 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
+| 17 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
+| 18 | *(manual — no commit)*                                   | GitHub repository configuration          |
+| 19 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
+| 20 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
 
 ---
 
@@ -234,7 +235,34 @@ must pass clean. From this point onward, run `tox` before every commit.
 
 ---
 
-## Modification 15 — `.github/workflows/ci.yml`
+## Modification 15 — pre-commit hook
+
+Add `pre-commit` to run the full `tox` quality gate before every commit.
+
+**`requirements/dev.in`**: add `pre-commit~=4.6.0`.
+
+**`.pre-commit-config.yaml`**:
+```yaml
+repos:
+  - repo: local
+    hooks:
+      - id: tox
+        name: tox
+        entry: tox
+        language: system
+        pass_filenames: false
+        always_run: true
+```
+Uses `language: system` so pre-commit calls the `tox` already on `PATH` (inside the activated
+virtualenv) rather than managing its own isolated environment.
+
+**`requirements/dev.txt`**: re-lock via `tox -e lock` to include `pre-commit` and its dependencies.
+
+**Post-merge dev environment step**: run `pre-commit install` once to register the hook in `.git/hooks/pre-commit`.
+
+---
+
+## Modification 16 — `.github/workflows/ci.yml`
 
 Quality gate workflow:
 - **Trigger:** `pull_request` targeting `main`.
@@ -248,7 +276,7 @@ Quality gate workflow:
 
 ---
 
-## Modification 16 — `.github/workflows/publish.yml`
+## Modification 17 — `.github/workflows/publish.yml`
 
 PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret needed):
 - **Trigger:** push of tags matching `version/*`.
@@ -259,11 +287,11 @@ PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret need
   3. Build: `pip install build && python -m build`.
   4. Publish: `pypa/gh-action-pypi-publish@release/v1` (official PyPA action).
 
-PyPI trusted publisher configuration is done in modification 17 (manual step).
+PyPI trusted publisher configuration is done in modification 18 (manual step).
 
 ---
 
-## Modification 17 — GitHub repository configuration (manual — no commit)
+## Modification 18 — GitHub repository configuration (manual — no commit)
 
 No files changed. Steps to execute on GitHub and PyPI:
 
@@ -284,7 +312,7 @@ No files changed. Steps to execute on GitHub and PyPI:
 
 ---
 
-## Modification 18 — Release `0.1.0`
+## Modification 19 — Release `0.1.0`
 
 Files changed: `pyproject.toml`, `CHANGELOG.md`.
 
@@ -301,7 +329,7 @@ Files changed: `pyproject.toml`, `CHANGELOG.md`.
 
 ---
 
-## Modification 19 — Post-release version bump
+## Modification 20 — Post-release version bump
 
 File changed: `pyproject.toml`.
 
