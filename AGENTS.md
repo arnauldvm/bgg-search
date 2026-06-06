@@ -50,6 +50,31 @@ bgg-search/
 └── AGENTS.md
 ```
 
+## Development workflow
+
+Every change (feature, bug fix, refactoring, …) follows this process:
+
+1. **Create a branch**: one branch per change, named after the intent (e.g., `feat/search-by-rank`).
+2. **Write a plan**: create `PLAN.md` at the repo root on the branch; describe the steps before writing any code. One step = one future commit.
+3. **Review the plan**: adapt it before starting execution.
+4. **Execute step by step** — for each step in `PLAN.md`:
+   - Edit code and adapt tests.
+   - Review the changes.
+   - Run `tox` (full quality gate).
+   - Loop until clean.
+   - Commit.
+5. **Run integration tests**: `tox -e integ`; loop until clean.
+6. **Release**: bump to next patch version (`Z` in `X.Y.Z`), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
+
+### Step quality rules
+
+Each step (commit) must be:
+- **Localized**: touch as few files as possible — ideally one; as few sections within that file as possible.
+- **Consistent**: all changes in the step serve a single, coherent purpose.
+- **Clean**: the codebase must pass `tox` at the end of every step, with no known errors left behind.
+
+`PLAN.md` is branch-local and must **not** be merged into `main`.
+
 ## Language
 
 Use American English for text (messages, documentation, commits...)
@@ -185,7 +210,7 @@ Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
 
 Between releases the version carries the `.dev0` suffix (PEP 440), signalling that the code is not yet a stable build. The canonical workflow:
 
-1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit, tag `vX.Y.Z`.
+1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit, tag `version/X.Y.Z`.
 2. After release: immediately bump to `X.Y.(Z+1).dev0` (or the appropriate next segment) and commit.
 
 The version is declared once, in `pyproject.toml` (`version = "..."`); the package exposes it via `importlib.metadata`:
