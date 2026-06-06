@@ -22,7 +22,12 @@ bgg-search/
 │       └── search.py        # high-level search helpers
 ├── tests/
 │   ├── conftest.py
-│   └── test_*.py
+│   ├── unit/                # fast, purely local tests
+│   │   ├── conftest.py
+│   │   └── test_*.py
+│   └── integ/               # slow, hits the real BGG API
+│       ├── conftest.py
+│       └── test_*.py
 ├── pyproject.toml           # build system, deps, tool config
 ├── README.md
 └── AGENTS.md
@@ -57,14 +62,15 @@ All tooling is configured in `pyproject.toml`. There is no `setup.py` or `requir
 
 | Task | Command |
 |------|---------|
-| Run tests | `pytest` |
+| Run unit tests | `pytest tests/unit/` |
+| Run integ tests | `pytest tests/integ/` |
 | Type-check | `mypy src/` |
 | Lint / format | `ruff check . && ruff format .` |
 
-Run all three before committing:
+Run all three before committing (unit tests only — integ tests are not run automatically):
 
 ```bash
-ruff check . && ruff format . && mypy src/ && pytest
+ruff check . && ruff format . && mypy src/ && pytest tests/unit/
 ```
 
 ## Code conventions
@@ -79,12 +85,23 @@ ruff check . && ruff format . && mypy src/ && pytest
 
 ## Testing
 
-- Use `pytest`; never use `unittest` directly.
+Use `pytest`; never use `unittest` directly.
+Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
+
+### Unit tests (`tests/unit/`)
+
+- Purely local: no network, no filesystem side-effects.
 - Mock HTTP with `httpx.MockTransport`; do **not** add `pytest-httpx`.
-- Never hit the real BGG API in tests.
-- Fixtures live in `tests/conftest.py`.
-- One file per module under test: `tests/test_client.py`, `tests/test_search.py`, etc.
-- Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
+- One file per source module: `tests/unit/test_client.py`, `tests/unit/test_search.py`, etc.
+- Must run fast; run automatically after every code change.
+
+### Integration tests (`tests/integ/`)
+
+- Hit the real BGG API; require network access.
+- Run only explicitly (e.g., before a release) — never triggered automatically.
+- Keep the number of requests minimal: one test must not make more API calls than strictly necessary.
+- Add a `time.sleep` between requests to avoid flooding the BGG API.
+- One file per high-level scenario: `tests/integ/test_search_flow.py`, etc.
 
 ## Package selection rules
 
