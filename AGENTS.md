@@ -1,6 +1,6 @@
 # BGG Search — Agent Guide
 
-## Project overview
+## Project context
 
 `bgg-search` is a personal Python package for querying [BoardGameGeek](https://boardgamegeek.com) (BGG).
 It wraps the BGG XML API2 and exposes:
@@ -12,7 +12,7 @@ This is a personal project; prioritize clarity and correctness over enterprise-g
 
 Rationale behind key choices is documented in [DECISIONS.md](DECISIONS.md).
 
-## Repository layout (target structure)
+### Repository layout (target structure)
 
 ```
 bgg-search/
@@ -51,6 +51,46 @@ bgg-search/
 └── AGENTS.md
 ```
 
+## Development environment
+
+Dependencies are managed with **uv**. Each context has its own requirements file (see `requirements/`).
+`.in` files are the unpinned specs; `.txt` files are the locked versions generated from them.
+
+```bash
+# create and activate a virtual environment
+uv venv && source .venv/bin/activate
+
+# install the package in editable mode with locked dev deps
+uv pip install -e . -r requirements/dev.txt
+```
+
+There is no `setup.py`. `pyproject.toml` contains package metadata and build system only; all dependency declarations live in `requirements/`.
+
+### Commands
+
+All tasks run through **tox**, which executes each step in an isolated virtualenv.
+
+| Task | Command |
+|------|---------|
+| Full quality gate (lint + type + security + unit tests) | `tox` |
+| Lint / format | `tox -e lint` |
+| Type-check | `tox -e type` |
+| Security scan (bandit) | `tox -e security` |
+| Unit tests | `tox -e unit` |
+| Integration tests | `tox -e integ` |
+| Dependency audit (pip-audit) | `tox -e audit` |
+| Re-lock all dependencies | `tox -e lock` |
+
+Run `tox` before every commit.
+Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
+
+To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
+To re-lock all requirements files after editing any `.in` counterpart: `tox -e lock`.
+
+### Tool configuration
+
+Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`) over consolidating everything into `pyproject.toml`. Use `pyproject.toml` only for package metadata and build system configuration.
+
 ## Development workflow
 
 Every change (feature, bug fix, refactoring, …) follows this process:
@@ -76,57 +116,9 @@ Each step (commit) must be:
 
 `PLAN.md` is branch-local and must **not** be merged into `main`.
 
-## Language
+## Architecture
 
-Use American English for text (messages, documentation, commits...)
-
-## Code versioning
-
-Use commits of the form `<action>(<scope>):<description'>`, where:
-
-- `<action>` is one of "add", "upd", "feat", "refactor", "chore"...
-- `<scope>` is a compact spec of the files full path (relative to project root)  
-  (exceptionally it may be omitted, when the commit concerns the whole project)
-- `<description>` is a short sentence describing the modification (do not repeat the action)
-
-## Development environment
-
-Dependencies are managed with **uv**. Each context has its own requirements file (see `requirements/`).
-`.in` files are the unpinned specs; `.txt` files are the locked versions generated from them.
-
-```bash
-# create and activate a virtual environment
-uv venv && source .venv/bin/activate
-
-# install the package in editable mode with locked dev deps
-uv pip install -e . -r requirements/dev.txt
-```
-
-To re-lock all requirements files after editing any `.in` counterpart: `tox -e lock`.
-
-There is no `setup.py`. `pyproject.toml` contains package metadata and build system only; all dependency declarations live in `requirements/`.
-
-## Commands
-
-Tests are automated with **tox**, which runs each step in an isolated virtualenv.
-
-| Task | Command |
-|------|---------|
-| Full quality gate (lint + type + security + unit tests) | `tox` |
-| Lint / format | `tox -e lint` |
-| Type-check | `tox -e type` |
-| Security scan (bandit) | `tox -e security` |
-| Unit tests | `tox -e unit` |
-| Integration tests | `tox -e integ` |
-| Dependency audit (pip-audit) | `tox -e audit` |
-| Re-lock all dependencies | `tox -e lock` |
-
-Run `tox` before every commit.
-Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
-
-To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
-
-## Modularization
+### Modularization
 
 Modules are organized in layers. Inner layers never import from outer layers:
 
@@ -145,34 +137,14 @@ Rules:
 - `cli.py`: pure I/O adapter — parse args, call `search.py`, format output; no business logic.
 - `__init__.py`: explicitly re-exports the public API; adding internal modules never accidentally becomes public.
 
-## Code conventions
+### Code conventions
 
 - **Python 3.13**; use built-in `tomllib`, `match`/`case`, `TypeAlias`, etc. where appropriate.
 - Public functions and classes must have type annotations; internal helpers may omit them only when obvious.
 - No comments that restate what the code already says. Comment the *why*, not the *what*.
 - Raise domain-specific exceptions (subclass `BggSearchError`) instead of leaking `httpx` errors.
 
-## Testing
-
-Use `pytest`; never use `unittest` directly.
-Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
-
-### Unit tests (`tests/unit/`)
-
-- Purely local: no network, no filesystem side-effects.
-- Mock HTTP with `httpx.MockTransport`; do **not** add `pytest-httpx`.
-- One file per source module: `tests/unit/test_client.py`, `tests/unit/test_search.py`, etc.
-- Must run fast; run automatically after every code change.
-
-### Integration tests (`tests/integ/`)
-
-- Hit the real BGG API; require network access.
-- Run only explicitly (e.g., before a release) — never triggered automatically.
-- Keep the number of requests minimal: one test must not make more API calls than strictly necessary.
-- Add a `time.sleep` between requests to avoid flooding the BGG API.
-- One file per high-level scenario: `tests/integ/test_search_flow.py`, etc.
-
-## Package selection rules
+### Package selection rules
 
 When choosing packages, apply these rules in order:
 
@@ -186,17 +158,48 @@ Concretely for this project:
 - Data models → `dataclasses` (stdlib) when validation is not needed; `pydantic>=2` only when input validation is required
 - Date/time → `datetime` (stdlib), not `arrow` or `pendulum`
 
-## Tool configuration
+### Testing
 
-Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`) over consolidating everything into `pyproject.toml`. Use `pyproject.toml` only for package metadata and build system configuration.
+Use `pytest`; never use `unittest` directly.
+Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
 
-## Things to avoid
+#### Unit tests (`tests/unit/`)
+
+- Purely local: no network, no filesystem side-effects.
+- Mock HTTP with `httpx.MockTransport`; do **not** add `pytest-httpx`.
+- One file per source module: `tests/unit/test_client.py`, `tests/unit/test_search.py`, etc.
+- Must run fast; run automatically after every code change.
+
+#### Integration tests (`tests/integ/`)
+
+- Hit the real BGG API; require network access.
+- Run only explicitly (e.g., before a release) — never triggered automatically.
+- Keep the number of requests minimal: one test must not make more API calls than strictly necessary.
+- Add a `time.sleep` between requests to avoid flooding the BGG API.
+- One file per high-level scenario: `tests/integ/test_search_flow.py`, etc.
+
+### Things to avoid
 
 - Do **not** add logging configuration at module level; leave that to the caller.
 - Do **not** cache BGG responses unless caching is explicitly requested.
 - Do **not** commit `.venv/`, `__pycache__/`, or `*.egg-info/` (ensure `.gitignore` covers them).
 
-## Version management
+## Conventions
+
+### Language
+
+Use American English for text (messages, documentation, commits...)
+
+### Commit format
+
+Use commits of the form `<action>(<scope>):<description>`, where:
+
+- `<action>` is one of "add", "upd", "feat", "refactor", "chore"...
+- `<scope>` is a compact spec of the files full path (relative to project root)  
+  (exceptionally it may be omitted, when the commit concerns the whole project)
+- `<description>` is a short sentence describing the modification (do not repeat the action)
+
+### Version management
 
 Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
 
@@ -218,7 +221,7 @@ __version__ = version("bgg-search")
 
 Do **not** hard-code the version string anywhere else in the source.
 
-## Changelog
+### Changelog
 
 `CHANGELOG.md` follows the [Keep a Changelog](https://keepachangelog.com) format (version 1.0.0).
 
@@ -230,7 +233,9 @@ Rules:
 - On release: rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
 - Do **not** edit past release sections.
 
-## BGG XML API2 reference
+## Reference
+
+### BGG XML API2
 
 Base URL: `https://boardgamegeek.com/xmlapi2/`
 
