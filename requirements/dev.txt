@@ -6,6 +6,8 @@ bandit==1.9.4
     # via -r requirements/dev.in
 cachetools==7.1.4
     # via tox
+cfgv==3.5.0
+    # via pre-commit
 colorama==0.4.6
     # via tox
 distlib==0.4.1
@@ -15,6 +17,8 @@ filelock==3.29.1
     #   python-discovery
     #   tox
     #   virtualenv
+identify==2.6.19
+    # via pre-commit
 librt==0.11.0
     # via mypy
 markdown-it-py==4.2.0
@@ -25,6 +29,8 @@ mypy==2.1.0
     # via -r requirements/dev.in
 mypy-extensions==1.1.0
     # via mypy
+nodeenv==1.10.0
+    # via pre-commit
 packaging==26.2
     # via
     #   pyproject-api
@@ -38,6 +44,8 @@ platformdirs==4.10.0
     #   virtualenv
 pluggy==1.6.0
     # via tox
+pre-commit==4.6.0
+    # via -r requirements/dev.in
 pygments==2.20.0
     # via rich
 pyproject-api==1.10.1
@@ -47,7 +55,9 @@ python-discovery==1.4.0
     #   tox
     #   virtualenv
 pyyaml==6.0.3
-    # via bandit
+    # via
+    #   bandit
+    #   pre-commit
 rich==15.0.0
     # via bandit
 ruff==0.15.16
@@ -61,4 +71,6 @@ tox==4.55.1
 typing-extensions==4.15.0
     # via mypy
 virtualenv==21.4.2
-    # via tox
+    # via
+    #   pre-commit
+    #   tox
