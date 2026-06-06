@@ -2,5 +2,5 @@
 
 ## Steps
 
-1. Add `src/bgg_search/models.py` — `GameSummary` and `GameDetails` frozen dataclasses.
-2. Add `tests/unit/test_models.py` — behavior tests for both dataclasses.
+1. Add `GameSummary` frozen dataclass to `src/bgg_search/models.py` + unit tests in `tests/unit/test_models.py`.
+2. Add `GameDetails` frozen dataclass to `src/bgg_search/models.py` + unit tests in `tests/unit/test_models.py`.
