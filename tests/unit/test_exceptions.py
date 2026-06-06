@@ -1,4 +1,4 @@
-from bgg_search.exceptions import BggApiError, BggSearchError
+from bgg_search.exceptions import BggApiError, BggNotFoundError, BggSearchError
 
 
 def test_bgg_search_error_is_exception() -> None:
@@ -23,3 +23,12 @@ def test_bgg_api_error_message() -> None:
 def test_bgg_api_error_status_code_optional() -> None:
     err = BggApiError("timeout")
     assert err.status_code is None
+
+
+def test_bgg_not_found_error_is_bgg_search_error() -> None:
+    assert issubclass(BggNotFoundError, BggSearchError)
+
+
+def test_bgg_not_found_error_message() -> None:
+    err = BggNotFoundError("game 42 not found")
+    assert str(err) == "game 42 not found"
