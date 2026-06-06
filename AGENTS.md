@@ -104,7 +104,7 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 
 Every change (feature, bug fix, refactoring, …) follows this process:
 
-1. **Create a branch**: cut a short-lived branch from `main`, named after the intent (e.g., `feat/search-by-rank`). Merge back to `main` after release.
+1. **Create a branch**: cut a short-lived branch from `main`, named after the intent (e.g., `feat/search-by-rank`).
 2. **Write a plan**: create `PLAN.md` on the branch; describe the steps before writing any code. One step = one future commit. Commit `PLAN.md` immediately so it is tracked and stays branch-local. (`PLAN.md` is the feature-level plan; the phase-level plan lives in `PHASE_PLAN.md` on `main` — see [PROCESS.md](PROCESS.md).)
 3. **Review the plan**: adapt it before starting execution.
 4. **Execute step by step** — for each step in `PLAN.md`:
@@ -114,8 +114,9 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    - Loop until clean.
    - Commit.
 5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
-6. **Run integration tests**: `tox -e integ`; loop until clean.
-7. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
+6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch (`git branch -d <branch>`).
+7. **Run integration tests**: `tox -e integ`; loop until clean.
+8. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
 
 ### Step quality rules
 
