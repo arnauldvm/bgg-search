@@ -50,11 +50,16 @@ bgg-search/
 ├── DECISIONS.md             # rationale behind key design and package choices
 ├── PROCESS.md               # project initiation workflow and branch/version map
 ├── README.md                # public-facing project documentation
-├── AGENTS.md                # guide for AI agents (this file)
-├── HIGHLEVEL_PLAN.md        # [transient] succession of phases toward MVP
-├── PHASE_PLAN.md            # [transient] decomposition of the current phase
-└── PLAN.md                  # [transient] steps for the current feature/change (branch-local)
+└── AGENTS.md                # guide for AI agents (this file)
 ```
+
+Transient files (not always present):
+
+| File | Scope | Purpose |
+|------|-------|---------|
+| `ROADMAP.md` | `main` | succession of phases toward MVP |
+| `PHASE_PLAN.md` | `main` | decomposition of the current phase |
+| `PLAN.md` | feature branch | steps for the current feature/change |
 
 ## Development environment
 
@@ -90,7 +95,6 @@ Run `tox` before every commit.
 Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
 
 To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
-To re-lock all requirements files after editing any `.in` counterpart: `tox -e lock`.
 
 ### Tool configuration
 
@@ -173,7 +177,7 @@ Aim for behavior coverage, not line coverage — test what the public API promis
 - Purely local: no network, no filesystem side-effects.
 - Mock HTTP with `httpx.MockTransport`; do **not** add `pytest-httpx`.
 - One file per source module: `tests/unit/test_client.py`, `tests/unit/test_search.py`, etc.
-- Must run fast; run automatically after every code change.
+- Must be fast enough to run after every code change.
 
 #### Integration tests (`tests/integ/`)
 

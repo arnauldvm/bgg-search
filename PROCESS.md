@@ -5,7 +5,7 @@
 Used once, from project creation to MVP (`1.0.0`):
 
 1. **Prepare `AGENTS.md`** — customize for the project before writing any code.
-2. **High-level plan** — propose a succession of broad phases, each delivering a coherent layer or capability. Versions: `0.1.x`, `0.2.x`, … Store in `HIGHLEVEL_PLAN.md`.
+2. **Roadmap** — propose a succession of broad phases, each delivering a coherent layer or capability. Versions: `0.1.x`, `0.2.x`, … Store in `ROADMAP.md`.
 3. **Review** — adapt the high-level plan before proceeding.
 4. **Execute phases** — for each phase:
    - 4.1 Propose a detailed phase plan (decomposed into successive modifications). Commit `PHASE_PLAN.md` to `main`.
