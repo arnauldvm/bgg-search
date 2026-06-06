@@ -105,7 +105,7 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 Every change (feature, bug fix, refactoring, …) follows this process:
 
 1. **Create a branch**: cut a short-lived branch from `main`, named after the intent (e.g., `feat/search-by-rank`). Merge back to `main` after release.
-2. **Write a plan**: create `PLAN.md` on the branch; describe the steps before writing any code. One step = one future commit. (`PLAN.md` is the feature-level plan; the phase-level plan lives in `PHASE_PLAN.md` on `main` — see [PROCESS.md](PROCESS.md).)
+2. **Write a plan**: create `PLAN.md` on the branch; describe the steps before writing any code. One step = one future commit. Commit `PLAN.md` immediately so it is tracked and stays branch-local. (`PLAN.md` is the feature-level plan; the phase-level plan lives in `PHASE_PLAN.md` on `main` — see [PROCESS.md](PROCESS.md).)
 3. **Review the plan**: adapt it before starting execution.
 4. **Execute step by step** — for each step in `PLAN.md`:
    - Edit code and adapt tests.
@@ -113,8 +113,9 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    - Run `tox` (full quality gate).
    - Loop until clean.
    - Commit.
-5. **Run integration tests**: `tox -e integ`; loop until clean.
-6. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
+5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
+6. **Run integration tests**: `tox -e integ`; loop until clean.
+7. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
 
 ### Step quality rules
 
@@ -123,7 +124,7 @@ Each step (commit) must be:
 - **Consistent**: all changes in the step serve a single, coherent purpose.
 - **Clean**: the codebase must pass `tox` at the end of every step, with no known errors left behind.
 
-`PLAN.md` is branch-local and must **not** be merged into `main`.
+`PLAN.md` is branch-local and must **not** be merged into `main` (enforced by step 5 above).
 
 ## Architecture
 
