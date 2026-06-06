@@ -6,7 +6,7 @@ Used once, from project creation to MVP (`1.0.0`):
 
 1. **Prepare `AGENTS.md`** — customize for the project before writing any code.
 2. **Roadmap** — propose a succession of broad phases, each delivering a coherent layer or capability. Versions: `0.1.x`, `0.2.x`, … Store in `ROADMAP.md`.
-3. **Review** — adapt the high-level plan before proceeding.
+3. **Review** — adapt the roadmap before proceeding.
 4. **Execute phases** — for each phase:
    - 4.1 Propose a detailed phase plan (decomposed into successive modifications). Commit `PHASE_PLAN.md` to `main`.
    - 4.2 Review and adapt the phase plan.
@@ -41,12 +41,11 @@ main
  │   ┌── fix/E ───┐
  │   └────────────○ merge + tag 1.2.0   ← significant fix → bump Y
  │
- │   (hotfix on a past version — branch from old tag, not from main)
- │
- ○ 1.0.0
-  \
-   ┌── hotfix/F ──┐
-   └──────────────○ tag 1.0.1           ← hotfix → bump Z
+ | (hotfix on a past version — branch from old tag, not from main)
+ |\
+ | ┌── hotfix/F ──┐
+ | └──────────────○ tag 1.0.1           ← hotfix → bump Z
+...
 ```
 
 **Key rules:**
@@ -55,4 +54,4 @@ main
 - Post-MVP: each change is released immediately after merge.
   - New feature or significant fix on the latest version → bump **Y**.
   - Hotfix backported to a past version → bump **Z** (branch cut from the old release tag, not `main`).
-- `PLAN.md` (feature) and `PHASE_PLAN.md` (phase) are never merged to `main`.
+- `PLAN.md` is branch-local and never merged to `main`.
