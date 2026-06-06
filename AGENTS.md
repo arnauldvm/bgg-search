@@ -60,18 +60,19 @@ All tooling is configured in `pyproject.toml`. There is no `setup.py` or `requir
 
 ## Commands
 
+Tests are automated with **tox**, which runs each step in an isolated virtualenv.
+
 | Task | Command |
 |------|---------|
-| Run unit tests | `pytest tests/unit/` |
-| Run integ tests | `pytest tests/integ/` |
-| Type-check | `mypy src/` |
-| Lint / format | `ruff check . && ruff format .` |
+| Full quality gate (lint + type + unit tests) | `tox` |
+| Lint / format | `tox -e lint` |
+| Type-check | `tox -e type` |
+| Unit tests | `tox -e unit` |
+| Integration tests | `tox -e integ` |
 
-Run all three before committing (unit tests only — integ tests are not run automatically):
+Run `tox` before every commit. `tox -e integ` is run explicitly only (e.g., before a release).
 
-```bash
-ruff check . && ruff format . && mypy src/ && pytest tests/unit/
-```
+To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
 
 ## Code conventions
 
@@ -124,7 +125,7 @@ Concretely for this project:
 dependencies = ["httpx", "pydantic>=2"]
 
 [project.optional-dependencies]
-dev = ["pytest", "mypy", "ruff"]
+dev = ["tox", "pytest", "mypy", "ruff"]
 ```
 
 ## Things to avoid
