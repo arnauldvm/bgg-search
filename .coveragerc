@@ -1,0 +1,7 @@
+[run]
+source = bgg_search
+branch = True
+
+[report]
+fail_under = 95
+show_missing = True
