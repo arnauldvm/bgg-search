@@ -1,0 +1,2 @@
+class BggSearchError(Exception):
+    pass
