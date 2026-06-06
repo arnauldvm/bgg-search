@@ -70,11 +70,7 @@ uv venv && source .venv/bin/activate
 uv pip install -e . -r requirements/dev.txt
 ```
 
-To lock (or re-lock) a requirements file after editing its `.in` counterpart:
-
-```bash
-uv pip compile requirements/runtime.in -o requirements/runtime.txt
-```
+To re-lock all requirements files after editing any `.in` counterpart: `tox -e lock`.
 
 There is no `setup.py`. `pyproject.toml` contains package metadata and build system only; all dependency declarations live in `requirements/`.
 
@@ -91,9 +87,10 @@ Tests are automated with **tox**, which runs each step in an isolated virtualenv
 | Unit tests | `tox -e unit` |
 | Integration tests | `tox -e integ` |
 | Dependency audit (pip-audit) | `tox -e audit` |
+| Re-lock all dependencies | `tox -e lock` |
 
 Run `tox` before every commit.
-`tox -e integ` and `tox -e audit` are run explicitly only (e.g., before a release).
+Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
 
 To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
 
