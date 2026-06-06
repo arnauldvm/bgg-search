@@ -5,6 +5,21 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 
 ---
 
+## Individual tool configuration files over pyproject.toml
+
+Each tool (`ruff`, `mypy`, `bandit`, `tox`, …) gets its own configuration file rather than a consolidated `[tool.*]` section in `pyproject.toml`.
+
+Reasons:
+
+- **Discoverability**: a developer (or agent) looking for ruff's config opens `ruff.toml` directly; they do not need to know which tools happen to store config in `pyproject.toml` and scroll through an unrelated file.
+- **Separation of concerns**: `pyproject.toml` is the package manifest (metadata, dependencies, build system). Mixing tool config into it conflates two distinct responsibilities.
+- **Diff clarity**: changes to a tool's config appear in that tool's file, not buried in `pyproject.toml` alongside unrelated edits.
+- **Portability**: individual config files work even when the tool is invoked outside the Python packaging context (e.g., in a pre-commit hook, a CI step, or a standalone script).
+
+`pyproject.toml` retains only what belongs there: `[project]` metadata, `[project.optional-dependencies]`, and `[build-system]`.
+
+---
+
 ## Package selection policy
 
 **Rules (in priority order):**
