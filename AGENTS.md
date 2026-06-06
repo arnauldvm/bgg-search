@@ -95,8 +95,8 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 
 Every change (feature, bug fix, refactoring, …) follows this process:
 
-1. **Create a branch**: one branch per change, named after the intent (e.g., `feat/search-by-rank`).
-2. **Write a plan**: create `PLAN.md` at the repo root on the branch; describe the steps before writing any code. One step = one future commit. (`PLAN.md` is the feature-level plan; phase-level plans live in `PHASE_PLAN.md` — see [PROCESS.md](PROCESS.md).)
+1. **Create a branch**: cut a short-lived branch from `main`, named after the intent (e.g., `feat/search-by-rank`). Merge back to `main` after release.
+2. **Write a plan**: create `PLAN.md` on the branch; describe the steps before writing any code. One step = one future commit. (`PLAN.md` is the feature-level plan; the phase-level plan lives in `PHASE_PLAN.md` on `main` — see [PROCESS.md](PROCESS.md).)
 3. **Review the plan**: adapt it before starting execution.
 4. **Execute step by step** — for each step in `PLAN.md`:
    - Edit code and adapt tests.
