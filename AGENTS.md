@@ -215,6 +215,8 @@ Use commits of the form `<action>(<scope>):<description>`, where:
   (e.g. a class name, function name, or config section): `src/bgg_search/client.py > BggClient.search`
 - `<description>` is a short sentence describing the modification (do not repeat the action)
 
+Do not add `Co-Authored-By` trailers. AI involvement is documented once in this file.
+
 ### Version management
 
 Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
