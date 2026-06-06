@@ -64,13 +64,16 @@ Tests are automated with **tox**, which runs each step in an isolated virtualenv
 
 | Task | Command |
 |------|---------|
-| Full quality gate (lint + type + unit tests) | `tox` |
+| Full quality gate (lint + type + security + unit tests) | `tox` |
 | Lint / format | `tox -e lint` |
 | Type-check | `tox -e type` |
+| Security scan (bandit) | `tox -e security` |
 | Unit tests | `tox -e unit` |
 | Integration tests | `tox -e integ` |
+| Dependency audit (pip-audit) | `tox -e audit` |
 
-Run `tox` before every commit. `tox -e integ` is run explicitly only (e.g., before a release).
+Run `tox` before every commit.
+`tox -e integ` and `tox -e audit` are run explicitly only (e.g., before a release).
 
 To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
 
@@ -125,7 +128,7 @@ Concretely for this project:
 dependencies = ["httpx", "pydantic>=2"]
 
 [project.optional-dependencies]
-dev = ["tox", "pytest", "mypy", "ruff"]
+dev = ["tox", "pytest", "mypy", "ruff", "bandit", "pip-audit"]
 ```
 
 ## Things to avoid
