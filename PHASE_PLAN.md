@@ -1,8 +1,8 @@
 # Phase 0.1 — Project scaffold: detailed plan
 
 Each modification is a single commit (or a small set of tightly coupled commits).
-Modifications 1–12 build up the scaffolding; `tox` first passes clean at modification 13.
-From modification 13 onward, run `tox` before every commit.
+Modifications 1–13 build up the scaffolding; `tox` first passes clean at modification 14.
+From modification 14 onward, run `tox` before every commit.
 
 ## Summary table
 
@@ -20,12 +20,13 @@ From modification 13 onward, run `tox` before every commit.
 | 10 | `src/bgg_search/__init__.py`                             | Minimal package (version only)           |
 | 11 | `tests/conftest.py`, `tests/unit/conftest.py`, `tests/integ/conftest.py` | Test directory structure |
 | 12 | `requirements/unit.in`, `.coveragerc`, `tox.ini`         | Test coverage measurement (95% floor)   |
-| 13 | `requirements/*.txt` (5 files)                           | Locked deps — first `tox` clean pass ✓  |
-| 14 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
-| 15 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
-| 16 | *(manual — no commit)*                                   | GitHub repository configuration          |
-| 17 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
-| 18 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
+| 13 | `tests/unit/test_version.py`                             | Minimal unit test — satisfies 95% floor |
+| 14 | `requirements/*.txt` (5 files)                           | Locked deps — first `tox` clean pass ✓  |
+| 15 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
+| 16 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
+| 17 | *(manual — no commit)*                                   | GitHub repository configuration          |
+| 18 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
+| 19 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
 
 ---
 
@@ -198,7 +199,25 @@ pytest --cov --cov-report=term-missing tests/unit/
 
 ---
 
-## Modification 13 — `requirements/*.txt` (first `tox` clean pass)
+## Modification 13 — `tests/unit/test_version.py`
+
+Minimal unit test that covers `src/bgg_search/__init__.py` (the only source file in this phase),
+ensuring the 95% coverage floor is satisfied from the first `tox` run:
+
+```python
+import bgg_search
+
+def test_version_exists() -> None:
+    assert isinstance(bgg_search.__version__, str)
+    assert len(bgg_search.__version__) > 0
+```
+
+This test is a legitimate check of the package's public API: `__version__` is an explicit
+part of the public surface defined by `__init__.py`.
+
+---
+
+## Modification 14 — `requirements/*.txt` (first `tox` clean pass)
 
 **Pre-steps (not committed — bootstrap the lock tool):**
 ```bash
@@ -215,7 +234,7 @@ must pass clean. From this point onward, run `tox` before every commit.
 
 ---
 
-## Modification 14 — `.github/workflows/ci.yml`
+## Modification 15 — `.github/workflows/ci.yml`
 
 Quality gate workflow:
 - **Trigger:** `pull_request` targeting `main`.
@@ -229,7 +248,7 @@ Quality gate workflow:
 
 ---
 
-## Modification 15 — `.github/workflows/publish.yml`
+## Modification 16 — `.github/workflows/publish.yml`
 
 PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret needed):
 - **Trigger:** push of tags matching `version/*`.
@@ -240,11 +259,11 @@ PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret need
   3. Build: `pip install build && python -m build`.
   4. Publish: `pypa/gh-action-pypi-publish@release/v1` (official PyPA action).
 
-PyPI trusted publisher configuration is done in modification 16 (manual step).
+PyPI trusted publisher configuration is done in modification 17 (manual step).
 
 ---
 
-## Modification 16 — GitHub repository configuration (manual — no commit)
+## Modification 17 — GitHub repository configuration (manual — no commit)
 
 No files changed. Steps to execute on GitHub and PyPI:
 
@@ -265,7 +284,7 @@ No files changed. Steps to execute on GitHub and PyPI:
 
 ---
 
-## Modification 17 — Release `0.1.0`
+## Modification 18 — Release `0.1.0`
 
 Files changed: `pyproject.toml`, `CHANGELOG.md`.
 
@@ -282,7 +301,7 @@ Files changed: `pyproject.toml`, `CHANGELOG.md`.
 
 ---
 
-## Modification 18 — Post-release version bump
+## Modification 19 — Post-release version bump
 
 File changed: `pyproject.toml`.
 
