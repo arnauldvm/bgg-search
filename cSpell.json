@@ -22,7 +22,9 @@
     "ruff",
     "pyproject",
     "editable",
-    "geek"
+    "geek",
+    "conftest",
+    "stdlib"
   ],
   "ignorePaths": [
     ".git/**",

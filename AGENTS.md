@@ -8,6 +8,8 @@ and filtering results.
 
 This is a personal project; prioritize clarity and correctness over enterprise-grade robustness.
 
+Rationale behind key choices is documented in [DECISIONS.md](DECISIONS.md).
+
 ## Repository layout (target structure)
 
 ```
@@ -77,10 +79,26 @@ ruff check . && ruff format . && mypy src/ && pytest
 
 ## Testing
 
-- Use `pytest` with `pytest-httpx` to mock HTTP responses; never hit the real BGG API in tests.
+- Use `pytest`; never use `unittest` directly.
+- Mock HTTP with `httpx.MockTransport`; do **not** add `pytest-httpx`.
+- Never hit the real BGG API in tests.
 - Fixtures live in `tests/conftest.py`.
 - One file per module under test: `tests/test_client.py`, `tests/test_search.py`, etc.
 - Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
+
+## Package selection rules
+
+When choosing packages, apply these rules in order:
+
+1. **Prefer stdlib** over external packages when the functionality is equivalent.
+2. **Prefer well-maintained external packages**: large community, frequent and recent releases.
+3. **Prefer packages with fewer transitive dependencies** when other criteria are equal.
+
+Concretely for this project:
+- XML parsing → `xml.etree.ElementTree` (stdlib), not `lxml` or `beautifulsoup4`
+- HTTP → `httpx` (active community, minimal deps) over `requests` (heavier dep tree) or `aiohttp`
+- Data models → `dataclasses` (stdlib) when validation is not needed; `pydantic>=2` only when input validation is required
+- Date/time → `datetime` (stdlib), not `arrow` or `pendulum`
 
 ## Dependencies (expected `pyproject.toml` extras)
 
@@ -89,7 +107,7 @@ ruff check . && ruff format . && mypy src/ && pytest
 dependencies = ["httpx", "pydantic>=2"]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-httpx", "mypy", "ruff"]
+dev = ["pytest", "mypy", "ruff"]
 ```
 
 ## Things to avoid
