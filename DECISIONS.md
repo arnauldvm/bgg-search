@@ -29,17 +29,22 @@ Reasons:
 - **Diff clarity**: changes to a tool's config appear in that tool's file, not buried in `pyproject.toml` alongside unrelated edits.
 - **Portability**: individual config files work even when the tool is invoked outside the Python packaging context (e.g., in a pre-commit hook, a CI step, or a standalone script).
 
-`pyproject.toml` retains only what belongs there: `[project]` metadata, `[project.optional-dependencies]`, and `[build-system]`.
+`pyproject.toml` retains only what belongs there: `[project]` metadata (including runtime `dependencies`) and `[build-system]`.
 
 ---
 
-## Package selection policy
+## Python 3.13 as target version
 
-**Rules (in priority order):**
+Criteria for choosing a Python version (in order):
 
-1. Prefer stdlib over external packages when the functionality is equivalent.
-2. Among external packages, prefer those with a large community and frequent recent releases.
-3. Among equally suitable packages, prefer those with fewer transitive dependencies.
+1. **Active support window**: target a version with several years of security fixes remaining; avoid versions nearing EOL.
+2. **Ecosystem readiness**: all dependencies must support the target version.
+3. **Feature set**: prefer newer versions for language improvements and performance gains.
+4. **Project type**: a published library must support older versions for broad compatibility; a personal tool can freely track the latest stable.
+
+As of June 2026, Python 3.13 is the latest stable release (EOL Oct 2029), all project dependencies support it, and 3.14 is still pre-release. There is no reason to stay on an older version for a personal tool.
+
+The version pin (`3.13`, not `≥ 3.13`) is intentional: it makes the runtime explicit and reproducible. Upgrade deliberately when 3.14 stabilizes and the ecosystem catches up.
 
 ---
 
@@ -89,6 +94,26 @@ Consumers of the library import from `bgg_search`, not from `bgg_search._client`
 
 ---
 
+## dataclasses over pydantic (default)
+
+Use `dataclasses` (stdlib) for internal data structures where no input validation is needed.
+Reach for `pydantic>=2` only when validating external input (e.g., deserializing API responses
+where field types or constraints must be enforced at runtime).
+
+This applies the **prefer stdlib** rule from the [Package selection policy](#package-selection-policy).
+
+---
+
+## Package selection policy
+
+**Rules (in priority order):**
+
+1. Prefer stdlib over external packages when the functionality is equivalent.
+2. Among external packages, prefer those with a large community and frequent recent releases.
+3. Among equally suitable packages, prefer those with fewer transitive dependencies.
+
+---
+
 ## pytest over unittest
 
 `unittest` is stdlib, but its functionality is not equivalent to `pytest`:
@@ -107,7 +132,8 @@ The "prefer stdlib" rule does not apply here because the functionality is not eq
 
 `pytest-httpx` is a thin convenience layer on top of `httpx`'s own `MockTransport`.
 The built-in transport covers the same use case (intercept requests, return canned responses)
-with no extra dependency, which aligns with rules 1 and 3 above.
+with no extra dependency — applying the **prefer stdlib/built-in** and **fewer transitive dependencies**
+rules from the [Package selection policy](#package-selection-policy).
 
 The trade-off is a few more lines of fixture boilerplate in `tests/conftest.py`.
 
@@ -115,35 +141,14 @@ The trade-off is a few more lines of fixture boilerplate in `tests/conftest.py`.
 
 ## httpx over requests
 
-`httpx` has a smaller transitive dependency tree than `requests`, supports both sync and async
-out of the box, and is actively maintained with a large community (rule 2 + rule 3).
+`httpx` has a smaller transitive dependency tree than `requests` (**fewer transitive dependencies**),
+supports both sync and async out of the box, and is actively maintained with a large community
+(**well-maintained, frequent releases**) — see [Package selection policy](#package-selection-policy).
 
 ---
 
 ## xml.etree.ElementTree over lxml / beautifulsoup4
 
 The BGG XML API returns well-formed XML. The stdlib parser handles it without issues.
-Adding `lxml` or `beautifulsoup4` would introduce external dependencies for no gain (rule 1).
-
----
-
-## Python 3.13 as target version
-
-Criteria for choosing a Python version (in order):
-
-1. **Active support window**: target a version with several years of security fixes remaining; avoid versions nearing EOL.
-2. **Ecosystem readiness**: all dependencies must support the target version.
-3. **Feature set**: prefer newer versions for language improvements and performance gains.
-4. **Project type**: a published library must support older versions for broad compatibility; a personal tool can freely track the latest stable.
-
-As of June 2026, Python 3.13 is the latest stable release (EOL Oct 2029), all project dependencies support it, and 3.14 is still pre-release. There is no reason to stay on an older version for a personal tool.
-
-The version pin (`3.13`, not `≥ 3.13`) is intentional: it makes the runtime explicit and reproducible. Upgrade deliberately when 3.14 stabilises and the ecosystem catches up.
-
----
-
-## dataclasses over pydantic (default)
-
-Use `dataclasses` (stdlib) for internal data structures where no input validation is needed.
-Reach for `pydantic>=2` only when validating external input (e.g., deserializing API responses
-where field types or constraints must be enforced at runtime).
+Adding `lxml` or `beautifulsoup4` would introduce external dependencies for no gain —
+applying the **prefer stdlib** rule from the [Package selection policy](#package-selection-policy).
