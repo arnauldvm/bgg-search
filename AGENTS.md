@@ -79,7 +79,7 @@ To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally 
 
 ## Code conventions
 
-- **Python ≥ 3.11**; use built-in `tomllib`, `match`/`case`, `TypeAlias`, etc. where appropriate.
+- **Python 3.13**; use built-in `tomllib`, `match`/`case`, `TypeAlias`, etc. where appropriate.
 - Prefer **dataclasses** or **Pydantic v2** models over raw dicts for API responses.
 - HTTP calls go through `httpx` (sync client is fine; async only if explicitly needed).
 - Parse XML with the standard library `xml.etree.ElementTree`; avoid third-party XML libs.

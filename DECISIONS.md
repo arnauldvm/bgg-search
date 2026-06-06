@@ -53,6 +53,21 @@ Adding `lxml` or `beautifulsoup4` would introduce external dependencies for no g
 
 ---
 
+## Python 3.13 as target version
+
+Criteria for choosing a Python version (in order):
+
+1. **Active support window**: target a version with several years of security fixes remaining; avoid versions nearing EOL.
+2. **Ecosystem readiness**: all dependencies must support the target version.
+3. **Feature set**: prefer newer versions for language improvements and performance gains.
+4. **Project type**: a published library must support older versions for broad compatibility; a personal tool can freely track the latest stable.
+
+As of June 2026, Python 3.13 is the latest stable release (EOL Oct 2029), all project dependencies support it, and 3.14 is still pre-release. There is no reason to stay on an older version for a personal tool.
+
+The version pin (`3.13`, not `≥ 3.13`) is intentional: it makes the runtime explicit and reproducible. Upgrade deliberately when 3.14 stabilises and the ecosystem catches up.
+
+---
+
 ## dataclasses over pydantic (default)
 
 Use `dataclasses` (stdlib) for internal data structures where no input validation is needed.
