@@ -192,7 +192,6 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 
 ## Things to avoid
 
-- Do **not** add `setup.cfg` or `setup.py`.
 - Do **not** add logging configuration at module level; leave that to the caller.
 - Do **not** cache BGG responses unless caching is explicitly requested.
 - Do **not** commit `.venv/`, `__pycache__/`, or `*.egg-info/` (ensure `.gitignore` covers them).
