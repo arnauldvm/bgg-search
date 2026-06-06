@@ -11,6 +11,7 @@ It wraps the BGG XML API2 and exposes:
 This is a personal project; prioritize clarity and correctness over enterprise-grade robustness.
 
 Rationale behind key choices is documented in [DECISIONS.md](DECISIONS.md).
+The project initiation workflow and branch/version map are documented in [PROCESS.md](PROCESS.md).
 
 ### Repository layout (target structure)
 
