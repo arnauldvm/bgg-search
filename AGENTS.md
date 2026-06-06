@@ -3,8 +3,10 @@
 ## Project overview
 
 `bgg-search` is a personal Python package for querying [BoardGameGeek](https://boardgamegeek.com) (BGG).
-It wraps the BGG XML API2 and exposes a clean Python interface for searching games, retrieving game details,
-and filtering results.
+It wraps the BGG XML API2 and exposes:
+
+- a clean, reusable Python API for searching games, retrieving game details, and filtering results;
+- a generic CLI for interacting with the BGG API from the command line.
 
 This is a personal project; prioritize clarity and correctness over enterprise-grade robustness.
 
@@ -19,7 +21,8 @@ bgg-search/
 │       ├── __init__.py
 │       ├── client.py        # HTTP client / API wrapper
 │       ├── models.py        # dataclasses / Pydantic models
-│       └── search.py        # high-level search helpers
+│       ├── search.py        # high-level search helpers
+│       └── cli.py           # CLI entry point
 ├── tests/
 │   ├── conftest.py
 │   ├── unit/                # fast, purely local tests
