@@ -5,7 +5,7 @@ Single step (one commit).
 ## Pre-steps (not committed — bootstrap)
 
 ```bash
-uv venv
+uv venv --python 3.13
 . .venv/bin/activate
 uv pip install tox
 tox -e lock
