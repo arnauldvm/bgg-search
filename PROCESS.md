@@ -11,7 +11,8 @@ Used once, from project creation to MVP (`1.0.0`):
    - 4.1 Propose a detailed phase plan (decomposed into successive modifications). Commit `PHASE_PLAN.md` to `main`.
    - 4.2 Review and adapt the phase plan.
    - 4.3 Implement each modification following the **Development workflow** (see [AGENTS.md](AGENTS.md)).
-   - 4.4 Release the phase (`0.N.0`).
+   - 4.4 Remove `PHASE_PLAN.md` in a dedicated commit on `main` before releasing.
+   - 4.5 Release the phase (`0.N.0`).
 5. **Release MVP** — tag `version/1.0.0`.
 
 After MVP, switch to a pure incremental workflow: one small feature at a time, each following the **Development workflow**.
@@ -55,3 +56,4 @@ main
   - New feature or significant fix on the latest version → bump **Y**.
   - Hotfix backported to a past version → bump **Z** (branch cut from the old release tag, not `main`).
 - `PLAN.md` is branch-local and never merged to `main`.
+- `PHASE_PLAN.md` lives on `main` during the phase and is removed before the phase release.
