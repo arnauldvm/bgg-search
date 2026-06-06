@@ -72,6 +72,9 @@ uv venv --python 3.13 && source .venv/bin/activate
 
 # install the package in editable mode with locked dev deps
 uv pip install -e . -r requirements/dev.txt
+
+# register the pre-commit hook (once per clone)
+pre-commit install
 ```
 
 There is no `setup.py`. `pyproject.toml` contains package metadata and build system only; all dependency declarations live in `requirements/`.
