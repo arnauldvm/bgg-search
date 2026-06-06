@@ -148,9 +148,6 @@ Rules:
 ## Code conventions
 
 - **Python 3.13**; use built-in `tomllib`, `match`/`case`, `TypeAlias`, etc. where appropriate.
-- Prefer **dataclasses** or **Pydantic v2** models over raw dicts for API responses.
-- HTTP calls go through `httpx` (sync client is fine; async only if explicitly needed).
-- Parse XML with the standard library `xml.etree.ElementTree`; avoid third-party XML libs.
 - Public functions and classes must have type annotations; internal helpers may omit them only when obvious.
 - No comments that restate what the code already says. Comment the *why*, not the *what*.
 - Raise domain-specific exceptions (subclass `BggSearchError`) instead of leaking `httpx` errors.
@@ -196,7 +193,6 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 ## Things to avoid
 
 - Do **not** add `setup.cfg` or `setup.py`.
-- Do **not** use `requests`; the project uses `httpx`.
 - Do **not** add logging configuration at module level; leave that to the caller.
 - Do **not** cache BGG responses unless caching is explicitly requested.
 - Do **not** commit `.venv/`, `__pycache__/`, or `*.egg-info/` (ensure `.gitignore` covers them).
