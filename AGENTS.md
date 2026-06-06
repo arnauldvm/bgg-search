@@ -68,7 +68,7 @@ Dependencies are managed with **uv**. Each context has its own requirements file
 
 ```bash
 # create and activate a virtual environment
-uv venv && source .venv/bin/activate
+uv venv --python 3.13 && source .venv/bin/activate
 
 # install the package in editable mode with locked dev deps
 uv pip install -e . -r requirements/dev.txt

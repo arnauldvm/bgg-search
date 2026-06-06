@@ -119,8 +119,9 @@ Strict type-checking configuration:
 
 ## Modification 8 — `.bandit`
 
-Bandit security scanner configuration:
-- Targets `src/` only — exclude `tests/` (test code may use `assert`, subprocess calls, etc. intentionally).
+Bandit security scanner configuration in **YAML** format (`bandit[toml]` only adds TOML support
+for `pyproject.toml`; standalone config files must be YAML):
+- `exclude_dirs: [tests, .venv]` — safety net; the tox command already targets `src/` directly.
 
 ---
 
@@ -221,8 +222,7 @@ part of the public surface defined by `__init__.py`.
 
 **Pre-steps (not committed — bootstrap the lock tool):**
 ```bash
-uv venv && source .venv/bin/activate
-uv pip install uv          # ensure uv is available inside the venv
+uv venv --python 3.13 && source .venv/bin/activate
 uv pip install tox         # bootstrap tox before lock files exist
 tox -e lock                # generates all five requirements/*.txt files
 ```
