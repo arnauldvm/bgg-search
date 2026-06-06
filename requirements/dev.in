@@ -3,3 +3,4 @@ ruff~=0.15.0
 mypy~=2.1.0
 bandit[toml]~=1.9.0
 pre-commit~=4.6.0
+pytest~=8.3.0

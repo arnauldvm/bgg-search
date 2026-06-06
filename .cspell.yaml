@@ -31,6 +31,8 @@ words:
   - Muysewinkel
   - coveragerc
   - pytest-cov
+  - Catan
+  - Pandemic
 
 ignorePaths:
   - .git/**
