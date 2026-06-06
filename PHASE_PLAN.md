@@ -1,337 +1,151 @@
-# Phase 0.1 — Project scaffold: detailed plan
+# Phase 0.2 — Domain & protocol: plan
 
-Each modification is a single commit (or a small set of tightly coupled commits).
-Modifications 1–13 build up the scaffolding; `tox` first passes clean at modification 14.
-From modification 14 onward, run `tox` before every commit.
+**Goal**: establish the stable core that all other layers depend on — no HTTP, no I/O.
+
+Each modification below is one short-lived feature branch merged into `main`.
+Each branch follows the standard development workflow (PLAN.md → tox → merge --no-ff).
+
+---
 
 ## Summary table
 
-| #  | Files                                                    | Summary                                  |
-|----|----------------------------------------------------------|------------------------------------------|
-|  1 | `.gitignore`                                             | Standard Python gitignore                |
-|  2 | `pyproject.toml`, `LICENSE`                              | Package metadata, build system, MIT license |
-|  3 | `CHANGELOG.md`                                           | Keep a Changelog stub                    |
-|  4 | `README.md`                                              | Project README stub                      |
-|  5 | `requirements/*.in` (5 files)                            | Unpinned dependency specs                |
-|  6 | `ruff.toml`                                              | Linter configuration                     |
-|  7 | `mypy.ini`                                               | Type-checker configuration               |
-|  8 | `.bandit`                                                | Security scanner configuration           |
-|  9 | `tox.ini`                                                | Test runner and tool orchestration       |
-| 10 | `src/bgg_search/__init__.py`                             | Minimal package (version only)           |
-| 11 | `tests/conftest.py`, `tests/unit/conftest.py`, `tests/integ/conftest.py` | Test directory structure |
-| 12 | `requirements/unit.in`, `.coveragerc`, `tox.ini`         | Test coverage measurement (95% floor)   |
-| 13 | `tests/unit/test_version.py`                             | Minimal unit test — satisfies 95% floor |
-| 14 | `requirements/*.txt` (5 files)                           | Locked deps — first `tox` clean pass ✓  |
-| 15 | `requirements/dev.in`, `.pre-commit-config.yaml`, `requirements/dev.txt` | pre-commit hook (runs tox) |
-| 16 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
-| 17 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
-| 18 | *(manual — no commit)*                                   | GitHub repository configuration          |
-| 19 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
-| 20 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
+| # | Branch | Files touched | Summary |
+|---|--------|---------------|---------|
+| 1 | `feat/models` | `models.py` *(new)*, `tests/unit/test_models.py` *(new)* | Pure domain dataclasses + unit tests |
+| 2 | `feat/exceptions` | `exceptions.py` *(new)*, `tests/unit/test_exceptions.py` *(new)* | Domain exception hierarchy + unit tests |
+| 3 | `feat/protocol` | `_protocol.py` *(new)* | `BggClientProtocol` structural interface |
+| 4 | `feat/public-api` | `__init__.py` *(update)*, `CHANGELOG.md` *(update)* | Explicit public API surface + changelog |
+
+Modifications 1 and 2 are independent and may be executed in either order (or as concurrent
+branches), but both must be merged before modification 3 begins.
 
 ---
 
-## Modification 1 — `.gitignore`
+## Modification 1 — `feat/models`
 
-Standard Python gitignore covering:
-- Virtualenvs: `.venv/`
-- Build artifacts: `dist/`, `*.egg-info/`
-- Caches: `__pycache__/`, `.mypy_cache/`, `.ruff_cache/`, `.tox/`
-- No editor-specific entries — those belong in each developer's global `~/.gitignore_global`.
+**Branch**: `feat/models`
+
+**Files touched**:
+- `src/bgg_search/models.py` *(new)*
+- `tests/unit/test_models.py` *(new)*
+
+**Goal**: define the pure domain dataclasses that represent BGG data.
+
+**Models** (all `@dataclass(frozen=True)`):
+
+| Class | Fields |
+|-------|--------|
+| `GameSummary` | `id: int`, `name: str` |
+| `GameDetails` | `id: int`, `name: str`, `year_published: int \| None`, `min_players: int \| None`, `max_players: int \| None`, `min_playtime: int \| None`, `max_playtime: int \| None`, `weight: float \| None`, `bgg_rating: float \| None` |
+
+`GameSummary` is what the `search` endpoint returns; `GameDetails` is what the `thing`
+endpoint returns.
+
+No imports from this package. No validation — raw values from the API are trusted here.
+
+**Tests**: construction with all fields, immutability (frozen), field access. No HTTP.
 
 ---
 
-## Modification 2 — `pyproject.toml` + `LICENSE`
+## Modification 2 — `feat/exceptions`
 
-`[project]` section:
-- `name = "bgg-search"`, `version = "0.1.0.dev0"`, short `description`, `readme = "README.md"`.
-- `license = "MIT"` (SPDX expression, PEP 639), author, classifiers (Python 3.13, license type, development status).
-- `requires-python = ">=3.13"`.
-- `dependencies = []` — no runtime deps yet; `httpx` is added in phase 0.3.
+**Branch**: `feat/exceptions`
 
-`[build-system]` section: `hatchling`.
+**Files touched**:
+- `src/bgg_search/exceptions.py` *(new)*
+- `tests/unit/test_exceptions.py` *(new)*
 
-No `[project.scripts]` entry — the CLI entry point is added in phase 0.4 when `cli.py` exists.
+**Goal**: define the domain exception hierarchy so that callers never see raw `httpx` or
+`xml.etree` errors.
 
-`LICENSE` — standard MIT text, year 2026, author Arnauld Van Muysewinkel.
+**Hierarchy**:
 
----
-
-## Modification 3 — `CHANGELOG.md`
-
-Keep a Changelog (v1.0.0) stub. Initial content:
-
-```markdown
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
+```
+BggSearchError          # base; all public exceptions are subclasses of this
+  BggApiError           # HTTP-level failure (non-200, timeout, …); carries status_code: int | None
+  BggNotFoundError      # requested game ID not found in the API response
+  BggParseError         # API returned unexpected XML structure
 ```
 
-No entries yet; first user-facing entries are added in phase 0.4.
+No imports from this package.
+
+**Tests**: construction with all arguments, `isinstance` hierarchy checks, and message
+propagation. Verify that every concrete exception is a `BggSearchError`.
 
 ---
 
-## Modification 4 — `README.md`
+## Modification 3 — `feat/protocol`
 
-Minimal stub: project name, one-line description, "under construction" note.
-The complete README (installation, quickstart, API reference, CLI reference) is written in phase 0.4.
+**Branch**: `feat/protocol`  
+**Depends on**: modifications 1 and 2 merged into `main`
 
----
+**Files touched**:
+- `src/bgg_search/_protocol.py` *(new)*
 
-## Modification 5 — `requirements/*.in`
+**Goal**: define `BggClientProtocol` — the structural interface between the use-case layer
+(`search.py`, phase 0.4) and the HTTP layer (`_client.py`, phase 0.3).
 
-Five files in `requirements/`:
-
-| File         | Contents                              |
-|--------------|---------------------------------------|
-| `runtime.in` | *(empty — no runtime deps this phase)*|
-| `dev.in`     | `tox`, `ruff`, `mypy`, `bandit[toml]` |
-| `unit.in`    | `pytest`, `pytest-cov` (added in mod 12) |
-| `integ.in`   | `pytest`                              |
-| `audit.in`   | `pip-audit`                           |
-
-These are the unpinned specs; the locked `.txt` files are generated in modification 13.
-
----
-
-## Modification 6 — `ruff.toml`
-
-Ruff linter and formatter configuration:
-- `target-version = "py313"`.
-- `src = ["src"]` — src-layout awareness for import sorting (`isort`).
-- Enabled rule sets: `E`, `W`, `F` (Pyflakes/pycodestyle), `I` (isort), `N` (naming), `UP` (pyupgrade), `B` (bugbear).
-- `line-length = 100`.
-
----
-
-## Modification 7 — `mypy.ini`
-
-Strict type-checking configuration:
-- `python_version = 3.13`.
-- `strict = True`.
-- `mypy_path = src` — points mypy at the src layout.
-
----
-
-## Modification 8 — `.bandit`
-
-Bandit security scanner configuration in **YAML** format (`bandit[toml]` only adds TOML support
-for `pyproject.toml`; standalone config files must be YAML):
-- `exclude_dirs: [tests, .venv]` — safety net; the tox command already targets `src/` directly.
-
----
-
-## Modification 9 — `tox.ini`
-
-Define all tox environments:
-
-| Env        | Deps file(s)              | Command(s)                                         | In default run? |
-|------------|---------------------------|----------------------------------------------------|-----------------|
-| `lint`     | `dev.txt`                 | `ruff check src/ tests/` + `ruff format --check src/ tests/` | Yes |
-| `type`     | `dev.txt` + editable `.`  | `mypy src/`                                        | Yes             |
-| `security` | `dev.txt`                 | `bandit -c .bandit -r src/`                        | Yes             |
-| `unit`     | `unit.txt` + editable `.` | `pytest` with coverage (updated in mod 12)         | Yes             |
-| `integ`    | `integ.txt` + editable `.`| `pytest tests/integ/`                              | No              |
-| `audit`    | `audit.txt`               | `pip-audit -r requirements/runtime.txt`            | No              |
-| `lock`     | `uv` (inline)             | `uv pip compile` each `.in` → `.txt` (`--python-version 3.13`) | No |
-
-`env_list = lint,type,security,unit` — bare `tox` runs these four.
-
----
-
-## Modification 10 — `src/bgg_search/__init__.py`
+**Protocol** (`typing.Protocol`, `@runtime_checkable`):
 
 ```python
-from importlib.metadata import version
-
-__version__ = version("bgg-search")
+class BggClientProtocol(Protocol):
+    def search(self, query: str) -> list[GameSummary]: ...
+    def get_game(self, game_id: int) -> GameDetails: ...
 ```
 
-The only source file for this phase. `importlib.metadata` (stdlib) reads the version
-declared in `pyproject.toml` at install time — the version string is never duplicated.
+Imports from `models.py` only. Exceptions are raised by implementors, not declared in the
+protocol.
+
+No unit tests for this modification: a `Protocol` carries no runtime behavior to test.
 
 ---
 
-## Modification 11 — Test directory structure
+## Modification 4 — `feat/public-api`
 
-Three empty `conftest.py` files to establish the directory layout in git:
+**Branch**: `feat/public-api`  
+**Depends on**: modifications 1, 2, and 3 merged into `main`
 
-```
-tests/
-├── conftest.py
-├── unit/
-│   └── conftest.py
-└── integ/
-    └── conftest.py
-```
+**Files touched**:
+- `src/bgg_search/__init__.py` *(update)*
+- `CHANGELOG.md` *(update)*
 
-Git does not track empty directories; the conftest files serve as anchors.
-They remain empty for now — fixtures are added alongside the tests that need them.
+**Goal**: make the public API surface explicit. Callers do `import bgg_search` and access
+exactly the symbols listed below — nothing more leaks through.
 
----
-
-## Modification 12 — Test coverage (3 commits)
-
-Add `pytest-cov` and enforce a 95% coverage floor on unit tests.
-Three tightly coupled files, one commit each:
-
-**Commit 1 — `requirements/unit.in`**: add `pytest-cov~=6.0.0`.
-
-**Commit 2 — `.coveragerc`**:
-```ini
-[run]
-source = bgg_search
-branch = True
-
-[report]
-fail_under = 95
-show_missing = True
-```
-
-**Commit 3 — `tox.ini`** (`unit` env only): update the pytest command to:
-```
-pytest --cov --cov-report=term-missing tests/unit/
-```
-`fail_under = 95` in `.coveragerc` causes `pytest-cov` to fail the run if coverage drops below the threshold.
-
----
-
-## Modification 13 — `tests/unit/test_version.py`
-
-Minimal unit test that covers `src/bgg_search/__init__.py` (the only source file in this phase),
-ensuring the 95% coverage floor is satisfied from the first `tox` run:
+**Re-exports** and `__all__`:
 
 ```python
-import bgg_search
+from bgg_search.models import GameSummary, GameDetails
+from bgg_search.exceptions import BggSearchError, BggApiError, BggNotFoundError, BggParseError
+from bgg_search._protocol import BggClientProtocol
 
-def test_version_exists() -> None:
-    assert isinstance(bgg_search.__version__, str)
-    assert len(bgg_search.__version__) > 0
+__all__ = [
+    "__version__",
+    "GameSummary",
+    "GameDetails",
+    "BggSearchError",
+    "BggApiError",
+    "BggNotFoundError",
+    "BggParseError",
+    "BggClientProtocol",
+]
 ```
 
-This test is a legitimate check of the package's public API: `__version__` is an explicit
-part of the public surface defined by `__init__.py`.
+**CHANGELOG entry** (under `## [Unreleased]`, subsection `Added`):
+> Public API surface: `GameSummary`, `GameDetails`, `BggSearchError`, `BggApiError`,
+> `BggNotFoundError`, `BggParseError`, `BggClientProtocol`.
+
+No new tests needed (re-exports are structural; coverage is already provided by the tests
+in modifications 1 and 2).
 
 ---
 
-## Modification 14 — `requirements/*.txt` (first `tox` clean pass)
+## Release checklist (after all modifications merged)
 
-**Pre-steps (not committed — bootstrap the lock tool):**
-```bash
-uv venv --python 3.13 && source .venv/bin/activate
-uv pip install tox         # bootstrap tox before lock files exist
-tox -e lock                # generates all five requirements/*.txt files
-```
-
-**Committed:** all five `requirements/*.txt` locked files.
-
-**Verify:** run bare `tox`; all four default environments (`lint`, `type`, `security`, `unit`)
-must pass clean. From this point onward, run `tox` before every commit.
-
----
-
-## Modification 15 — pre-commit hook
-
-Add `pre-commit` to run the full `tox` quality gate before every commit.
-
-**`requirements/dev.in`**: add `pre-commit~=4.6.0`.
-
-**`.pre-commit-config.yaml`**:
-```yaml
-repos:
-  - repo: local
-    hooks:
-      - id: tox
-        name: tox
-        entry: tox
-        language: system
-        pass_filenames: false
-        always_run: true
-```
-Uses `language: system` so pre-commit calls the `tox` already on `PATH` (inside the activated
-virtualenv) rather than managing its own isolated environment.
-
-**`requirements/dev.txt`**: re-lock via `tox -e lock` to include `pre-commit` and its dependencies.
-
-**Post-merge dev environment step**: run `pre-commit install` once to register the hook in `.git/hooks/pre-commit`.
-
----
-
-## Modification 16 — `.github/workflows/ci.yml`
-
-Quality gate workflow:
-- **Trigger:** `pull_request` targeting `main`.
-- **Matrix:** Python 3.13, `ubuntu-latest`.
-- **Steps:**
-  1. Checkout.
-  2. Set up Python 3.13.
-  3. Install `tox` via `pip`.
-  4. Run `tox` (bare — executes the four default environments).
-- **Job name:** `tox` — this is the name that GitHub branch protection will require.
-
----
-
-## Modification 17 — `.github/workflows/publish.yml`
-
-PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret needed):
-- **Trigger:** push of tags matching `version/*`.
-- **Permissions:** `id-token: write` (required for OIDC), `contents: read`.
-- **Steps:**
-  1. Checkout.
-  2. Set up Python 3.13.
-  3. Build: `pip install build && python -m build`.
-  4. Publish: `pypa/gh-action-pypi-publish@release/v1` (official PyPA action).
-
-PyPI trusted publisher configuration is done in modification 18 (manual step).
-
----
-
-## Modification 18 — GitHub repository configuration (manual — no commit)
-
-No files changed. Steps to execute on GitHub and PyPI:
-
-**GitHub:**
-1. Confirm the issue tracker is enabled (default on GitHub — verify it is on).
-2. Add branch protection rule for `main`:
-   - Require a pull request before merging.
-   - Require status check `tox` (from the CI workflow) to pass before merging.
-   - Do not allow bypassing the above settings.
-
-**PyPI:**
-1. Create the `bgg-search` project on PyPI (first publish or claim the name).
-2. Add a trusted publisher entry:
-   - GitHub owner: `<your-github-username>`
-   - Repository: `bgg-search`
-   - Workflow file: `publish.yml`
-   - Environment: *(leave blank, or set one if desired)*
-
----
-
-## Modification 19 — Release `0.1.0`
-
-Files changed: `pyproject.toml`, `CHANGELOG.md`.
-
-1. Set `version = "0.1.0"` in `pyproject.toml`.
-2. Update `CHANGELOG.md`: rename `## [Unreleased]` → `## [0.1.0] - YYYY-MM-DD`; open a fresh `## [Unreleased]` section above it.
-3. Run the pre-release checklist:
-   ```bash
-   tox -e lock   # re-lock in case any dep changed
-   tox -e audit  # dependency vulnerability scan
-   tox -e integ  # integration tests against the real BGG API
-   ```
-4. Commit: `chore: release 0.1.0`.
-5. Tag: `git tag version/0.1.0`.
-
----
-
-## Modification 20 — Post-release version bump
-
-File changed: `pyproject.toml`.
-
-Set `version = "0.2.0.dev0"`. Commit immediately after the release tag:
-`chore(pyproject.toml): bump version to 0.2.0.dev0`.
+- [ ] `tox` passes clean on `main`
+- [ ] `tox -e lock` — regenerate locked deps if any were added
+- [ ] `tox -e audit` — dependency audit clean
+- [ ] `tox -e integ` — integration tests pass (none exist in this phase; trivially clean)
+- [ ] Bump version to `0.2.0`, update `CHANGELOG.md`, commit, tag `version/0.2.0`
+- [ ] Bump to `0.3.0.dev0`, commit
+- [ ] Push `main`, then push `version/0.2.0`
