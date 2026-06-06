@@ -201,7 +201,9 @@ Use commits of the form `<action>(<scope>):<description>`, where:
 
 - `<action>` is one of "add", "upd", "feat", "refactor", "chore"...
 - `<scope>` is a compact spec of the files full path (relative to project root)  
-  (exceptionally it may be omitted, when the commit concerns the whole project)
+  (exceptionally it may be omitted, when the commit concerns the whole project);  
+  optionally followed by ` > <location>` to pinpoint the change within the file  
+  (e.g. a class name, function name, or config section): `src/bgg_search/client.py > BggClient.search`
 - `<description>` is a short sentence describing the modification (do not repeat the action)
 
 ### Version management
