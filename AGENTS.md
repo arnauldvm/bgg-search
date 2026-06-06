@@ -46,10 +46,14 @@ bgg-search/
 │   ├── audit.in             # pip-audit (unpinned spec)
 │   └── audit.txt            # locked audit deps
 ├── pyproject.toml           # package metadata and build system only
-├── CHANGELOG.md
-├── PROCESS.md
-├── README.md
-└── AGENTS.md
+├── CHANGELOG.md             # user-facing change history (Keep a Changelog format)
+├── DECISIONS.md             # rationale behind key design and package choices
+├── PROCESS.md               # project initiation workflow and branch/version map
+├── README.md                # public-facing project documentation
+├── AGENTS.md                # guide for AI agents (this file)
+├── HIGHLEVEL_PLAN.md        # [transient] succession of phases toward MVP
+├── PHASE_PLAN.md            # [transient] decomposition of the current phase
+└── PLAN.md                  # [transient] steps for the current feature/change (branch-local)
 ```
 
 ## Development environment
