@@ -43,6 +43,7 @@ bgg-search/
 │   ├── audit.in             # pip-audit (unpinned spec)
 │   └── audit.txt            # locked audit deps
 ├── pyproject.toml           # package metadata and build system only
+├── CHANGELOG.md
 ├── README.md
 └── AGENTS.md
 ```
@@ -152,6 +153,18 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 - Do **not** add logging configuration at module level; leave that to the caller.
 - Do **not** cache BGG responses unless caching is explicitly requested.
 - Do **not** commit `.venv/`, `__pycache__/`, or `*.egg-info/` (ensure `.gitignore` covers them).
+
+## Changelog
+
+`CHANGELOG.md` follows the [Keep a Changelog](https://keepachangelog.com) format (version 1.0.0).
+
+Rules:
+
+- Always keep an `## [Unreleased]` section at the top.
+- Add an entry under `[Unreleased]` for every user-facing change (new feature, fix, removed behavior). Internal refactors and tooling changes do not need an entry.
+- Use the standard subsections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
+- On release: rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
+- Do **not** edit past release sections.
 
 ## BGG XML API2 reference
 
