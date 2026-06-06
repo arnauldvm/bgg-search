@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/streetsidesoftware/cspell/main/packages/cspell-types/cspell.schema.json
+
+version: "0.2"
+language: en-US
+
+dictionaries:
+  - python
+  - html
+  - xml
+  - bash
+  - markdown
+  - software-terms
+
+words:
+  - bgg
+  - boardgame
+  - boardgamegeek
+  - xmlapi
+  - httpx
+  - pydantic
+  - pytest
+  - mypy
+  - ruff
+  - pyproject
+  - editable
+  - geek
+  - conftest
+  - stdlib
+  - integ
+
+ignorePaths:
+  - .git/**
+  - .venv/**
+  - "**/__pycache__/**"
+  - "**/*.egg-info/**"
+  - dist/**
+  - build/**
+
+ignoreRegExpList:
+  - "https?://[^\\s]+"
