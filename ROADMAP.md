@@ -19,7 +19,7 @@ Deliverables:
 
 ## Phase 0.2 — Search
 
-**Goal**: working project with a functional search command.
+**Goal**: a user can look up board games by name and inspect their details. The typical flow: `bgg-search search <query>` returns a ranked list of matching titles with their BGG IDs; `bgg-search details <id>` fetches full details (players, play time, weight, rating, …) for a chosen game.
 
 Deliverables:
 - Domain core: `models.py` (game data structures), `exceptions.py`.
