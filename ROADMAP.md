@@ -17,21 +17,41 @@ Deliverables:
 
 ---
 
-## Phase 0.2 — Search
+## Phase 0.2 — Domain & protocol
+
+**Goal**: establish the stable core that all other layers depend on — no HTTP, no I/O.
+
+Deliverables:
+- `models.py`: pure dataclasses for game data structures.
+- `exceptions.py`: domain exception hierarchy.
+- `_protocol.py`: `BggClientProtocol` (`typing.Protocol`) — the contract between the use-case layer and the HTTP layer.
+- `__init__.py`: explicit public API surface (re-exports only).
+- Unit tests for models and exceptions.
+
+---
+
+## Phase 0.3 — HTTP client
+
+**Goal**: a working HTTP client that speaks to the BGG XML API, independently testable.
+
+Deliverables:
+- `_client.py`: concrete `httpx`-based implementation of `BggClientProtocol`, covering the `search` and `thing` endpoints.
+- Unit tests (mocked HTTP via `httpx.MockTransport`).
+
+---
+
+## Phase 0.4 — Search use-case & CLI
 
 **Goal**: a user can look up board games by name and inspect their details. The typical flow: `bgg-search search <query>` returns a ranked list of matching titles with their BGG IDs; `bgg-search details <id>` fetches full details (players, play time, weight, rating, …) for a chosen game.
 
 Deliverables:
-- Domain core: `models.py` (game data structures), `exceptions.py`.
-- HTTP layer: `_protocol.py` (`BggClientProtocol`), `_client.py` implementing the `search` and `thing` endpoints.
-- Use-case layer: `search.py` — `search_games(query)` and `get_game(id)`.
-- CLI adapter: `cli.py` — `bgg-search search <query>` and `bgg-search details <id>` sub-commands.
-- Explicit public API: `__init__.py`.
-- Tests: unit tests (mocked HTTP via `httpx.MockTransport`) and integration tests for the search flow.
+- `search.py`: `search_games(query)` and `get_game(id)` use-cases.
+- `cli.py`: `bgg-search search <query>` and `bgg-search details <id>` sub-commands.
+- Unit tests for `search.py`; integration tests for the end-to-end search flow.
 
 ---
 
-## Phase 0.3 — Collection
+## Phase 0.5 — Collection
 
 **Goal**: retrieve and display a user's owned game collection.
 
@@ -39,11 +59,11 @@ Deliverables:
 - `_client.py`: `collection` endpoint support.
 - `search.py`: `get_collection(username)` use-case.
 - `cli.py`: `bgg-search collection <username>` sub-command.
-- Tests: unit + integration tests for the collection flow.
+- Unit + integration tests for the collection flow.
 
 ---
 
-## Phase 0.4 — Filtering & polish
+## Phase 0.6 — Filtering & polish
 
 **Goal**: filtering/sorting capabilities and production-quality polish for MVP.
 
@@ -63,7 +83,9 @@ Deliverables:
 | Version | Phase |
 |---------|-------|
 | `0.1.0` | Project scaffold |
-| `0.2.0` | Search |
-| `0.3.0` | Collection |
-| `0.4.0` | Filtering & polish |
-| `1.0.0` | MVP tag (after `0.4.0`) |
+| `0.2.0` | Domain & protocol |
+| `0.3.0` | HTTP client |
+| `0.4.0` | Search use-case & CLI |
+| `0.5.0` | Collection |
+| `0.6.0` | Filtering & polish |
+| `1.0.0` | MVP tag (after `0.6.0`) |
