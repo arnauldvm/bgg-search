@@ -6,7 +6,7 @@
 It wraps the BGG XML API2 and exposes a clean Python interface for searching games, retrieving game details,
 and filtering results.
 
-This is a personal project; prioritise clarity and correctness over enterprise-grade robustness.
+This is a personal project; prioritize clarity and correctness over enterprise-grade robustness.
 
 ## Repository layout (target structure)
 
@@ -25,7 +25,11 @@ bgg-search/
 ├── README.md
 └── AGENTS.md
 ```
-*
+
+## Language
+
+Use American English for text (messages, documentation, commits...)
+
 ## Code versioning
 
 Use commits of the form `<action>(<scope>):<description'>`, where:
@@ -76,7 +80,7 @@ ruff check . && ruff format . && mypy src/ && pytest
 - Use `pytest` with `pytest-httpx` to mock HTTP responses; never hit the real BGG API in tests.
 - Fixtures live in `tests/conftest.py`.
 - One file per module under test: `tests/test_client.py`, `tests/test_search.py`, etc.
-- Aim for behaviour coverage, not line coverage — test what the public API promises, not implementation details.
+- Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
 
 ## Dependencies (expected `pyproject.toml` extras)
 
