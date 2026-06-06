@@ -29,6 +29,8 @@ words:
   - integ
   - Arnauld
   - Muysewinkel
+  - coveragerc
+  - pytest-cov
 
 ignorePaths:
   - .git/**

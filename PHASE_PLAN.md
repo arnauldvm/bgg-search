@@ -1,8 +1,8 @@
 # Phase 0.1 — Project scaffold: detailed plan
 
-Each modification is a single commit. Modifications 1–11 build up the scaffolding;
-`tox` first passes clean at modification 12. From modification 12 onward, run `tox`
-before every commit.
+Each modification is a single commit (or a small set of tightly coupled commits).
+Modifications 1–12 build up the scaffolding; `tox` first passes clean at modification 13.
+From modification 13 onward, run `tox` before every commit.
 
 ## Summary table
 
@@ -19,12 +19,13 @@ before every commit.
 |  9 | `tox.ini`                                                | Test runner and tool orchestration       |
 | 10 | `src/bgg_search/__init__.py`                             | Minimal package (version only)           |
 | 11 | `tests/conftest.py`, `tests/unit/conftest.py`, `tests/integ/conftest.py` | Test directory structure |
-| 12 | `requirements/*.txt` (5 files)                           | Locked deps — first `tox` clean pass ✓  |
-| 13 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
-| 14 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
-| 15 | *(manual — no commit)*                                   | GitHub repository configuration          |
-| 16 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
-| 17 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
+| 12 | `requirements/unit.in`, `.coveragerc`, `tox.ini`         | Test coverage measurement (95% floor)   |
+| 13 | `requirements/*.txt` (5 files)                           | Locked deps — first `tox` clean pass ✓  |
+| 14 | `.github/workflows/ci.yml`                               | Quality gate CI (PR trigger)             |
+| 15 | `.github/workflows/publish.yml`                          | PyPI publish CI (version tag trigger)    |
+| 16 | *(manual — no commit)*                                   | GitHub repository configuration          |
+| 17 | `pyproject.toml`, `CHANGELOG.md`                         | Release `0.1.0` + tag `version/0.1.0`   |
+| 18 | `pyproject.toml`                                         | Post-release bump to `0.2.0.dev0`        |
 
 ---
 
@@ -88,11 +89,11 @@ Five files in `requirements/`:
 |--------------|---------------------------------------|
 | `runtime.in` | *(empty — no runtime deps this phase)*|
 | `dev.in`     | `tox`, `ruff`, `mypy`, `bandit[toml]` |
-| `unit.in`    | `pytest`                              |
+| `unit.in`    | `pytest`, `pytest-cov` (added in mod 12) |
 | `integ.in`   | `pytest`                              |
 | `audit.in`   | `pip-audit`                           |
 
-These are the unpinned specs; the locked `.txt` files are generated in modification 12.
+These are the unpinned specs; the locked `.txt` files are generated in modification 13.
 
 ---
 
@@ -102,7 +103,7 @@ Ruff linter and formatter configuration:
 - `target-version = "py313"`.
 - `src = ["src"]` — src-layout awareness for import sorting (`isort`).
 - Enabled rule sets: `E`, `W`, `F` (Pyflakes/pycodestyle), `I` (isort), `N` (naming), `UP` (pyupgrade), `B` (bugbear).
-- `line-length = 88`.
+- `line-length = 100`.
 
 ---
 
@@ -126,17 +127,17 @@ Bandit security scanner configuration:
 
 Define all tox environments:
 
-| Env        | Deps file(s)             | Command(s)                                         | In default run? |
-|------------|--------------------------|----------------------------------------------------|-----------------|
-| `lint`     | `dev.txt`                | `ruff check src/ tests/` + `ruff format --check src/ tests/` | Yes |
+| Env        | Deps file(s)              | Command(s)                                         | In default run? |
+|------------|---------------------------|----------------------------------------------------|-----------------|
+| `lint`     | `dev.txt`                 | `ruff check src/ tests/` + `ruff format --check src/ tests/` | Yes |
 | `type`     | `dev.txt` + editable `.`  | `mypy src/`                                        | Yes             |
-| `security` | `dev.txt`                | `bandit -c .bandit -r src/`                        | Yes             |
-| `unit`     | `unit.txt` + editable `.` | `pytest tests/unit/`                               | Yes             |
+| `security` | `dev.txt`                 | `bandit -c .bandit -r src/`                        | Yes             |
+| `unit`     | `unit.txt` + editable `.` | `pytest` with coverage (updated in mod 12)         | Yes             |
 | `integ`    | `integ.txt` + editable `.`| `pytest tests/integ/`                              | No              |
-| `audit`    | `audit.txt`              | `pip-audit -r requirements/runtime.txt`            | No              |
-| `lock`     | `uv` (inline)            | `uv pip compile` each `.in` → `.txt` (`--python 3.13`) | No          |
+| `audit`    | `audit.txt`               | `pip-audit -r requirements/runtime.txt`            | No              |
+| `lock`     | `uv` (inline)             | `uv pip compile` each `.in` → `.txt` (`--python-version 3.13`) | No |
 
-`envlist = lint,type,security,unit` — bare `tox` runs these four.
+`env_list = lint,type,security,unit` — bare `tox` runs these four.
 
 ---
 
@@ -171,17 +172,41 @@ They remain empty for now — fixtures are added alongside the tests that need t
 
 ---
 
-## Modification 12 — `requirements/*.txt` (first `tox` clean pass)
+## Modification 12 — Test coverage (3 commits)
+
+Add `pytest-cov` and enforce a 95% coverage floor on unit tests.
+Three tightly coupled files, one commit each:
+
+**Commit 1 — `requirements/unit.in`**: add `pytest-cov~=6.0.0`.
+
+**Commit 2 — `.coveragerc`**:
+```ini
+[run]
+source = bgg_search
+branch = True
+
+[report]
+fail_under = 95
+show_missing = True
+```
+
+**Commit 3 — `tox.ini`** (`unit` env only): update the pytest command to:
+```
+pytest --cov --cov-report=term-missing tests/unit/
+```
+`fail_under = 95` in `.coveragerc` causes `pytest-cov` to fail the run if coverage drops below the threshold.
+
+---
+
+## Modification 13 — `requirements/*.txt` (first `tox` clean pass)
 
 **Pre-steps (not committed — bootstrap the lock tool):**
 ```bash
 uv venv && source .venv/bin/activate
 uv pip install uv          # ensure uv is available inside the venv
+uv pip install tox         # bootstrap tox before lock files exist
 tox -e lock                # generates all five requirements/*.txt files
 ```
-
-`tox -e lock` requires `tox` to be installed; install it with `uv pip install tox`
-before running if it is not yet available in the environment.
 
 **Committed:** all five `requirements/*.txt` locked files.
 
@@ -190,7 +215,7 @@ must pass clean. From this point onward, run `tox` before every commit.
 
 ---
 
-## Modification 13 — `.github/workflows/ci.yml`
+## Modification 14 — `.github/workflows/ci.yml`
 
 Quality gate workflow:
 - **Trigger:** `pull_request` targeting `main`.
@@ -204,7 +229,7 @@ Quality gate workflow:
 
 ---
 
-## Modification 14 — `.github/workflows/publish.yml`
+## Modification 15 — `.github/workflows/publish.yml`
 
 PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret needed):
 - **Trigger:** push of tags matching `version/*`.
@@ -215,11 +240,11 @@ PyPI publish workflow using OIDC trusted publishing (no `PYPI_TOKEN` secret need
   3. Build: `pip install build && python -m build`.
   4. Publish: `pypa/gh-action-pypi-publish@release/v1` (official PyPA action).
 
-PyPI trusted publisher configuration is done in modification 15 (manual step).
+PyPI trusted publisher configuration is done in modification 16 (manual step).
 
 ---
 
-## Modification 15 — GitHub repository configuration (manual — no commit)
+## Modification 16 — GitHub repository configuration (manual — no commit)
 
 No files changed. Steps to execute on GitHub and PyPI:
 
@@ -240,7 +265,7 @@ No files changed. Steps to execute on GitHub and PyPI:
 
 ---
 
-## Modification 16 — Release `0.1.0`
+## Modification 17 — Release `0.1.0`
 
 Files changed: `pyproject.toml`, `CHANGELOG.md`.
 
@@ -257,7 +282,7 @@ Files changed: `pyproject.toml`, `CHANGELOG.md`.
 
 ---
 
-## Modification 17 — Post-release version bump
+## Modification 18 — Post-release version bump
 
 File changed: `pyproject.toml`.
 
