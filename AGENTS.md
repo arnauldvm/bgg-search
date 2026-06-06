@@ -119,7 +119,9 @@ Every change (feature, bug fix, refactoring, …) follows this process:
 5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
 6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch (`git branch -d <branch>`).
 7. **Run integration tests**: `tox -e integ`; loop until clean.
-8. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`.
+8. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`, bump to `X.(Y+1).0.dev0`. Then push in this order:
+   1. `git push origin main` — version bump must be on `main` before the tag is pushed.
+   2. `git push origin version/X.Y.Z` — triggers the publish workflow.
 
 ### Step quality rules
 
