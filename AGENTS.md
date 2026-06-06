@@ -112,6 +112,7 @@ Every change (feature, bug fix, refactoring, …) follows this process:
 3. **Review the plan**: adapt it before starting execution.
 4. **Execute step by step** — for each step in `PLAN.md`:
    - Edit code and adapt tests.
+   - If the change is user-facing, add an entry to `CHANGELOG.md` under `## [Unreleased]`.
    - Review the changes.
    - Run `tox` (full quality gate).
    - Loop until clean.
@@ -248,7 +249,7 @@ Do **not** hard-code the version string anywhere else in the source.
 Rules:
 
 - Always keep an `## [Unreleased]` section at the top.
-- Add an entry under `[Unreleased]` for every user-facing change (new feature, fix, removed behavior). Internal refactors and tooling changes do not need an entry.
+- Add an entry under `[Unreleased]` for every user-facing change (new feature, fix, removed behavior). Internal refactors and tooling changes do not need an entry. The entry must be part of the same commit as the change — not deferred to release time.
 - Use the standard subsections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
 - On release: rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
 - Do **not** edit past release sections.
