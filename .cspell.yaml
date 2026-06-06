@@ -27,6 +27,7 @@ words:
   - conftest
   - stdlib
   - integ
+  - highlevel
 
 ignorePaths:
   - .git/**
