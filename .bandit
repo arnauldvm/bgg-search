@@ -1,1 +1,3 @@
-exclude_dirs = ["tests", ".venv"]
+exclude_dirs:
+  - tests
+  - .venv
