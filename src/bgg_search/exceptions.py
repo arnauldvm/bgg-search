@@ -10,3 +10,7 @@ class BggApiError(BggSearchError):
 
 class BggNotFoundError(BggSearchError):
     pass
+
+
+class BggParseError(BggSearchError):
+    pass

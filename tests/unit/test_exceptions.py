@@ -1,4 +1,4 @@
-from bgg_search.exceptions import BggApiError, BggNotFoundError, BggSearchError
+from bgg_search.exceptions import BggApiError, BggNotFoundError, BggParseError, BggSearchError
 
 
 def test_bgg_search_error_is_exception() -> None:
@@ -32,3 +32,12 @@ def test_bgg_not_found_error_is_bgg_search_error() -> None:
 def test_bgg_not_found_error_message() -> None:
     err = BggNotFoundError("game 42 not found")
     assert str(err) == "game 42 not found"
+
+
+def test_bgg_parse_error_is_bgg_search_error() -> None:
+    assert issubclass(BggParseError, BggSearchError)
+
+
+def test_bgg_parse_error_message() -> None:
+    err = BggParseError("unexpected XML structure")
+    assert str(err) == "unexpected XML structure"
