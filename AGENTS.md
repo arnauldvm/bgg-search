@@ -56,7 +56,7 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-All tooling is configured in `pyproject.toml`. There is no `setup.py` or `requirements.txt`.
+There is no `setup.py` or `requirements.txt`. Dependencies are declared in `pyproject.toml`; each tool uses its own configuration file.
 
 ## Commands
 
@@ -120,6 +120,10 @@ Concretely for this project:
 - HTTP → `httpx` (active community, minimal deps) over `requests` (heavier dep tree) or `aiohttp`
 - Data models → `dataclasses` (stdlib) when validation is not needed; `pydantic>=2` only when input validation is required
 - Date/time → `datetime` (stdlib), not `arrow` or `pendulum`
+
+## Tool configuration
+
+Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`) over consolidating everything into `pyproject.toml`. Use `pyproject.toml` only for metadata and dependency declarations.
 
 ## Dependencies (expected `pyproject.toml` extras)
 
