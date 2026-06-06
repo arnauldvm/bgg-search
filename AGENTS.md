@@ -18,11 +18,13 @@ Rationale behind key choices is documented in [DECISIONS.md](DECISIONS.md).
 bgg-search/
 ├── src/
 │   └── bgg_search/          # installable package
-│       ├── __init__.py
-│       ├── client.py        # HTTP client / API wrapper
-│       ├── models.py        # dataclasses / Pydantic models
-│       ├── search.py        # high-level search helpers
-│       └── cli.py           # CLI entry point
+│       ├── __init__.py      # explicit public API surface
+│       ├── models.py        # pure domain dataclasses
+│       ├── exceptions.py    # all domain exceptions
+│       ├── _protocol.py     # BggClientProtocol (typing.Protocol)
+│       ├── _client.py       # concrete httpx client + XML parsing
+│       ├── search.py        # use-case layer
+│       └── cli.py           # CLI adapter (I/O only)
 ├── tests/
 │   ├── conftest.py
 │   ├── unit/                # fast, purely local tests
@@ -97,6 +99,25 @@ Run `tox` before every commit.
 Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
 
 To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
+
+## Modularization
+
+Modules are organized in layers. Inner layers never import from outer layers:
+
+```
+cli.py → search.py → _protocol.py → models.py
+                   ↘ exceptions.py
+_client.py → _protocol.py, models.py, exceptions.py
+```
+
+Rules:
+
+- `models.py` and `exceptions.py`: no imports from this package.
+- `_protocol.py`: imports `models.py` only; defines `BggClientProtocol` (`typing.Protocol`).
+- `_client.py`: internal (underscore prefix); never imported directly by callers; implements `BggClientProtocol`.
+- `search.py`: depends on `BggClientProtocol`, not on `_client.py`; receives a client instance via parameter.
+- `cli.py`: pure I/O adapter — parse args, call `search.py`, format output; no business logic.
+- `__init__.py`: explicitly re-exports the public API; adding internal modules never accidentally becomes public.
 
 ## Code conventions
 

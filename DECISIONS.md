@@ -43,6 +43,52 @@ Reasons:
 
 ---
 
+## Modular architecture and separation of concerns
+
+The package is organized in layers with a strict inward dependency direction. Each decision below addresses a specific maintainability or testability concern.
+
+### Domain models and exceptions are dependency-free
+
+`models.py` and `exceptions.py` import nothing from this package or from external libraries.
+This makes them the stable core: any other module can import them without risk of circular imports,
+and they can be read and understood without knowledge of httpx, XML, or argparse.
+
+### Abstract client protocol (`_protocol.py`)
+
+`search.py` (the use-case layer) depends on `BggClientProtocol` — a `typing.Protocol` — rather
+than on the concrete `_client.py`. This decouples business logic from HTTP and XML details:
+
+- Unit tests for `search.py` pass a fake/stub client with no httpx involved.
+- The concrete client can be replaced (e.g., async variant, cached variant) without touching `search.py`.
+- The protocol is the contract; the client is an implementation detail.
+
+### Concrete client is internal (`_client.py`)
+
+The underscore prefix signals that `_client.py` is not part of the public API.
+Callers (including `cli.py`) never import it directly; they receive a client instance via
+dependency injection. This means:
+
+- XML parsing is fully encapsulated: swapping the parser is a one-file change.
+- The HTTP layer can evolve (e.g., connection pooling, retries) without rippling through the codebase.
+
+### CLI is a pure I/O adapter (`cli.py`)
+
+`cli.py` contains no business logic. It only:
+1. Parses command-line arguments.
+2. Calls `search.py` functions.
+3. Formats and prints output.
+
+This separation means the Python API and the CLI are independently testable and independently
+evolvable. A future GUI or REST wrapper would reuse `search.py` without touching `cli.py`.
+
+### Explicit public API (`__init__.py`)
+
+`__init__.py` explicitly re-exports everything that is public. Adding a new internal module
+(e.g., a caching layer) never accidentally leaks into the package's public surface.
+Consumers of the library import from `bgg_search`, not from `bgg_search._client`.
+
+---
+
 ## pytest over unittest
 
 `unittest` is stdlib, but its functionality is not equivalent to `pytest`:
