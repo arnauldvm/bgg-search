@@ -12,6 +12,8 @@ Deliverables:
 - `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime, dev, unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
 - Minimal `src/bgg_search/__init__.py` (version only).
 - `tox` passing clean with no source to check yet.
+- Remote repository configured (GitHub): branch protection, issue tracker.
+- CI pipeline (GitHub Actions): quality gate on every PR, automated package publish to PyPI on version tag.
 
 ---
 
