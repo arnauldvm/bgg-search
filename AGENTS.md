@@ -154,6 +154,28 @@ Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ru
 - Do **not** cache BGG responses unless caching is explicitly requested.
 - Do **not** commit `.venv/`, `__pycache__/`, or `*.egg-info/` (ensure `.gitignore` covers them).
 
+## Version management
+
+Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
+
+- **MAJOR**: incompatible API change.
+- **MINOR**: new backward-compatible feature.
+- **PATCH**: backward-compatible bug fix.
+
+Between releases the version carries the `.dev0` suffix (PEP 440), signalling that the code is not yet a stable build. The canonical workflow:
+
+1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit, tag `vX.Y.Z`.
+2. After release: immediately bump to `X.Y.(Z+1).dev0` (or the appropriate next segment) and commit.
+
+The version is declared once, in `pyproject.toml` (`version = "..."`); the package exposes it via `importlib.metadata`:
+
+```python
+from importlib.metadata import version
+__version__ = version("bgg-search")
+```
+
+Do **not** hard-code the version string anywhere else in the source.
+
 ## Changelog
 
 `CHANGELOG.md` follows the [Keep a Changelog](https://keepachangelog.com) format (version 1.0.0).
