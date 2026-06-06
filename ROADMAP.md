@@ -48,29 +48,6 @@ Deliverables:
 - `search.py`: `search_games(query)` and `get_game(id)` use-cases.
 - `cli.py`: `bgg-search search <query>` and `bgg-search details <id>` sub-commands.
 - Unit tests for `search.py`; integration tests for the end-to-end search flow.
-
----
-
-## Phase 0.5 — Collection
-
-**Goal**: retrieve and display a user's owned game collection.
-
-Deliverables:
-- `_client.py`: `collection` endpoint support.
-- `search.py`: `get_collection(username)` use-case.
-- `cli.py`: `bgg-search collection <username>` sub-command.
-- Unit + integration tests for the collection flow.
-
----
-
-## Phase 0.6 — Filtering & polish
-
-**Goal**: filtering/sorting capabilities and production-quality polish for MVP.
-
-Deliverables:
-- `search.py`: filter and sort helpers applicable to both search results and collections (player count, play time, weight, BGG rank, …).
-- `cli.py`: filter flags on the `search` and `collection` commands.
-- Edge-case handling: BGG API errors, malformed XML, rate-limit guidance.
 - Complete `README.md`: installation, quickstart, Python API reference, CLI reference.
 - `CHANGELOG.md` complete for all phases.
 - Dependency audit (`tox -e audit`) passing clean.
@@ -78,7 +55,7 @@ Deliverables:
 
 ---
 
-## Version map
+## Version map (MVP)
 
 | Version | Phase |
 |---------|-------|
@@ -86,6 +63,15 @@ Deliverables:
 | `0.2.0` | Domain & protocol |
 | `0.3.0` | HTTP client |
 | `0.4.0` | Search use-case & CLI |
-| `0.5.0` | Collection |
-| `0.6.0` | Filtering & polish |
-| `1.0.0` | MVP tag (after `0.6.0`) |
+| `1.0.0` | MVP tag (after `0.4.0`) |
+
+---
+
+## Post-MVP features
+
+After `1.0.0`, development switches to the incremental workflow (one feature per release, version bump on each merge).
+
+Planned:
+
+- **Collection** — retrieve and display a user's owned game collection: `collection` endpoint, `get_collection(username)` use-case, `bgg-search collection <username>` CLI command.
+- **Filtering & sorting** — filter and sort search results and collections by player count, play time, weight, BGG rank, …
