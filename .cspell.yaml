@@ -27,6 +27,8 @@ words:
   - conftest
   - stdlib
   - integ
+  - Arnauld
+  - Muysewinkel
 
 ignorePaths:
   - .git/**
