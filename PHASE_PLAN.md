@@ -9,7 +9,7 @@ before every commit.
 | #  | Files                                                    | Summary                                  |
 |----|----------------------------------------------------------|------------------------------------------|
 |  1 | `.gitignore`                                             | Standard Python gitignore                |
-|  2 | `pyproject.toml`                                         | Package metadata and build system        |
+|  2 | `pyproject.toml`, `LICENSE`                              | Package metadata, build system, MIT license |
 |  3 | `CHANGELOG.md`                                           | Keep a Changelog stub                    |
 |  4 | `README.md`                                              | Project README stub                      |
 |  5 | `requirements/*.in` (5 files)                            | Unpinned dependency specs                |
@@ -38,17 +38,19 @@ Standard Python gitignore covering:
 
 ---
 
-## Modification 2 — `pyproject.toml`
+## Modification 2 — `pyproject.toml` + `LICENSE`
 
 `[project]` section:
 - `name = "bgg-search"`, `version = "0.1.0.dev0"`, short `description`, `readme = "README.md"`.
-- `license`, author, classifiers (Python 3.13, license type, development status).
+- `license = "MIT"` (SPDX expression, PEP 639), author, classifiers (Python 3.13, license type, development status).
 - `requires-python = ">=3.13"`.
 - `dependencies = []` — no runtime deps yet; `httpx` is added in phase 0.3.
 
 `[build-system]` section: `hatchling`.
 
 No `[project.scripts]` entry — the CLI entry point is added in phase 0.4 when `cli.py` exists.
+
+`LICENSE` — standard MIT text, year 2026, author Arnauld Van Muysewinkel.
 
 ---
 
