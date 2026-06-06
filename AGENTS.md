@@ -28,7 +28,18 @@ bgg-search/
 │   └── integ/               # slow, hits the real BGG API
 │       ├── conftest.py
 │       └── test_*.py
-├── pyproject.toml           # build system, deps, tool config
+├── requirements/
+│   ├── runtime.in           # package runtime deps (unpinned spec)
+│   ├── runtime.txt          # locked runtime deps
+│   ├── dev.in               # tooling: tox, ruff, mypy, bandit (unpinned spec)
+│   ├── dev.txt              # locked tooling deps
+│   ├── unit.in              # unit test deps (unpinned spec)
+│   ├── unit.txt             # locked unit test deps
+│   ├── integ.in             # integ test deps (unpinned spec)
+│   ├── integ.txt            # locked integ test deps
+│   ├── audit.in             # pip-audit (unpinned spec)
+│   └── audit.txt            # locked audit deps
+├── pyproject.toml           # package metadata and build system only
 ├── README.md
 └── AGENTS.md
 ```
@@ -48,15 +59,24 @@ Use commits of the form `<action>(<scope>):<description'>`, where:
 
 ## Development environment
 
+Dependencies are managed with **uv**. Each context has its own requirements file (see `requirements/`).
+`.in` files are the unpinned specs; `.txt` files are the locked versions generated from them.
+
 ```bash
 # create and activate a virtual environment
-python -m venv .venv && source .venv/bin/activate
+uv venv && source .venv/bin/activate
 
-# install the package in editable mode with dev dependencies
-pip install -e ".[dev]"
+# install the package in editable mode with locked dev deps
+uv pip install -e . -r requirements/dev.txt
 ```
 
-There is no `setup.py` or `requirements.txt`. Dependencies are declared in `pyproject.toml`; each tool uses its own configuration file.
+To lock (or re-lock) a requirements file after editing its `.in` counterpart:
+
+```bash
+uv pip compile requirements/runtime.in -o requirements/runtime.txt
+```
+
+There is no `setup.py`. `pyproject.toml` contains package metadata and build system only; all dependency declarations live in `requirements/`.
 
 ## Commands
 
@@ -123,21 +143,11 @@ Concretely for this project:
 
 ## Tool configuration
 
-Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`) over consolidating everything into `pyproject.toml`. Use `pyproject.toml` only for metadata and dependency declarations.
-
-## Dependencies (expected `pyproject.toml` extras)
-
-```toml
-[project]
-dependencies = ["httpx", "pydantic>=2"]
-
-[project.optional-dependencies]
-dev = ["tox", "pytest", "mypy", "ruff", "bandit", "pip-audit"]
-```
+Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`) over consolidating everything into `pyproject.toml`. Use `pyproject.toml` only for package metadata and build system configuration.
 
 ## Things to avoid
 
-- Do **not** add `setup.cfg`, `setup.py`, or a `requirements.txt`.
+- Do **not** add `setup.cfg` or `setup.py`.
 - Do **not** use `requests`; the project uses `httpx`.
 - Do **not** add logging configuration at module level; leave that to the caller.
 - Do **not** cache BGG responses unless caching is explicitly requested.

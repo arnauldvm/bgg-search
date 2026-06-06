@@ -5,6 +5,19 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 
 ---
 
+## uv as dependency manager
+
+`uv` replaces `pip` + `venv` for environment and dependency management.
+
+- **Speed**: written in Rust; resolves and installs orders of magnitude faster than pip.
+- **Single tool**: handles virtualenv creation (`uv venv`), installation (`uv pip install`), and locking (`uv pip compile`) — no need for pip-tools alongside pip.
+- **pip-compatible**: `uv pip compile` produces standard `requirements.txt` files; `uv pip install -r` accepts them. No lock-in to a proprietary format.
+- **Actively maintained**: developed by Astral (same team as ruff), large and fast-growing community.
+
+The `.in` / `.txt` split (spec vs. lock) follows the pip-tools convention, which uv fully supports.
+
+---
+
 ## Individual tool configuration files over pyproject.toml
 
 Each tool (`ruff`, `mypy`, `bandit`, `tox`, …) gets its own configuration file rather than a consolidated `[tool.*]` section in `pyproject.toml`.
