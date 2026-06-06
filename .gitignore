@@ -1,0 +1,12 @@
+# Virtualenvs
+.venv/
+
+# Build artifacts
+dist/
+*.egg-info/
+
+# Caches
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+.tox/
