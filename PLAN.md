@@ -2,16 +2,11 @@
 
 ## Step 1 — Decide how to tag without triggering publication
 
-With `--no-publish` we still want a version tag for traceability, but we must not trigger
-the GitHub Actions publish workflow. Analyze the options and pick one:
+**Decision: option B — different tag prefix.**
 
-- **A — Local tag only**: create the tag locally, never push it. Simple, but the remote has
-  no record of the release point.
-- **B — Different tag prefix**: push a tag such as `no-publish/0.3.1` that does not match the
-  `version/*` pattern that triggers the workflow. Tag is visible on the remote, no publish.
-- **C — Annotate or mark the tag**: push the tag as-is but modify the workflow to skip
-  publishing based on a marker (e.g., a tag message, a specific annotation, or a commit
-  message convention). More coupling between the script and CI.
+With `--no-publish`, the script creates and pushes `no-publish/<version>` instead of
+`version/<version>`. The publish workflow triggers only on `version/*`, so the tag reaches
+the remote for traceability without triggering PyPI publication.
 
 ## Step 2 — Wire `--no-publish` into `release.py`
 
