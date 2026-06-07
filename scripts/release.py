@@ -1,5 +1,8 @@
+import json
 import pathlib
 import subprocess
+import time
+import urllib.request
 from typing import Any, Literal
 
 import tomlkit
@@ -103,6 +106,24 @@ def check_preconditions(rel_ver: str, bgg_token: str | None) -> None:
     _check_git_local()
     _check_changelog()
     _check_git_remote(rel_ver)
+
+
+def verify_pypi(version: str, *, retries: int = 6, delay: int = 30) -> None:
+    url = f"https://pypi.org/pypi/bgg-search/{version}/json"
+    for attempt in range(1, retries + 1):
+        try:
+            with urllib.request.urlopen(url) as resp:
+                data = json.loads(resp.read())
+            upload_time = data["urls"][0]["upload_time"]
+            print(f"Published: bgg-search {version} (uploaded {upload_time})")
+            return
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+        print(f"Not yet on PyPI (attempt {attempt}/{retries}); waiting {delay}s…")
+        if attempt < retries:
+            time.sleep(delay)
+    raise SystemExit(f"Error: bgg-search {version} did not appear on PyPI after {retries} attempts")
 
 
 def read_version() -> str:
