@@ -18,6 +18,14 @@ def run(args: list[str], *, check: bool = True, **kwargs: Any) -> subprocess.Com
     return subprocess.run(args, check=check, **kwargs)
 
 
+def run_git(*args: str, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
+    return run(["git", *args], **kwargs)
+
+
+def run_tox(env: str) -> subprocess.CompletedProcess[Any]:
+    return run(["tox", "-e", env])
+
+
 def release_version(dev_version: str) -> str:
     v = Version(dev_version)
     if not v.is_devrelease:
@@ -49,10 +57,10 @@ def _check_env(bgg_token: str | None) -> None:
 
 
 def _check_git_local() -> None:
-    branch = run(["git", "branch", "--show-current"], capture_output=True, text=True).stdout.strip()
+    branch = run_git("branch", "--show-current", capture_output=True, text=True).stdout.strip()
     if branch != "main":
         raise SystemExit(f"Error: not on main branch (current: {branch!r})")
-    dirty = run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
+    dirty = run_git("status", "--porcelain", capture_output=True, text=True).stdout.strip()
     if dirty:
         raise SystemExit("Error: working tree is not clean")
 
@@ -74,15 +82,13 @@ def _check_changelog() -> None:
 
 def _check_git_remote(rel_ver: str) -> None:
     # Fetch first so remote refs are up to date before any comparison.
-    run(["git", "fetch", "origin"])
+    run_git("fetch", "origin")
     # Local main must be exactly in sync with origin/main.
-    ahead = run(
-        ["git", "rev-list", "--count", "origin/main..HEAD"],
-        capture_output=True, text=True,
+    ahead = run_git(
+        "rev-list", "--count", "origin/main..HEAD", capture_output=True, text=True
     ).stdout.strip()
-    behind = run(
-        ["git", "rev-list", "--count", "HEAD..origin/main"],
-        capture_output=True, text=True,
+    behind = run_git(
+        "rev-list", "--count", "HEAD..origin/main", capture_output=True, text=True
     ).stdout.strip()
     if behind != "0":
         raise SystemExit(f"Error: local main is behind origin/main by {behind} commit(s)")
@@ -92,12 +98,11 @@ def _check_git_remote(rel_ver: str) -> None:
         )
     # Release tag must not already exist — locally or on the remote.
     tag = f"version/{rel_ver}"
-    local_tags = run(["git", "tag", "--list", tag], capture_output=True, text=True).stdout.strip()
+    local_tags = run_git("tag", "--list", tag, capture_output=True, text=True).stdout.strip()
     if local_tags:
         raise SystemExit(f"Error: tag {tag!r} already exists locally")
-    remote_tags = run(
-        ["git", "ls-remote", "--tags", "origin", f"refs/tags/{tag}"],
-        capture_output=True, text=True,
+    remote_tags = run_git(
+        "ls-remote", "--tags", "origin", f"refs/tags/{tag}", capture_output=True, text=True
     ).stdout.strip()
     if remote_tags:
         raise SystemExit(f"Error: tag {tag!r} already exists on origin")
@@ -162,22 +167,22 @@ def main() -> None:
 
     check_preconditions(rel_ver, bgg_token)
 
-    run(["tox", "-e", "lock"])
-    run(["tox", "-e", "audit"])
-    run(["tox", "-e", "integ"])
+    run_tox("lock")
+    run_tox("audit")
+    run_tox("integ")
 
     write_version(rel_ver)
     update_changelog(rel_ver, today)
-    run(["git", "add", "pyproject.toml", "CHANGELOG.md"])
-    run(["git", "commit", "-m", f"chore: release {rel_ver}"])
-    run(["git", "tag", f"version/{rel_ver}"])
+    run_git("add", "pyproject.toml", "CHANGELOG.md")
+    run_git("commit", "-m", f"chore: release {rel_ver}")
+    run_git("tag", f"version/{rel_ver}")
 
     write_version(next_dev_ver)
-    run(["git", "add", "pyproject.toml"])
-    run(["git", "commit", "-m", f"chore(pyproject.toml): bump version to {next_dev_ver}"])
+    run_git("add", "pyproject.toml")
+    run_git("commit", "-m", f"chore(pyproject.toml): bump version to {next_dev_ver}")
 
-    run(["git", "push", "origin", "main"])
-    run(["git", "push", "origin", f"version/{rel_ver}"])
+    run_git("push", "origin", "main")
+    run_git("push", "origin", f"version/{rel_ver}")
 
     verify_pypi(rel_ver)
 
