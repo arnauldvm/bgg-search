@@ -2,3 +2,5 @@
 #    uv pip compile requirements/release.in -o requirements/release.txt --python-version 3.13
 packaging==26.2
     # via -r requirements/release.in
+tomlkit==0.15.0
+    # via -r requirements/release.in

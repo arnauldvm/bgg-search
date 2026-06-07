@@ -159,13 +159,11 @@ The release procedure is automated by `scripts/release.py` rather than `bump-my-
 
 **Design of the script:**
 - Lives in `scripts/`, separate from package source (`src/`), and is never installed as part of the package.
-- Uses existing libraries already present in the dev dependency tree rather than reimplementing their logic:
-  - `tomllib` (stdlib, Python 3.11+) to read `pyproject.toml`.
-  - `packaging.version` (already a transitive dev dep via tox/pytest) to parse the current version.
-  - `subprocess`, `pathlib`, `datetime`, `re`, `urllib`, `json` (all stdlib) for the remaining steps.
-- Writes the new version with `re.sub` rather than a `tomllib` + `tomli_w` round-trip: a full
-  round-trip discards comments and normalises formatting; `re.sub` patches exactly the version line
-  and leaves everything else in `pyproject.toml` intact.
+- Uses `tomlkit` to read and write `pyproject.toml`: unlike a `tomllib` + `tomli_w` round-trip or
+  `re`-based line editing, `tomlkit` is a style-preserving parser — it keeps comments, formatting,
+  and quote styles intact while understanding TOML structure (quoted keys, section scoping, …).
+- Uses `packaging.version` (already a transitive dev dep via tox/pytest) to parse the current version.
+- Uses `subprocess`, `pathlib`, `datetime`, `urllib`, `json` (all stdlib) for the remaining steps.
 - Exposed via `tox -e release` (with `passenv = BGG_TOKEN`) so it runs in an isolated, reproducible environment.
 
 ---
