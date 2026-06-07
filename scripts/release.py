@@ -110,6 +110,17 @@ def read_version() -> str:
     return str(doc["project"]["version"])
 
 
+def update_changelog(version: str, date: str) -> None:
+    path = ROOT / "CHANGELOG.md"
+    text = path.read_text()
+    # MD003+MD018+MD019 guarantee "## [" is an unambiguous section prefix (see .markdownlint.yaml).
+    old_heading = "## [Unreleased]"
+    new_heading = f"## [Unreleased]\n\n## [{version}] - {date}"
+    if old_heading not in text:
+        raise SystemExit("Error: CHANGELOG.md has no [Unreleased] section")
+    path.write_text(text.replace(old_heading, new_heading, 1))
+
+
 def write_version(new_version: str) -> None:
     # tomlkit is a style-preserving TOML parser: it keeps comments, formatting, and quote
     # styles intact, and understands structure (section scoping, quoted keys, …).
