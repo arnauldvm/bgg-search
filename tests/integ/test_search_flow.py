@@ -6,6 +6,7 @@ import pytest
 from bgg_search._client import BggClient
 from bgg_search._protocol import BggClientProtocol
 from bgg_search.models import GameDetails, GameSummary
+from bgg_search.search import search_games
 
 _CATAN_ID = 13
 
@@ -18,8 +19,8 @@ def client() -> BggClientProtocol:
     return BggClient(token=token)
 
 
-def test_search_returns_results(bgg_client: BggClient) -> None:
-    results = bgg_client.search("Catan")
+def test_search_returns_results(client: BggClientProtocol) -> None:
+    results = search_games("Catan", client)
     time.sleep(2)
 
     assert len(results) > 0
