@@ -168,6 +168,21 @@ The release procedure is automated by `scripts/release.py` rather than `bump-my-
 
 ---
 
+## subprocess over a git library in `scripts/release.py`
+
+`scripts/release.py` invokes git via `subprocess` rather than a library such as `GitPython` or `pygit2`.
+
+The git operations the script performs are all simple one-liners: checking branch name and working-tree
+state, fetching, staging, committing, tagging, and pushing. None require complex operations such as
+conflict resolution, diff inspection, or history traversal.
+
+Adding a git library would introduce a transitive dependency solely to wrap a handful of commands that
+are already transparent and universally understood when printed to the console — contradicting the
+**prefer stdlib** and **fewer transitive dependencies** rules from the
+[Package selection policy](#package-selection-policy).
+
+---
+
 ## xml.etree.ElementTree over lxml / beautifulsoup4
 
 The BGG XML API returns well-formed XML. The stdlib parser handles it without issues.
