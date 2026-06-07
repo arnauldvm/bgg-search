@@ -9,11 +9,14 @@ Phases toward `1.0.0` (MVP). Each phase is released as `0.N.0`.
 **Goal**: empty-but-working project skeleton that passes the full quality gate.
 
 Deliverables:
-- `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime, dev, unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
+
+- `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime, dev,
+  unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
 - Minimal `src/bgg_search/__init__.py` (version only).
 - `tox` passing clean with no source to check yet.
 - Remote repository configured (GitHub): branch protection, issue tracker.
-- CI pipeline (GitHub Actions): quality gate on every PR, automated package publish to PyPI on version tag.
+- CI pipeline (GitHub Actions): quality gate on every PR, automated package publish to PyPI on
+  version tag.
 
 ---
 
@@ -22,9 +25,11 @@ Deliverables:
 **Goal**: establish the stable core that all other layers depend on — no HTTP, no I/O.
 
 Deliverables:
+
 - `models.py`: pure dataclasses for game data structures.
 - `exceptions.py`: domain exception hierarchy.
-- `_protocol.py`: `BggClientProtocol` (`typing.Protocol`) — the contract between the use-case layer and the HTTP layer.
+- `_protocol.py`: `BggClientProtocol` (`typing.Protocol`) — the contract between the use-case
+  layer and the HTTP layer.
 - `__init__.py`: explicit public API surface (re-exports only).
 - Unit tests for models and exceptions.
 
@@ -35,17 +40,24 @@ Deliverables:
 **Goal**: a working HTTP client that speaks to the BGG XML API, independently testable.
 
 Deliverables:
-- `_client.py`: concrete `httpx`-based implementation of `BggClientProtocol`, covering the `search` and `thing` endpoints.
+
+- `_client.py`: concrete `httpx`-based implementation of `BggClientProtocol`,
+  covering the `search` and `thing` endpoints.
 - Unit tests (mocked HTTP via `httpx.MockTransport`).
 
 ---
 
 ## Phase 0.4 — Release tool
 
-**Goal**: automate the full release procedure so that cutting a release requires a single command, with no manual file edits.
+**Goal**: automate the full release procedure so that cutting a release requires
+a single command, with no manual file edits.
 
 Deliverables:
-- `scripts/release.py`: automates all release steps (lock, audit, integ, version bump, CHANGELOG rename, commit, tag, dev bump, push, PyPI verification); aborts early if `PHASE_PLAN.md` is still present. Uses only stdlib and libraries already present in the dev dependency tree (`tomllib`, `tomli_w`, `packaging.version`).
+
+- `scripts/release.py`: automates all release steps (lock, audit, integ, version bump,
+  CHANGELOG rename, commit, tag, dev bump, push, PyPI verification); aborts early if
+  `PHASE_PLAN.md` is still present. Uses only stdlib and libraries already present in the
+  dev dependency tree (`tomllib`, `tomli_w`, `packaging.version`).
 - `tox -e release` env exposing the script in an isolated, reproducible environment.
 - Updated `AGENTS.md`: release procedure reduced to `BGG_TOKEN=<token> tox -e release`.
 
@@ -53,9 +65,13 @@ Deliverables:
 
 ## Phase 0.5 — Search use-case & CLI
 
-**Goal**: a user can look up board games by name and inspect their details. The typical flow: `bgg-search search <query>` returns a ranked list of matching titles with their BGG IDs; `bgg-search details <id>` fetches full details (players, play time, weight, rating, …) for a chosen game.
+**Goal**: a user can look up board games by name and inspect their details.
+The typical flow: `bgg-search search <query>` returns a ranked list of matching titles
+with their BGG IDs; `bgg-search details <id>` fetches full details
+(players, play time, weight, rating, …) for a chosen game.
 
 Deliverables:
+
 - `search.py`: `search_games(query)` and `get_game(id)` use-cases.
 - `cli.py`: `bgg-search search <query>` and `bgg-search details <id>` sub-commands.
 - Unit tests for `search.py`; integration tests for the end-to-end search flow.
@@ -81,9 +97,13 @@ Deliverables:
 
 ## Post-MVP features
 
-After `1.0.0`, development switches to the incremental workflow (one feature per release, version bump on each merge).
+After `1.0.0`, development switches to the incremental workflow
+(one feature per release, version bump on each merge).
 
 Planned:
 
-- **Collection** — retrieve and display a user's owned game collection: `collection` endpoint, `get_collection(username)` use-case, `bgg-search collection <username>` CLI command.
-- **Filtering & sorting** — filter and sort search results and collections by player count, play time, weight, BGG rank, …
+- **Collection** — retrieve and display a user's owned game collection:
+  `collection` endpoint, `get_collection(username)` use-case,
+  `bgg-search collection <username>` CLI command.
+- **Filtering & sorting** — filter and sort search results and collections by player count,
+  play time, weight, BGG rank, …

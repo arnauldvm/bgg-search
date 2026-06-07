@@ -15,7 +15,7 @@ The project initiation workflow and branch/version map are documented in [PROCES
 
 ### Repository layout (target structure)
 
-```
+```text
 bgg-search/
 ├── src/
 │   └── bgg_search/          # installable package
@@ -77,7 +77,8 @@ uv pip install -e . -r requirements/dev.txt
 pre-commit install
 ```
 
-There is no `setup.py`. `pyproject.toml` contains package metadata and build system only; all dependency declarations live in `requirements/`.
+There is no `setup.py`. `pyproject.toml` contains package metadata and build system only;
+all dependency declarations live in `requirements/`.
 
 ### Commands
 
@@ -100,31 +101,45 @@ To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally 
 
 ### Tool configuration
 
-Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`) over consolidating everything into `pyproject.toml`. Use `pyproject.toml` only for package metadata and build system configuration.
+Prefer individual configuration files per tool (e.g., `.bandit`, `mypy.ini`, `ruff.toml`)
+over consolidating everything into `pyproject.toml`.
+Use `pyproject.toml` only for package metadata and build system configuration.
 
 ## Development workflow
 
 Every change (feature, bug fix, refactoring, …) follows this process:
 
-1. **Create a branch**: cut a short-lived branch from `main`, named after the intent (e.g., `feat/search-by-rank`).
-2. **Write a plan**: create `PLAN.md` on the branch; describe the steps before writing any code. One step = one future commit. Commit `PLAN.md` immediately so it is tracked and stays branch-local. (`PLAN.md` is the feature-level plan; the phase-level plan lives in `PHASE_PLAN.md` on `main` — see [PROCESS.md](PROCESS.md).)
+1. **Create a branch**: cut a short-lived branch from `main`, named after the intent
+   (e.g., `feat/search-by-rank`).
+2. **Write a plan**: create `PLAN.md` on the branch; describe the steps before writing any code.
+   One step = one future commit.
+   Commit `PLAN.md` immediately so it is tracked and stays branch-local.
+   (`PLAN.md` is the feature-level plan; the phase-level plan lives in `PHASE_PLAN.md` on `main`
+   — see [PROCESS.md](PROCESS.md).)
 3. **Review the plan**: adapt it before starting execution.
 4. **Execute step by step** — for each step in `PLAN.md`:
    - Edit code and adapt tests.
    - If the change is user-facing, add an entry to `CHANGELOG.md` under `## [Unreleased]`.
    - Review the changes.
-   - Commit — the pre-commit hook runs `tox` automatically and blocks if any check fails; fix issues and retry.
-5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
-6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch (`git branch -d <branch>`).
-7. **Remove `PHASE_PLAN.md`**: delete it in a dedicated commit on `main` before releasing. This ensures the plan is gone before the release tag is created.
+   - Commit — the pre-commit hook runs `tox` automatically and blocks if any check fails;
+     fix issues and retry.
+5. **Remove `PLAN.md`**: delete it in a dedicated commit
+   (`chore(PLAN.md): remove branch-local plan before merge`).
+   This ensures it is never merged into `main`.
+6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch
+   (`git branch -d <branch>`).
+7. **Remove `PHASE_PLAN.md`**: delete it in a dedicated commit on `main` before releasing.
+   This ensures the plan is gone before the release tag is created.
 8. **Release**: follow the [Release procedure](#release-procedure) section below.
 
 ### Step quality rules
 
 Each step (commit) must be:
+
 - **Localized**: touch as few files as possible — ideally one; as few sections within that file as possible.
 - **Consistent**: all changes in the step serve a single, coherent purpose.
-- **Clean**: the codebase must pass `tox` at the end of every step (enforced by the pre-commit hook), with no known errors left behind.
+- **Clean**: the codebase must pass `tox` at the end of every step
+  (enforced by the pre-commit hook), with no known errors left behind.
 
 `PLAN.md` is branch-local and must **not** be merged into `main` (enforced by step 5 above).
 
@@ -137,21 +152,27 @@ Each step (commit) must be:
 3. Current version in `pyproject.toml` ends in `.devN` (signals an unreleased development state).
 4. The release tag `version/X.Y.Z` does not already exist locally or on the remote.
 5. `BGG_TOKEN` environment variable is set (without it, integration tests silently skip and report success).
-6. `CHANGELOG.md` has content under `[Unreleased]` (releasing with an empty section is almost certainly a mistake).
+6. `CHANGELOG.md` has content under `[Unreleased]`
+   (releasing with an empty section is almost certainly a mistake).
 7. Local `main` is in sync with `origin/main` (not behind, not unexpectedly ahead).
 8. `PHASE_PLAN.md` does not exist (see development workflow step 7).
+
+**Steps:**
 
 1. Re-lock dependencies: `tox -e lock`
 2. Audit dependencies: `tox -e audit`
 3. Run integration tests: `BGG_TOKEN=<token> tox -e integ`; loop until clean.
-4. Bump version in `pyproject.toml` to `X.Y.Z` (Y for a new feature or significant fix; Z for a hotfix on a past version).
-5. Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
+4. Bump version in `pyproject.toml` to `X.Y.Z` (Y for a new feature or significant fix;
+   Z for a hotfix on a past version).
+5. Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD`
+   and open a fresh `[Unreleased]` section above it.
 6. Commit: `chore: release X.Y.Z`
 7. Tag: `git tag version/X.Y.Z`
 8. Bump `pyproject.toml` to `X.(Y+1).0.dev0` and commit: `chore(pyproject.toml): bump version to X.(Y+1).0.dev0`
 9. Push `main` first (version bump must be on `main` before the tag): `git push origin main`
 10. Push the tag (triggers the publish workflow): `git push origin version/X.Y.Z`
-11. Once the workflow completes (allow a few minutes), verify publication: `curl -s https://pypi.org/pypi/bgg-search/X.Y.Z/json | python3 -c "import sys, json; d=json.load(sys.stdin); print(d['info']['version'], d['urls'][0]['upload_time'])"`
+11. Once the workflow completes (allow a few minutes), verify publication:
+    browse to `https://pypi.org/project/bgg-search/` and confirm the new version is listed.
 
 ## Architecture
 
@@ -159,7 +180,7 @@ Each step (commit) must be:
 
 Modules are organized in layers. Inner layers never import from outer layers:
 
-```
+```text
 cli.py → search.py → _protocol.py → models.py
                    ↘ exceptions.py
 _client.py → _protocol.py, models.py, exceptions.py
@@ -172,12 +193,14 @@ Rules:
 - `_client.py`: internal (underscore prefix); never imported directly by callers; implements `BggClientProtocol`.
 - `search.py`: depends on `BggClientProtocol`, not on `_client.py`; receives a client instance via parameter.
 - `cli.py`: pure I/O adapter — parse args, call `search.py`, format output; no business logic.
-- `__init__.py`: explicitly re-exports the public API; adding internal modules never accidentally becomes public.
+- `__init__.py`: explicitly re-exports the public API;
+  adding internal modules never accidentally becomes public.
 
 ### Code conventions
 
 - **Python 3.13**; use built-in `tomllib`, `match`/`case`, `TypeAlias`, etc. where appropriate.
-- Public functions and classes must have type annotations; internal helpers may omit them only when obvious.
+- Public functions and classes must have type annotations;
+  internal helpers may omit them only when obvious.
 - No comments that restate what the code already says. Comment the *why*, not the *what*.
 - Raise domain-specific exceptions (subclass `BggSearchError`) instead of leaking `httpx` errors.
 
@@ -190,15 +213,18 @@ When choosing packages, apply these rules in order:
 3. **Prefer packages with fewer transitive dependencies** when other criteria are equal.
 
 Concretely for this project:
+
 - XML parsing → `xml.etree.ElementTree` (stdlib), not `lxml` or `beautifulsoup4`
 - HTTP → `httpx` (active community, minimal deps) over `requests` (heavier dep tree) or `aiohttp`
-- Data models → `dataclasses` (stdlib) when validation is not needed; `pydantic>=2` only when input validation is required
+- Data models → `dataclasses` (stdlib) when validation is not needed;
+  `pydantic>=2` only when input validation is required
 - Date/time → `datetime` (stdlib), not `arrow` or `pendulum`
 
 ### Testing
 
 Use `pytest`; never use `unittest` directly.
-Aim for behavior coverage, not line coverage — test what the public API promises, not implementation details.
+Aim for behavior coverage, not line coverage — test what the public API promises,
+not implementation details.
 
 #### Unit tests (`tests/unit/`)
 
@@ -210,7 +236,8 @@ Aim for behavior coverage, not line coverage — test what the public API promis
 #### Integration tests (`tests/integ/`)
 
 - Hit the real BGG API; require network access.
-- Require a BGG API token passed via the `BGG_TOKEN` environment variable; tests are skipped when it is absent.
+- Require a BGG API token passed via the `BGG_TOKEN` environment variable;
+  tests are skipped when it is absent.
 - Run only explicitly (e.g., before a release) — never triggered automatically.
 - Keep the number of requests minimal: one test must not make more API calls than strictly necessary.
 - Add a `time.sleep` between requests to avoid flooding the BGG API.
@@ -235,7 +262,7 @@ Use commits of the form `<action>(<scope>):<description>`, where:
 - `<action>` is one of "add", "upd", "feat", "refactor", "chore"...
 - `<scope>` is a compact spec of the files full path (relative to project root)  
   (exceptionally it may be omitted, when the commit concerns the whole project);  
-  optionally followed by ` > <location>` to pinpoint the change within the file  
+  optionally followed by `> <location>` to pinpoint the change within the file  
   (e.g. a class name, function name, or config section): `src/bgg_search/client.py > BggClient.search`
 - `<description>` is a short sentence describing the modification (do not repeat the action)
 
@@ -249,7 +276,8 @@ Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
 - **MINOR**: new feature, or a significant fix on the latest version.
 - **PATCH**: hotfix backported to a past version (branch cut from an old release tag, not `main`).
 
-Between releases the version carries the `.dev0` suffix (PEP 440), signalling that the code is not yet a stable build. The canonical workflow:
+Between releases the version carries the `.dev0` suffix (PEP 440),
+signalling that the code is not yet a stable build. The canonical workflow:
 
 1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit, tag `version/X.Y.Z`.
 2. After release: immediately bump to `X.(Y+1).0.dev0` and commit.
@@ -270,9 +298,12 @@ Do **not** hard-code the version string anywhere else in the source.
 Rules:
 
 - Always keep an `## [Unreleased]` section at the top.
-- Add an entry under `[Unreleased]` for every user-facing change (new feature, fix, removed behavior). Internal refactors and tooling changes do not need an entry. The entry must be part of the same commit as the change — not deferred to release time.
+- Add an entry under `[Unreleased]` for every user-facing change
+  (new feature, fix, removed behavior). Internal refactors and tooling changes do not need an entry.
+  The entry must be part of the same commit as the change — not deferred to release time.
 - Use the standard subsections: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`.
-- On release: rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
+- On release: rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD`
+  and open a fresh `[Unreleased]` section above it.
 - Do **not** edit past release sections.
 
 ## Reference
