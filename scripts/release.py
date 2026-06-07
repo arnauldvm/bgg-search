@@ -43,6 +43,15 @@ def _check_env(bgg_token: str | None) -> None:
         raise SystemExit(f"Error: current version {current!r} is not a dev release")
 
 
+def _check_git_local() -> None:
+    branch = run(["git", "branch", "--show-current"], capture_output=True, text=True).stdout.strip()
+    if branch != "main":
+        raise SystemExit(f"Error: not on main branch (current: {branch!r})")
+    dirty = run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
+    if dirty:
+        raise SystemExit("Error: working tree is not clean")
+
+
 def read_version() -> str:
     doc = tomlkit.parse((ROOT / "pyproject.toml").read_text())
     return str(doc["project"]["version"])
