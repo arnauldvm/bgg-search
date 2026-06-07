@@ -17,6 +17,45 @@ A BGG API token is required to make requests. Obtain one by registering your app
 <https://boardgamegeek.com/applications>, then expose it as the `BGG_TOKEN` environment
 variable.
 
+## Quickstart
+
+### CLI
+
+```bash
+export BGG_TOKEN=<your-token>
+
+# Search for games matching a query
+bgg-search search "Catan"
+#       13  Catan
+#   396790  Catan: New Energies
+#      ...
+
+# Fetch full details for a game by its BGG ID
+bgg-search details 13
+# id:            13
+# name:          Catan
+# year:          1995
+# min_players:   3
+# max_players:   4
+# ...
+```
+
+### Python API
+
+```python
+import os
+from bgg_search import BggClient, search_games, get_game
+
+client = BggClient(token=os.environ["BGG_TOKEN"])
+
+results = search_games("Catan", client)
+for game in results:
+    print(game.id, game.name)
+
+details = get_game(13, client)
+print(details.name, details.bgg_rating)
+```
+
 ## Development
 
 Run the quality gate (lint, type-check, security scan, unit tests):
