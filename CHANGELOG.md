@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Public API surface: `GameSummary`, `GameDetails`, `BggSearchError`, `BggApiError`,
+  `BggNotFoundError`, `BggParseError`, `BggClientProtocol`.
+
 ## [0.1.0] - 2026-06-07
 
 ### Added
