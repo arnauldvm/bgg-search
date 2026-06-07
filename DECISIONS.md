@@ -159,12 +159,27 @@ The release procedure is automated by `scripts/release.py` rather than `bump-my-
 
 **Design of the script:**
 - Lives in `scripts/`, separate from package source (`src/`), and is never installed as part of the package.
-- Uses existing libraries already present in the dev dependency tree rather than reimplementing their logic:
-  - `tomllib` (stdlib, Python 3.11+) to read `pyproject.toml`.
-  - `tomli_w` (already a transitive dev dep via tox) to write `pyproject.toml`.
-  - `packaging.version` (already a transitive dev dep via tox/pytest) to parse the current version.
-  - `subprocess`, `pathlib`, `datetime`, `urllib`, `json` (all stdlib) for the remaining steps.
+- Uses `tomlkit` to read and write `pyproject.toml`: unlike a `tomllib` + `tomli_w` round-trip or
+  `re`-based line editing, `tomlkit` is a style-preserving parser — it keeps comments, formatting,
+  and quote styles intact while understanding TOML structure (quoted keys, section scoping, …).
+- Uses `packaging.version` (already a transitive dev dep via tox/pytest) to parse the current version.
+- Uses `subprocess`, `pathlib`, `datetime`, `urllib`, `json` (all stdlib) for the remaining steps.
 - Exposed via `tox -e release` (with `passenv = BGG_TOKEN`) so it runs in an isolated, reproducible environment.
+
+---
+
+## subprocess over a git library in `scripts/release.py`
+
+`scripts/release.py` invokes git via `subprocess` rather than a library such as `GitPython` or `pygit2`.
+
+The git operations the script performs are all simple one-liners: checking branch name and working-tree
+state, fetching, staging, committing, tagging, and pushing. None require complex operations such as
+conflict resolution, diff inspection, or history traversal.
+
+Adding a git library would introduce a transitive dependency solely to wrap a handful of commands that
+are already transparent and universally understood when printed to the console — contradicting the
+**prefer stdlib** and **fewer transitive dependencies** rules from the
+[Package selection policy](#package-selection-policy).
 
 ---
 
