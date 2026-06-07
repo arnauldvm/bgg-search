@@ -1,9 +1,21 @@
 # bgg-search
 
-Python client and CLI for the [BoardGameGeek](https://boardgamegeek.com) XML API.
+`bgg-search` is a Python package and command-line tool for querying the
+[BoardGameGeek](https://boardgamegeek.com) XML API. It lets you search for board games
+by name and retrieve full game details — player counts, play time, weight, BGG rating, and
+more — from the command line or from your own Python code.
 
-> Documentation is under construction. Full installation instructions, quickstart guide,
-> and API/CLI reference will be added in a future release.
+## Installation
+
+```bash
+pip install bgg-search
+```
+
+Requires **Python ≥ 3.13**.
+
+A BGG API token is required to make requests. Obtain one by registering your application at
+<https://boardgamegeek.com/applications>, then expose it as the `BGG_TOKEN` environment
+variable.
 
 ## Development
 
