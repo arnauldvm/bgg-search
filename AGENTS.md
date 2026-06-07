@@ -90,12 +90,12 @@ All tasks run through **tox**, which executes each step in an isolated virtualen
 | Type-check | `tox -e type` |
 | Security scan (bandit) | `tox -e security` |
 | Unit tests | `tox -e unit` |
-| Integration tests | `tox -e integ` |
+| Integration tests | `BGG_TOKEN=<token> tox -e integ` |
 | Dependency audit (pip-audit) | `tox -e audit` |
 | Re-lock all dependencies | `tox -e lock` |
 
 The pre-commit hook runs `tox` automatically before every commit and blocks if any check fails.
-Before each release, also run: `tox -e lock`, then `tox -e audit`, then `tox -e integ`.
+Before each release, also run: `tox -e lock`, then `tox -e audit`, then `BGG_TOKEN=<token> tox -e integ`.
 
 To fix formatting issues reported by `tox -e lint`, run `ruff format .` locally then re-run tox.
 
@@ -188,6 +188,7 @@ Aim for behavior coverage, not line coverage — test what the public API promis
 #### Integration tests (`tests/integ/`)
 
 - Hit the real BGG API; require network access.
+- Require a BGG API token passed via the `BGG_TOKEN` environment variable; tests are skipped when it is absent.
 - Run only explicitly (e.g., before a release) — never triggered automatically.
 - Keep the number of requests minimal: one test must not make more API calls than strictly necessary.
 - Add a `time.sleep` between requests to avoid flooding the BGG API.
