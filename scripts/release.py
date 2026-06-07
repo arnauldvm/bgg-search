@@ -1,6 +1,6 @@
 import pathlib
 import subprocess
-from typing import Any
+from typing import Any, Literal
 
 import tomlkit
 from packaging.version import Version
@@ -20,9 +20,17 @@ def release_version(dev_version: str) -> str:
     return f"{v.major}.{v.minor}.{v.micro}"
 
 
-def next_dev_version(release_ver: str) -> str:
+def next_dev_version(release_ver: str, bump: Literal["major", "minor", "patch"] = "minor") -> str:
     v = Version(release_ver)
-    return f"{v.major}.{v.minor + 1}.0.dev0"
+    match bump:
+        case "major":
+            return f"{v.major + 1}.0.0.dev0"
+        case "minor":
+            return f"{v.major}.{v.minor + 1}.0.dev0"
+        case "patch":
+            return f"{v.major}.{v.minor}.{v.micro + 1}.dev0"
+        case _:
+            raise SystemExit(f"Error: invalid bump component {bump!r}")
 
 
 def read_version() -> str:
