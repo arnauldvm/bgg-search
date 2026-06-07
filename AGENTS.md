@@ -121,6 +121,7 @@ Every change (feature, bug fix, refactoring, …) follows this process:
 8. **Release**: bump version (Y for a feature or significant fix; Z for a hotfix on a past version), update `CHANGELOG.md`, run `tox -e lock && tox -e audit`, tag `version/X.Y.Z`, bump to `X.(Y+1).0.dev0`. Then push in this order:
    1. `git push origin main` — version bump must be on `main` before the tag is pushed.
    2. `git push origin version/X.Y.Z` — triggers the publish workflow.
+   3. Once the workflow completes (allow a few minutes), verify publication: `curl -s https://pypi.org/pypi/bgg-search/X.Y.Z/json | python3 -c "import sys, json; d=json.load(sys.stdin); print(d['info']['version'], d['urls'][0]['upload_time'])"`
 
 ### Step quality rules
 
