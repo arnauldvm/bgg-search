@@ -140,7 +140,31 @@ Every `subprocess.run` call uses `check=True`; any non-zero exit aborts the scri
 
 ---
 
-## Step 6 — Update `AGENTS.md`
+## Step 6 — CLI arguments for `release.py`
+
+Feature branch: `feat/release-args`
+
+Files modified:
+
+- `scripts/release.py` — add `parse_args()` and wire arguments into `main()`
+
+Arguments introduced:
+
+| Argument | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `bump` | positional | `minor` | Version component to bump: `major`, `minor`, or `patch`. |
+| `--verbose` / `-v` | flag | off | Echo each command as it runs (`+ cmd …`). |
+
+Mutually exclusive mode flags (at most one; default is full release):
+
+| Flag | Purpose |
+| --- | --- |
+| `--check-only` | Run preconditions only and exit; make no changes. |
+| `--verify-pypi VERSION` | Skip the release; only poll PyPI for `VERSION`. |
+
+---
+
+## Step 7 — Update `AGENTS.md`
 
 Feature branch: `feat/release-agents-doc`
 
