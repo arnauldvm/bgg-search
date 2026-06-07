@@ -48,8 +48,20 @@ def test_search_raises_parse_error_on_malformed_xml() -> None:
         _make_client("<not valid").search("catan")
 
 
+def test_search_falls_back_to_alternate_name() -> None:
+    xml = (
+        '<items total="1"><item id="13" type="boardgame">'
+        '<name type="alternate" value="Siedler"/></item></items>'
+    )
+    result = _make_client(xml).search("siedler")
+    assert result == [GameSummary(id=13, name="Siedler")]
+
+
 def test_search_raises_parse_error_on_missing_name_element() -> None:
-    xml = '<items total="1"><item id="13" type="boardgame"></item></items>'
+    xml = (
+        '<items total="1"><item id="13" type="boardgame">'
+        '<yearpublished value="1995"/></item></items>'
+    )
     with pytest.raises(BggParseError):
         _make_client(xml).search("catan")
 

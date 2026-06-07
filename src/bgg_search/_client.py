@@ -40,7 +40,9 @@ class BggClient:
                 game_id = int(item.get("id", ""))
                 name_el = item.find("name[@type='primary']")
                 if name_el is None:
-                    raise BggParseError("Missing primary name element")
+                    name_el = item.find("name")
+                if name_el is None:
+                    raise BggParseError("Missing name element")
                 name = name_el.get("value", "")
             except (ValueError, TypeError) as exc:
                 raise BggParseError(f"Failed to parse search item: {exc}") from exc
