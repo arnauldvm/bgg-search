@@ -116,18 +116,7 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    - Commit — the pre-commit hook runs `tox` automatically and blocks if any check fails; fix issues and retry.
 5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
 6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch (`git branch -d <branch>`).
-7. **Release**:
-   1. Re-lock dependencies: `tox -e lock`
-   2. Audit dependencies: `tox -e audit`
-   3. Run integration tests: `BGG_TOKEN=<token> tox -e integ`; loop until clean.
-   4. Bump version in `pyproject.toml` to `X.Y.Z` (Y for a new feature or significant fix; Z for a hotfix on a past version).
-   5. Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
-   6. Commit: `chore: release X.Y.Z`
-   7. Tag: `git tag version/X.Y.Z`
-   8. Bump `pyproject.toml` to `X.(Y+1).0.dev0` and commit: `chore(pyproject.toml): bump version to X.(Y+1).0.dev0`
-   9. Push `main` first (version bump must be on `main` before the tag): `git push origin main`
-   10. Push the tag (triggers the publish workflow): `git push origin version/X.Y.Z`
-   11. Once the workflow completes (allow a few minutes), verify publication: `curl -s https://pypi.org/pypi/bgg-search/X.Y.Z/json | python3 -c "import sys, json; d=json.load(sys.stdin); print(d['info']['version'], d['urls'][0]['upload_time'])"`
+7. **Release**: follow the [Release procedure](#release-procedure) section below.
 
 ### Step quality rules
 
@@ -137,6 +126,20 @@ Each step (commit) must be:
 - **Clean**: the codebase must pass `tox` at the end of every step (enforced by the pre-commit hook), with no known errors left behind.
 
 `PLAN.md` is branch-local and must **not** be merged into `main` (enforced by step 5 above).
+
+## Release procedure
+
+1. Re-lock dependencies: `tox -e lock`
+2. Audit dependencies: `tox -e audit`
+3. Run integration tests: `BGG_TOKEN=<token> tox -e integ`; loop until clean.
+4. Bump version in `pyproject.toml` to `X.Y.Z` (Y for a new feature or significant fix; Z for a hotfix on a past version).
+5. Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and open a fresh `[Unreleased]` section above it.
+6. Commit: `chore: release X.Y.Z`
+7. Tag: `git tag version/X.Y.Z`
+8. Bump `pyproject.toml` to `X.(Y+1).0.dev0` and commit: `chore(pyproject.toml): bump version to X.(Y+1).0.dev0`
+9. Push `main` first (version bump must be on `main` before the tag): `git push origin main`
+10. Push the tag (triggers the publish workflow): `git push origin version/X.Y.Z`
+11. Once the workflow completes (allow a few minutes), verify publication: `curl -s https://pypi.org/pypi/bgg-search/X.Y.Z/json | python3 -c "import sys, json; d=json.load(sys.stdin); print(d['info']['version'], d['urls'][0]['upload_time'])"`
 
 ## Architecture
 
