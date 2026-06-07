@@ -1,4 +1,4 @@
-# Phase 0.4 — Release Tool: Phase Plan
+# Phase 0.3.1 — Release Tool: Phase Plan
 
 **Goal**: automate the full release procedure so that cutting a release requires a single command,
 with no manual file edits.

@@ -1,6 +1,7 @@
 # BGG Search — Roadmap
 
-Phases toward `1.0.0` (MVP). Each phase is released as `0.N.0`.
+Phases toward `1.0.0` (MVP). Each feature phase is released as `0.N.0`; tooling-only phases
+that ship no user-facing changes are released as patch versions.
 
 ---
 
@@ -47,7 +48,7 @@ Deliverables:
 
 ---
 
-## Phase 0.4 — Release tool
+## Phase 0.3.1 — Release tool
 
 **Goal**: automate the full release procedure so that cutting a release requires
 a single command, with no manual file edits.
@@ -63,7 +64,7 @@ Deliverables:
 
 ---
 
-## Phase 0.5 — Search use-case & CLI
+## Phase 0.4 — Search use-case & CLI
 
 **Goal**: a user can look up board games by name and inspect their details.
 The typical flow: `bgg-search search <query>` returns a ranked list of matching titles
@@ -89,9 +90,9 @@ Deliverables:
 | `0.1.0` | Project scaffold |
 | `0.2.0` | Domain & protocol |
 | `0.3.0` | HTTP client |
-| `0.4.0` | Release tool |
-| `0.5.0` | Search use-case & CLI |
-| `1.0.0` | MVP tag (after `0.5.0`) |
+| `0.3.1` | Release tool (tooling only — patch) |
+| `0.4.0` | Search use-case & CLI |
+| `1.0.0` | MVP tag (after `0.4.0`) |
 
 ---
 
