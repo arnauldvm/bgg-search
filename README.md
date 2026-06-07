@@ -113,6 +113,54 @@ client = BggClient(token="<your-token>")
 | `BggNotFoundError` | `BggSearchError` | Requested game ID does not exist         |
 | `BggParseError`  | `BggSearchError` | BGG API response cannot be parsed         |
 
+## CLI reference
+
+All commands read the BGG token from the `BGG_TOKEN` environment variable and exit
+with code 1 (printing an error to stderr) if it is not set or if the BGG API returns
+an error.
+
+### `bgg-search search <query>`
+
+Search for board games by name.
+
+```text
+bgg-search search <query>
+```
+
+| Argument | Description          |
+|----------|----------------------|
+| `query`  | Free-text search term |
+
+Output: one line per result, formatted as `{id:>8}  {name}`. No output when no games match.
+
+### `bgg-search details <id>`
+
+Fetch and display full details for a game.
+
+```text
+bgg-search details <id>
+```
+
+| Argument | Description |
+|----------|-------------|
+| `id`     | BGG game ID (integer) |
+
+Output: labeled key-value block, one field per line:
+
+```text
+id:            13
+name:          Catan
+year:          1995
+min_players:   3
+max_players:   4
+min_playtime:  60
+max_playtime:  120
+weight:        2.3
+bgg_rating:    7.1
+```
+
+Exits with code 1 and prints an error to stderr when the game ID is not found.
+
 ## Development
 
 Run the quality gate (lint, type-check, security scan, unit tests):
