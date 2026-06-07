@@ -97,6 +97,7 @@ All tasks run through **tox**, which executes each step in an isolated virtualen
 | Dependency audit (pip-audit) | `tox -e audit` |
 | Re-lock all dependencies | `tox -e lock` |
 | Release | `BGG_TOKEN=<token> tox -e release` |
+| Release (local only, no PyPI publish) | `BGG_TOKEN=<token> tox -e release-no-publish` |
 
 The pre-commit hook runs `tox` automatically before every commit and blocks if any check fails.
 
