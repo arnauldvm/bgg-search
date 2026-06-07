@@ -7,8 +7,9 @@
 
 ## Step 2 — Wire `--verbose`
 
-`scripts/release.py`: add module-level `_verbose` flag; gate command echoing in `run()` on it;
-set it from `args.verbose` in `main()`.
+`scripts/release.py`: add `trace(msg)` helper that prints Python-level operations when
+`_verbose` is set; gate `run()` command echoing on `_verbose` too; call `trace()` in
+`write_version()`, `update_changelog()`, and at each major step in `main()`.
 
 ## Step 3 — Wire `bump`
 

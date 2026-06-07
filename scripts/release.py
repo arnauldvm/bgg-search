@@ -12,10 +12,17 @@ import tomlkit
 from packaging.version import Version
 
 ROOT = pathlib.Path(__file__).parent.parent
+_verbose: bool = False
+
+
+def trace(msg: str) -> None:
+    if _verbose:
+        print(f"> {msg}")
 
 
 def run(args: list[str], *, check: bool = True, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
-    print("+ " + " ".join(args))
+    if _verbose:
+        print("+ " + " ".join(args))
     return subprocess.run(args, check=check, **kwargs)
 
 
@@ -50,20 +57,25 @@ def next_dev_version(release_ver: str, bump: Literal["major", "minor", "patch"] 
 def _check_env(bgg_token: str | None) -> None:
     if bgg_token is None:
         raise SystemExit("Error: BGG_TOKEN environment variable is not set")
+    trace("BGG_TOKEN: set")
     if (ROOT / "PHASE_PLAN.md").exists():
         raise SystemExit("Error: PHASE_PLAN.md exists — remove it before releasing")
+    trace("PHASE_PLAN.md: absent")
     current = read_version()
     if not Version(current).is_devrelease:
         raise SystemExit(f"Error: current version {current!r} is not a dev release")
+    trace(f"version {current!r}: dev release")
 
 
 def _check_git_local() -> None:
     branch = run_git("branch", "--show-current", capture_output=True, text=True).stdout.strip()
     if branch != "main":
         raise SystemExit(f"Error: not on main branch (current: {branch!r})")
+    trace(f"branch: {branch!r}")
     dirty = run_git("status", "--porcelain", capture_output=True, text=True).stdout.strip()
     if dirty:
         raise SystemExit("Error: working tree is not clean")
+    trace("working tree: clean")
 
 
 def _check_changelog() -> None:
@@ -79,6 +91,7 @@ def _check_changelog() -> None:
     section_body = after[:next_section] if next_section != -1 else after
     if not section_body.strip():
         raise SystemExit("Error: CHANGELOG.md [Unreleased] section has no content")
+    trace("[Unreleased] section: has content")
 
 
 def _check_git_remote(rel_ver: str) -> None:
@@ -97,6 +110,7 @@ def _check_git_remote(rel_ver: str) -> None:
         raise SystemExit(
             f"Error: local main is unexpectedly ahead of origin/main by {ahead} commit(s)"
         )
+    trace(f"origin/main: in sync (ahead={ahead}, behind={behind})")
     # Release tag must not already exist — locally or on the remote.
     tag = f"version/{rel_ver}"
     local_tags = run_git("tag", "--list", tag, capture_output=True, text=True).stdout.strip()
@@ -107,6 +121,7 @@ def _check_git_remote(rel_ver: str) -> None:
     ).stdout.strip()
     if remote_tags:
         raise SystemExit(f"Error: tag {tag!r} already exists on origin")
+    trace(f"tag {tag!r}: absent locally and on remote")
 
 
 def check_preconditions(rel_ver: str, bgg_token: str | None) -> None:
@@ -140,6 +155,7 @@ def read_version() -> str:
 
 
 def update_changelog(version: str, date: str) -> None:
+    trace(f"update_changelog({version!r}, {date!r}) → CHANGELOG.md")
     path = ROOT / "CHANGELOG.md"
     text = path.read_text()
     # MD003+MD018+MD019 guarantee "## [" is an unambiguous section prefix (see .markdownlint.yaml).
@@ -153,6 +169,7 @@ def update_changelog(version: str, date: str) -> None:
 def write_version(new_version: str) -> None:
     # tomlkit is a style-preserving TOML parser: it keeps comments, formatting, and quote
     # styles intact, and understands structure (section scoping, quoted keys, …).
+    trace(f"write_version({new_version!r}) → pyproject.toml")
     path = ROOT / "pyproject.toml"
     doc = tomlkit.parse(path.read_text())
     doc["project"]["version"] = new_version
@@ -184,11 +201,17 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    global _verbose
+    args = parse_args()
+    _verbose = args.verbose
     bgg_token = os.environ.get("BGG_TOKEN")
+    trace(f"BGG_TOKEN={'set' if bgg_token else 'unset'}")
     dev_ver = read_version()
+    trace(f"current version: {dev_ver}")
     rel_ver = release_version(dev_ver)
     next_dev_ver = next_dev_version(rel_ver)
     today = date.today().isoformat()
+    trace(f"releasing {rel_ver} → next dev {next_dev_ver} (date: {today})")
 
     check_preconditions(rel_ver, bgg_token)
 
@@ -209,6 +232,7 @@ def main() -> None:
     run_git("push", "origin", "main")
     run_git("push", "origin", f"version/{rel_ver}")
 
+    trace(f"verify_pypi({rel_ver!r})")
     verify_pypi(rel_ver)
 
 
