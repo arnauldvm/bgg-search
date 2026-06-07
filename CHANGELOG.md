@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Release automation: `tox -e release` / `tox -e release-no-publish` invoke `scripts/release.py`,
+  which handles locking, auditing, integration tests, version bumping, changelog update,
+  tagging, pushing, and PyPI verification in a single command.
+
 ## [0.3.0] - 2026-06-07
 
 ### Added
