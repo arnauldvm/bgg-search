@@ -264,6 +264,19 @@ not implementation details.
 
 ## Conventions
 
+### Markdown
+
+All Markdown files written or edited by agents must pass `markdownlint` without errors.
+Common rules to observe:
+
+- Line length must not exceed 100 characters.
+- Fenced code blocks must declare a language (e.g. ` ```python `, ` ```toml `, ` ```markdown `).
+- Headings must be surrounded by blank lines.
+- No trailing spaces (except intentional line breaks).
+- Lists must be preceded by a blank line.
+
+The pre-commit hook enforces this automatically and will block commits that violate these rules.
+
 ### Language
 
 Use American English for text (messages, documentation, commits...)
