@@ -6,7 +6,7 @@ import pytest
 from bgg_search._client import BggClient
 from bgg_search._protocol import BggClientProtocol
 from bgg_search.models import GameDetails, GameSummary
-from bgg_search.search import search_games
+from bgg_search.search import get_game, search_games
 
 _CATAN_ID = 13
 
@@ -28,8 +28,8 @@ def test_search_returns_results(client: BggClientProtocol) -> None:
     assert any(r.id == _CATAN_ID for r in results)
 
 
-def test_get_game_returns_details(bgg_client: BggClient) -> None:
-    result = bgg_client.get_game(_CATAN_ID)
+def test_get_game_returns_details(client: BggClientProtocol) -> None:
+    result = get_game(_CATAN_ID, client)
     time.sleep(2)
 
     assert isinstance(result, GameDetails)
