@@ -38,6 +38,7 @@ packaging==26.2
     #   pyproject-api
     #   pytest
     #   tox
+    #   tox-uv-bare
 pathspec==1.1.1
     # via mypy
 platformdirs==4.10.0
@@ -74,9 +75,17 @@ stevedore==5.8.0
 tomli-w==1.2.0
     # via tox
 tox==4.55.1
+    # via
+    #   -r requirements/dev.in
+    #   tox-uv-bare
+tox-uv==1.35.2
     # via -r requirements/dev.in
+tox-uv-bare==1.35.2
+    # via tox-uv
 typing-extensions==4.15.0
     # via mypy
+uv==0.11.19
+    # via tox-uv
 virtualenv==21.4.2
     # via
     #   pre-commit

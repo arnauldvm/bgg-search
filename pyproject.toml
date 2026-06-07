@@ -15,8 +15,14 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.13",
 ]
-dependencies = []
+dynamic = ["dependencies", "optional-dependencies"]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements/runtime.in"]
+
+[tool.hatch.metadata.hooks.requirements_txt.optional-dependencies]
+locked = ["requirements/runtime.txt"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-requirements-txt"]
 build-backend = "hatchling.build"
