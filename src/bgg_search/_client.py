@@ -4,8 +4,8 @@ import xml.etree.ElementTree as ET  # nosec B405
 
 import httpx
 
-from bgg_search.exceptions import BggApiError, BggParseError
-from bgg_search.models import GameSummary
+from bgg_search.exceptions import BggApiError, BggNotFoundError, BggParseError
+from bgg_search.models import GameDetails, GameSummary
 
 _BASE_URL = "https://boardgamegeek.com/xmlapi2/"
 
@@ -48,3 +48,44 @@ class BggClient:
                 raise BggParseError(f"Failed to parse search item: {exc}") from exc
             results.append(GameSummary(id=game_id, name=name))
         return results
+
+    def get_game(self, game_id: int) -> GameDetails:
+        response = self._client.get("thing", params={"id": game_id, "stats": 1})
+        if response.status_code != 200:
+            raise BggApiError(
+                f"BGG API error: {response.status_code}", status_code=response.status_code
+            )
+        try:
+            root = ET.fromstring(response.text)  # nosec B314
+        except ET.ParseError as exc:
+            raise BggParseError(f"Failed to parse thing response: {exc}") from exc
+        item = root.find("item")
+        if item is None:
+            raise BggNotFoundError(f"Game {game_id} not found")
+        try:
+            name_el = item.find("name[@type='primary']")
+            if name_el is None:
+                raise BggParseError("Missing primary name element")
+            name = name_el.get("value", "")
+
+            def _int(tag: str) -> int | None:
+                el = item.find(tag)
+                return int(el.get("value", "")) if el is not None else None
+
+            def _float(tag: str) -> float | None:
+                el = item.find(tag)
+                return float(el.get("value", "")) if el is not None else None
+
+            return GameDetails(
+                id=int(item.get("id", "")),
+                name=name,
+                year_published=_int("yearpublished"),
+                min_players=_int("minplayers"),
+                max_players=_int("maxplayers"),
+                min_playtime=_int("minplaytime"),
+                max_playtime=_int("maxplaytime"),
+                weight=_float("statistics/ratings/averageweight"),
+                bgg_rating=_float("statistics/ratings/average"),
+            )
+        except (ValueError, TypeError) as exc:
+            raise BggParseError(f"Failed to parse game {game_id}: {exc}") from exc

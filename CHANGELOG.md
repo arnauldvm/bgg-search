@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `BggClient`: concrete `httpx`-based implementation of `BggClientProtocol`, with `search` and
+  `get_game` methods. Requires a BGG API token passed via the `token` constructor argument.
+
 ## [0.2.0] - 2026-06-07
 
 ### Added
