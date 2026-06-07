@@ -98,6 +98,13 @@ def _check_git_remote(rel_ver: str) -> None:
         raise SystemExit(f"Error: tag {tag!r} already exists on origin")
 
 
+def check_preconditions(rel_ver: str, bgg_token: str | None) -> None:
+    _check_env(bgg_token)
+    _check_git_local()
+    _check_changelog()
+    _check_git_remote(rel_ver)
+
+
 def read_version() -> str:
     doc = tomlkit.parse((ROOT / "pyproject.toml").read_text())
     return str(doc["project"]["version"])
