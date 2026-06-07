@@ -45,7 +45,7 @@ Deliverables:
 **Goal**: automate the full release procedure so that cutting a release requires a single command, with no manual file edits.
 
 Deliverables:
-- `scripts/release.py`: automates all release steps (lock, audit, integ, version bump, CHANGELOG rename, commit, tag, dev bump, push, PyPI verification). Uses only stdlib and libraries already present in the dev dependency tree (`tomllib`, `tomli_w`, `packaging.version`).
+- `scripts/release.py`: automates all release steps (lock, audit, integ, version bump, CHANGELOG rename, commit, tag, dev bump, push, PyPI verification); aborts early if `PHASE_PLAN.md` is still present. Uses only stdlib and libraries already present in the dev dependency tree (`tomllib`, `tomli_w`, `packaging.version`).
 - `tox -e release` env exposing the script in an isolated, reproducible environment.
 - Updated `AGENTS.md`: release procedure reduced to `BGG_TOKEN=<token> tox -e release`.
 

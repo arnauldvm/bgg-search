@@ -116,7 +116,8 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    - Commit — the pre-commit hook runs `tox` automatically and blocks if any check fails; fix issues and retry.
 5. **Remove `PLAN.md`**: delete it in a dedicated commit (`chore(PLAN.md): remove branch-local plan before merge`). This ensures it is never merged into `main`.
 6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch (`git branch -d <branch>`).
-7. **Release**: follow the [Release procedure](#release-procedure) section below.
+7. **Remove `PHASE_PLAN.md`**: delete it in a dedicated commit on `main` before releasing. This ensures the plan is gone before the release tag is created.
+8. **Release**: follow the [Release procedure](#release-procedure) section below.
 
 ### Step quality rules
 
@@ -128,6 +129,8 @@ Each step (commit) must be:
 `PLAN.md` is branch-local and must **not** be merged into `main` (enforced by step 5 above).
 
 ## Release procedure
+
+**Precondition**: `PHASE_PLAN.md` must not exist on `main` (see development workflow step 7). The release script aborts if it does.
 
 1. Re-lock dependencies: `tox -e lock`
 2. Audit dependencies: `tox -e audit`
