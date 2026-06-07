@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-06-07
+
 ### Added
 
 - Release automation: `tox -e release` / `tox -e release-no-publish` invoke `scripts/release.py`,
