@@ -17,6 +17,9 @@ classifiers = [
 ]
 dynamic = ["dependencies", "optional-dependencies"]
 
+[project.scripts]
+bgg-search = "bgg_search.cli:main"
+
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements/runtime.in"]
 
