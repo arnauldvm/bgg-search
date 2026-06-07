@@ -148,34 +148,43 @@ Each step (commit) must be:
 
 ## Release procedure
 
-**Preconditions** — the release script verifies all of the following and aborts if any fails:
+```bash
+BGG_TOKEN=<token> tox -e release
+```
+
+The script verifies all preconditions, runs the full quality gate, bumps versions,
+commits, tags, pushes, and polls PyPI — aborting with a clear message on any failure.
+Pass `--help` for available options (`--check-only`, `--verify-pypi`, `--verbose`, `bump`).
+
+### Preconditions verified by the script
 
 1. Current branch is `main`.
 2. Working tree is clean (no staged or unstaged changes).
 3. Current version in `pyproject.toml` ends in `.devN` (signals an unreleased development state).
 4. The release tag `version/X.Y.Z` does not already exist locally or on the remote.
-5. `BGG_TOKEN` environment variable is set (without it, integration tests silently skip and report success).
+5. `BGG_TOKEN` environment variable is set (without it, integration tests silently skip
+   and report success).
 6. `CHANGELOG.md` has content under `[Unreleased]`
    (releasing with an empty section is almost certainly a mistake).
 7. Local `main` is in sync with `origin/main` (not behind, not unexpectedly ahead).
 8. `PHASE_PLAN.md` does not exist (see development workflow step 7).
 
-**Steps:**
+### Steps performed by the script
 
 1. Re-lock dependencies: `tox -e lock`
 2. Audit dependencies: `tox -e audit`
-3. Run integration tests: `BGG_TOKEN=<token> tox -e integ`; loop until clean.
-4. Bump version in `pyproject.toml` to `X.Y.Z` (Y for a new feature or significant fix;
-   Z for a hotfix on a past version).
-5. Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD`
-   and open a fresh `[Unreleased]` section above it.
+3. Run integration tests: `tox -e integ`
+4. Bump version in `pyproject.toml` to `X.Y.Z`.
+5. Update `CHANGELOG.md`: rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and open a
+   fresh `[Unreleased]` section above it.
 6. Commit: `chore: release X.Y.Z`
 7. Tag: `git tag version/X.Y.Z`
-8. Bump `pyproject.toml` to `X.(Y+1).0.dev0` and commit: `chore(pyproject.toml): bump version to X.(Y+1).0.dev0`
-9. Push `main` first (version bump must be on `main` before the tag): `git push origin main`
+8. Bump `pyproject.toml` to `X.(Y+1).0.dev0` and commit:
+   `chore(pyproject.toml): bump version to X.(Y+1).0.dev0`
+9. Push `main` first (the next-dev commit must be on the remote before the tag push triggers
+   the publish workflow): `git push origin main`
 10. Push the tag (triggers the publish workflow): `git push origin version/X.Y.Z`
-11. Once the workflow completes (allow a few minutes), verify publication:
-    browse to `https://pypi.org/project/bgg-search/` and confirm the new version is listed.
+11. Poll PyPI until the new version appears (retries every 30 s, up to 3 min).
 
 ## Architecture
 
