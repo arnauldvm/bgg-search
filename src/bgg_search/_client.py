@@ -11,8 +11,18 @@ _BASE_URL = "https://boardgamegeek.com/xmlapi2/"
 
 
 class BggClient:
-    def __init__(self, *, base_url: str = _BASE_URL, timeout: float = 10.0) -> None:
-        self._client = httpx.Client(base_url=base_url, timeout=timeout)
+    def __init__(
+        self,
+        *,
+        base_url: str = _BASE_URL,
+        timeout: float = 10.0,
+        token: str | None = None,
+        _transport: httpx.BaseTransport | None = None,
+    ) -> None:
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
+        self._client = httpx.Client(
+            base_url=base_url, timeout=timeout, headers=headers, transport=_transport
+        )
 
     def search(self, query: str) -> list[GameSummary]:
         response = self._client.get("search", params={"query": query, "type": "boardgame"})

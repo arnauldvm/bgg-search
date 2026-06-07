@@ -6,14 +6,15 @@ from bgg_search.exceptions import BggApiError, BggParseError
 from bgg_search.models import GameSummary
 
 
-def _make_client(response_text: str, status_code: int = 200) -> BggClient:
-    def handler(request: httpx.Request) -> httpx.Response:
+def _make_client(response_text: str, status_code: int = 200, token: str | None = None) -> BggClient:
+    def handler(_request: httpx.Request) -> httpx.Response:
         return httpx.Response(status_code, text=response_text)
 
-    transport = httpx.MockTransport(handler)
-    client = BggClient(base_url="https://mock/")
-    client._client = httpx.Client(base_url="https://mock/", transport=transport)
-    return client
+    return BggClient(
+        base_url="https://mock/",
+        token=token,
+        _transport=httpx.MockTransport(handler),
+    )
 
 
 def test_search_returns_summaries() -> None:
@@ -60,3 +61,18 @@ def test_search_raises_parse_error_on_invalid_id() -> None:
     )
     with pytest.raises(BggParseError):
         _make_client(xml).search("catan")
+
+
+def test_search_sends_auth_header() -> None:
+    captured: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured.append(request)
+        return httpx.Response(200, text='<items total="0"></items>')
+
+    BggClient(
+        base_url="https://mock/",
+        token="test-token",
+        _transport=httpx.MockTransport(handler),
+    ).search("test")
+    assert captured[0].headers["authorization"] == "Bearer test-token"
