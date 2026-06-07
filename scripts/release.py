@@ -215,6 +215,10 @@ def main() -> None:
 
     check_preconditions(rel_ver, bgg_token)
 
+    if args.check_only:
+        print(f"Preconditions passed for release {rel_ver}.")
+        return
+
     run_tox("lock")
     run_tox("audit")
     run_tox("integ")
