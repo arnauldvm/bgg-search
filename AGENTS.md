@@ -132,9 +132,12 @@ Every change (feature, bug fix, refactoring, …) follows this process:
    This ensures it is never merged into `main`.
 6. **Merge and delete the branch**: merge into `main` with `--no-ff`, then delete the branch
    (`git branch -d <branch>`).
-7. **Remove `PHASE_PLAN.md`**: delete it in a dedicated commit on `main` before releasing.
+   Push `main` to remote immediately after every merge: `git push origin main`.
+7. **Push regularly**: any direct commits on `main` (e.g. `PHASE_PLAN.md` updates) must also
+   be pushed promptly. Do not let `main` drift ahead of `origin/main` for more than one commit.
+8. **Remove `PHASE_PLAN.md`**: delete it in a dedicated commit on `main` before releasing.
    This ensures the plan is gone before the release tag is created.
-8. **Release**: follow the [Release procedure](#release-procedure) section below.
+9. **Release**: follow the [Release procedure](#release-procedure) section below.
 
 ### Step quality rules
 
