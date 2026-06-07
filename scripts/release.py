@@ -33,6 +33,16 @@ def next_dev_version(release_ver: str, bump: Literal["major", "minor", "patch"] 
             raise SystemExit(f"Error: invalid bump component {bump!r}")
 
 
+def _check_env(bgg_token: str | None) -> None:
+    if bgg_token is None:
+        raise SystemExit("Error: BGG_TOKEN environment variable is not set")
+    if (ROOT / "PHASE_PLAN.md").exists():
+        raise SystemExit("Error: PHASE_PLAN.md exists — remove it before releasing")
+    current = read_version()
+    if not Version(current).is_devrelease:
+        raise SystemExit(f"Error: current version {current!r} is not a dev release")
+
+
 def read_version() -> str:
     doc = tomlkit.parse((ROOT / "pyproject.toml").read_text())
     return str(doc["project"]["version"])

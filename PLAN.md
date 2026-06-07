@@ -2,11 +2,10 @@
 
 ## Step 1 — `_check_env(bgg_token)`
 `scripts/release.py`: checks that need no subprocess and no network — BGG_TOKEN set (5),
-PHASE_PLAN.md absent (8).
+PHASE_PLAN.md absent (8), current version is a dev release (3).
 
 ## Step 2 — `_check_git_local()`
-`scripts/release.py`: local git + version checks — branch is main (1), working tree clean (2),
-current version is a dev release (3).
+`scripts/release.py`: local git checks — branch is main (1), working tree clean (2).
 
 ## Step 3 — `_check_changelog()`
 `scripts/release.py`: check 6 — [Unreleased] section of CHANGELOG.md has content.
