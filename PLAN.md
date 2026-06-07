@@ -8,3 +8,6 @@
 
 ## Step 3 — `release_version()` + `next_dev_version()`
 `scripts/release.py`: add pure version-string computation helpers.
+
+## Step 4 — Generalise `next_dev_version()`
+`scripts/release.py`: add `bump: Literal["major", "minor", "patch"] = "minor"` parameter.
