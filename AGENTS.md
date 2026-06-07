@@ -34,6 +34,8 @@ bgg-search/
 │   └── integ/               # slow, hits the real BGG API
 │       ├── conftest.py
 │       └── test_*.py
+├── scripts/
+│   └── release.py           # automated release script (invoked via tox -e release)
 ├── requirements/
 │   ├── runtime.in           # package runtime deps (unpinned spec)
 │   ├── runtime.txt          # locked runtime deps
