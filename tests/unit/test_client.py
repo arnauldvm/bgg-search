@@ -2,8 +2,8 @@ import httpx
 import pytest
 
 from bgg_search._client import BggClient
-from bgg_search.exceptions import BggApiError, BggParseError
-from bgg_search.models import GameSummary
+from bgg_search.exceptions import BggApiError, BggNotFoundError, BggParseError
+from bgg_search.models import GameDetails, GameSummary
 
 
 def _make_client(response_text: str, status_code: int = 200, token: str | None = None) -> BggClient:
@@ -73,6 +73,97 @@ def test_search_raises_parse_error_on_invalid_id() -> None:
     )
     with pytest.raises(BggParseError):
         _make_client(xml).search("catan")
+
+
+_THING_XML_FULL = """
+<items>
+    <item type="boardgame" id="13">
+        <name type="primary" sortindex="1" value="Catan"/>
+        <yearpublished value="1995"/>
+        <minplayers value="3"/>
+        <maxplayers value="4"/>
+        <minplaytime value="60"/>
+        <maxplaytime value="120"/>
+        <statistics>
+            <ratings>
+                <average value="7.09067"/>
+                <averageweight value="2.2821"/>
+            </ratings>
+        </statistics>
+    </item>
+</items>
+"""
+
+_THING_XML_MINIMAL = """
+<items>
+    <item type="boardgame" id="13">
+        <name type="primary" sortindex="1" value="Catan"/>
+    </item>
+</items>
+"""
+
+
+def test_get_game_returns_full_details() -> None:
+    result = _make_client(_THING_XML_FULL).get_game(13)
+    assert result == GameDetails(
+        id=13,
+        name="Catan",
+        year_published=1995,
+        min_players=3,
+        max_players=4,
+        min_playtime=60,
+        max_playtime=120,
+        weight=2.2821,
+        bgg_rating=7.09067,
+    )
+
+
+def test_get_game_handles_missing_optional_fields() -> None:
+    result = _make_client(_THING_XML_MINIMAL).get_game(13)
+    assert result == GameDetails(
+        id=13,
+        name="Catan",
+        year_published=None,
+        min_players=None,
+        max_players=None,
+        min_playtime=None,
+        max_playtime=None,
+        weight=None,
+        bgg_rating=None,
+    )
+
+
+def test_get_game_raises_not_found() -> None:
+    with pytest.raises(BggNotFoundError):
+        _make_client("<items></items>").get_game(999)
+
+
+def test_get_game_raises_api_error_on_http_error() -> None:
+    with pytest.raises(BggApiError) as exc_info:
+        _make_client("Service Unavailable", status_code=503).get_game(13)
+    assert exc_info.value.status_code == 503
+
+
+def test_get_game_raises_parse_error_on_malformed_xml() -> None:
+    with pytest.raises(BggParseError):
+        _make_client("<not valid").get_game(13)
+
+
+def test_get_game_raises_parse_error_on_missing_primary_name() -> None:
+    xml = '<items><item type="boardgame" id="13"></item></items>'
+    with pytest.raises(BggParseError):
+        _make_client(xml).get_game(13)
+
+
+def test_get_game_raises_parse_error_on_invalid_numeric_field() -> None:
+    xml = (
+        '<items><item type="boardgame" id="13">'
+        '<name type="primary" value="Catan"/>'
+        '<minplayers value="nan"/>'
+        "</item></items>"
+    )
+    with pytest.raises(BggParseError):
+        _make_client(xml).get_game(13)
 
 
 def test_search_sends_auth_header() -> None:
