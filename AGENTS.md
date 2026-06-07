@@ -154,7 +154,7 @@ BGG_TOKEN=<token> tox -e release
 
 The script verifies all preconditions, runs the full quality gate, bumps versions,
 commits, tags, pushes, and polls PyPI — aborting with a clear message on any failure.
-Pass `--help` for available options (`--check-only`, `--verify-pypi`, `--verbose`, `bump`).
+Pass `--help` for available options (`--check-only`, `--no-publish`, `--verify-pypi`, `--verbose`, `bump`).
 
 ### Preconditions verified by the script
 
