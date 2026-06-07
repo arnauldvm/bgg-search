@@ -40,7 +40,18 @@ Deliverables:
 
 ---
 
-## Phase 0.4 — Search use-case & CLI
+## Phase 0.4 — Release tool
+
+**Goal**: automate the full release procedure so that cutting a release requires a single command, with no manual file edits.
+
+Deliverables:
+- `scripts/release.py`: automates all release steps (lock, audit, integ, version bump, CHANGELOG rename, commit, tag, dev bump, push, PyPI verification). Uses only stdlib and libraries already present in the dev dependency tree (`tomllib`, `tomli_w`, `packaging.version`).
+- `tox -e release` env exposing the script in an isolated, reproducible environment.
+- Updated `AGENTS.md`: release procedure reduced to `BGG_TOKEN=<token> tox -e release`.
+
+---
+
+## Phase 0.5 — Search use-case & CLI
 
 **Goal**: a user can look up board games by name and inspect their details. The typical flow: `bgg-search search <query>` returns a ranked list of matching titles with their BGG IDs; `bgg-search details <id>` fetches full details (players, play time, weight, rating, …) for a chosen game.
 
@@ -62,8 +73,9 @@ Deliverables:
 | `0.1.0` | Project scaffold |
 | `0.2.0` | Domain & protocol |
 | `0.3.0` | HTTP client |
-| `0.4.0` | Search use-case & CLI |
-| `1.0.0` | MVP tag (after `0.4.0`) |
+| `0.4.0` | Release tool |
+| `0.5.0` | Search use-case & CLI |
+| `1.0.0` | MVP tag (after `0.5.0`) |
 
 ---
 

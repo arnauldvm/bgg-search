@@ -147,6 +147,27 @@ supports both sync and async out of the box, and is actively maintained with a l
 
 ---
 
+## Custom release script over bump-my-version
+
+The release procedure is automated by `scripts/release.py` rather than `bump-my-version`.
+
+**Why not bump-my-version:**
+- Its natural version scheme is plain `MAJOR.MINOR.PATCH`. Our scheme (`X.Y.0.dev0` ↔ `X.Y.0` ↔ `X.(Y+1).0.dev0`) requires custom `parse` regex, custom `serialize` patterns, and a custom `dev` part — non-trivial configuration for no real gain.
+- Its core value is updating a version string atomically across many files. Our version appears in exactly **one file** (`pyproject.toml`).
+- Every step outside version bumping — locking deps, auditing, running integration tests, updating `CHANGELOG.md`, pushing, verifying PyPI — falls outside its scope anyway, so a wrapper script is unavoidable.
+- Adding it as a dependency is not justified given the above.
+
+**Design of the script:**
+- Lives in `scripts/`, separate from package source (`src/`), and is never installed as part of the package.
+- Uses existing libraries already present in the dev dependency tree rather than reimplementing their logic:
+  - `tomllib` (stdlib, Python 3.11+) to read `pyproject.toml`.
+  - `tomli_w` (already a transitive dev dep via tox) to write `pyproject.toml`.
+  - `packaging.version` (already a transitive dev dep via tox/pytest) to parse the current version.
+  - `subprocess`, `pathlib`, `datetime`, `urllib`, `json` (all stdlib) for the remaining steps.
+- Exposed via `tox -e release` (with `passenv = BGG_TOKEN`) so it runs in an isolated, reproducible environment.
+
+---
+
 ## xml.etree.ElementTree over lxml / beautifulsoup4
 
 The BGG XML API returns well-formed XML. The stdlib parser handles it without issues.
