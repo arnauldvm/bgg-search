@@ -94,7 +94,7 @@ def _check_changelog() -> None:
     trace("[Unreleased] section: has content")
 
 
-def _check_git_remote(rel_ver: str) -> None:
+def _check_git_remote(tag: str) -> None:
     # Fetch first so remote refs are up to date before any comparison.
     run_git("fetch", "origin")
     # Local main must be exactly in sync with origin/main.
@@ -112,7 +112,6 @@ def _check_git_remote(rel_ver: str) -> None:
         )
     trace(f"origin/main: in sync (ahead={ahead}, behind={behind})")
     # Release tag must not already exist — locally or on the remote.
-    tag = f"version/{rel_ver}"
     local_tags = run_git("tag", "--list", tag, capture_output=True, text=True).stdout.strip()
     if local_tags:
         raise SystemExit(f"Error: tag {tag!r} already exists locally")
@@ -124,11 +123,11 @@ def _check_git_remote(rel_ver: str) -> None:
     trace(f"tag {tag!r}: absent locally and on remote")
 
 
-def check_preconditions(rel_ver: str, bgg_token: str | None) -> None:
+def check_preconditions(bgg_token: str | None, tag: str) -> None:
     _check_env(bgg_token)
     _check_git_local()
     _check_changelog()
-    _check_git_remote(rel_ver)
+    _check_git_remote(tag)
 
 
 def verify_pypi(version: str, *, retries: int = 6, delay: int = 30) -> None:
@@ -197,6 +196,11 @@ def parse_args() -> argparse.Namespace:
         metavar="VERSION",
         help="Skip the release; only poll PyPI for VERSION.",
     )
+    mode.add_argument(
+        "--no-publish",
+        action="store_true",
+        help="Run the full release locally but skip PyPI publication; tag as no-publish/<version>.",
+    )
     return parser.parse_args()
 
 
@@ -215,9 +219,10 @@ def main() -> None:
     rel_ver = release_version(dev_ver)
     next_dev_ver = next_dev_version(rel_ver, bump=args.bump)
     today = date.today().isoformat()
-    trace(f"releasing {rel_ver} → next dev {next_dev_ver} (date: {today})")
+    tag = f"no-publish/{rel_ver}" if args.no_publish else f"version/{rel_ver}"
+    trace(f"releasing {rel_ver} → next dev {next_dev_ver} (date: {today}, tag: {tag!r})")
 
-    check_preconditions(rel_ver, bgg_token)
+    check_preconditions(bgg_token, tag)
 
     if args.check_only:
         print(f"Preconditions passed for release {rel_ver}.")
@@ -231,17 +236,18 @@ def main() -> None:
     update_changelog(rel_ver, today)
     run_git("add", "pyproject.toml", "CHANGELOG.md")
     run_git("commit", "-m", f"chore: release {rel_ver}")
-    run_git("tag", f"version/{rel_ver}")
+    run_git("tag", tag)
 
     write_version(next_dev_ver)
     run_git("add", "pyproject.toml")
     run_git("commit", "-m", f"chore(pyproject.toml): bump version to {next_dev_ver}")
 
     run_git("push", "origin", "main")
-    run_git("push", "origin", f"version/{rel_ver}")
+    run_git("push", "origin", tag)
 
-    trace(f"verify_pypi({rel_ver!r})")
-    verify_pypi(rel_ver)
+    if not args.no_publish:
+        trace(f"verify_pypi({rel_ver!r})")
+        verify_pypi(rel_ver)
 
 
 if __name__ == "__main__":
