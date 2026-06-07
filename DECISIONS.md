@@ -10,8 +10,10 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 `uv` replaces `pip` + `venv` for environment and dependency management.
 
 - **Speed**: written in Rust; resolves and installs orders of magnitude faster than pip.
-- **Single tool**: handles virtualenv creation (`uv venv`), installation (`uv pip install`), and locking (`uv pip compile`) — no need for pip-tools alongside pip.
-- **pip-compatible**: `uv pip compile` produces standard `requirements.txt` files; `uv pip install -r` accepts them. No lock-in to a proprietary format.
+- **Single tool**: handles virtualenv creation (`uv venv`), installation (`uv pip install`),
+  and locking (`uv pip compile`) — no need for pip-tools alongside pip.
+- **pip-compatible**: `uv pip compile` produces standard `requirements.txt` files;
+  `uv pip install -r` accepts them. No lock-in to a proprietary format.
 - **Actively maintained**: developed by Astral (same team as ruff), large and fast-growing community.
 
 The `.in` / `.txt` split (spec vs. lock) follows the pip-tools convention, which uv fully supports.
@@ -20,16 +22,24 @@ The `.in` / `.txt` split (spec vs. lock) follows the pip-tools convention, which
 
 ## Individual tool configuration files over pyproject.toml
 
-Each tool (`ruff`, `mypy`, `bandit`, `tox`, …) gets its own configuration file rather than a consolidated `[tool.*]` section in `pyproject.toml`.
+Each tool (`ruff`, `mypy`, `bandit`, `tox`, …) gets its own configuration file
+rather than a consolidated `[tool.*]` section in `pyproject.toml`.
 
 Reasons:
 
-- **Discoverability**: a developer (or agent) looking for ruff's config opens `ruff.toml` directly; they do not need to know which tools happen to store config in `pyproject.toml` and scroll through an unrelated file.
-- **Separation of concerns**: `pyproject.toml` is the package manifest (metadata, dependencies, build system). Mixing tool config into it conflates two distinct responsibilities.
-- **Diff clarity**: changes to a tool's config appear in that tool's file, not buried in `pyproject.toml` alongside unrelated edits.
-- **Portability**: individual config files work even when the tool is invoked outside the Python packaging context (e.g., in a pre-commit hook, a CI step, or a standalone script).
+- **Discoverability**: a developer (or agent) looking for ruff's config opens `ruff.toml`
+  directly; they do not need to know which tools happen to store config in `pyproject.toml`
+  and scroll through an unrelated file.
+- **Separation of concerns**: `pyproject.toml` is the package manifest
+  (metadata, dependencies, build system).
+  Mixing tool config into it conflates two distinct responsibilities.
+- **Diff clarity**: changes to a tool's config appear in that tool's file,
+  not buried in `pyproject.toml` alongside unrelated edits.
+- **Portability**: individual config files work even when the tool is invoked outside
+  the Python packaging context (e.g., in a pre-commit hook, a CI step, or a standalone script).
 
-`pyproject.toml` retains only what belongs there: `[project]` metadata (including runtime `dependencies`) and `[build-system]`.
+`pyproject.toml` retains only what belongs there: `[project]` metadata
+(including runtime `dependencies`) and `[build-system]`.
 
 ---
 
@@ -37,20 +47,26 @@ Reasons:
 
 Criteria for choosing a Python version (in order):
 
-1. **Active support window**: target a version with several years of security fixes remaining; avoid versions nearing EOL.
+1. **Active support window**: target a version with several years of security fixes remaining;
+   avoid versions nearing EOL.
 2. **Ecosystem readiness**: all dependencies must support the target version.
 3. **Feature set**: prefer newer versions for language improvements and performance gains.
-4. **Project type**: a published library must support older versions for broad compatibility; a personal tool can freely track the latest stable.
+4. **Project type**: a published library must support older versions for broad compatibility;
+   a personal tool can freely track the latest stable.
 
-As of June 2026, Python 3.13 is the latest stable release (EOL Oct 2029), all project dependencies support it, and 3.14 is still pre-release. There is no reason to stay on an older version for a personal tool.
+As of June 2026, Python 3.13 is the latest stable release (EOL Oct 2029),
+all project dependencies support it, and 3.14 is still pre-release.
+There is no reason to stay on an older version for a personal tool.
 
-The version pin (`3.13`, not `≥ 3.13`) is intentional: it makes the runtime explicit and reproducible. Upgrade deliberately when 3.14 stabilizes and the ecosystem catches up.
+The version pin (`3.13`, not `≥ 3.13`) is intentional: it makes the runtime explicit and
+reproducible. Upgrade deliberately when 3.14 stabilizes and the ecosystem catches up.
 
 ---
 
 ## Modular architecture and separation of concerns
 
-The package is organized in layers with a strict inward dependency direction. Each decision below addresses a specific maintainability or testability concern.
+The package is organized in layers with a strict inward dependency direction.
+Each decision below addresses a specific maintainability or testability concern.
 
 ### Domain models and exceptions are dependency-free
 
@@ -64,7 +80,8 @@ and they can be read and understood without knowledge of httpx, XML, or argparse
 than on the concrete `_client.py`. This decouples business logic from HTTP and XML details:
 
 - Unit tests for `search.py` pass a fake/stub client with no httpx involved.
-- The concrete client can be replaced (e.g., async variant, cached variant) without touching `search.py`.
+- The concrete client can be replaced (e.g., async variant, cached variant)
+  without touching `search.py`.
 - The protocol is the contract; the client is an implementation detail.
 
 ### Concrete client is internal (`_client.py`)
@@ -74,11 +91,13 @@ Callers (including `cli.py`) never import it directly; they receive a client ins
 dependency injection. This means:
 
 - XML parsing is fully encapsulated: swapping the parser is a one-file change.
-- The HTTP layer can evolve (e.g., connection pooling, retries) without rippling through the codebase.
+- The HTTP layer can evolve (e.g., connection pooling, retries)
+  without rippling through the codebase.
 
 ### CLI is a pure I/O adapter (`cli.py`)
 
 `cli.py` contains no business logic. It only:
+
 1. Parses command-line arguments.
 2. Calls `search.py` functions.
 3. Formats and prints output.
@@ -118,9 +137,12 @@ This applies the **prefer stdlib** rule from the [Package selection policy](#pac
 
 `unittest` is stdlib, but its functionality is not equivalent to `pytest`:
 
-- **Fixtures**: `pytest` fixture injection is composable and scope-aware; `unittest` setUp/tearDown is flat and class-scoped.
-- **Parametrize**: `@pytest.mark.parametrize` is concise; the `unittest` equivalent (`subTest` or external libs) is verbose.
-- **Assertions**: `pytest` rewrites plain `assert` statements and produces detailed diffs; `unittest` requires `assertEqual`, `assertIn`, etc.
+- **Fixtures**: `pytest` fixture injection is composable and scope-aware;
+  `unittest` setUp/tearDown is flat and class-scoped.
+- **Parametrize**: `@pytest.mark.parametrize` is concise;
+  the `unittest` equivalent (`subTest` or external libs) is verbose.
+- **Assertions**: `pytest` rewrites plain `assert` statements and produces detailed diffs;
+  `unittest` requires `assertEqual`, `assertIn`, etc.
 - **Ecosystem**: plugins (`pytest-cov`, `pytest-xdist`, …) integrate naturally.
 
 `pytest` has a very large community, is released frequently, and has minimal transitive dependencies.
@@ -152,19 +174,28 @@ supports both sync and async out of the box, and is actively maintained with a l
 The release procedure is automated by `scripts/release.py` rather than `bump-my-version`.
 
 **Why not bump-my-version:**
-- Its natural version scheme is plain `MAJOR.MINOR.PATCH`. Our scheme (`X.Y.0.dev0` ↔ `X.Y.0` ↔ `X.(Y+1).0.dev0`) requires custom `parse` regex, custom `serialize` patterns, and a custom `dev` part — non-trivial configuration for no real gain.
-- Its core value is updating a version string atomically across many files. Our version appears in exactly **one file** (`pyproject.toml`).
-- Every step outside version bumping — locking deps, auditing, running integration tests, updating `CHANGELOG.md`, pushing, verifying PyPI — falls outside its scope anyway, so a wrapper script is unavoidable.
+
+- Its natural version scheme is plain `MAJOR.MINOR.PATCH`.
+  Our scheme (`X.Y.0.dev0` ↔ `X.Y.0` ↔ `X.(Y+1).0.dev0`) requires custom `parse` regex,
+  custom `serialize` patterns, and a custom `dev` part — non-trivial configuration for no real gain.
+- Its core value is updating a version string atomically across many files.
+  Our version appears in exactly **one file** (`pyproject.toml`).
+- Every step outside version bumping — locking deps, auditing, running integration tests,
+  updating `CHANGELOG.md`, pushing, verifying PyPI — falls outside its scope anyway,
+  so a wrapper script is unavoidable.
 - Adding it as a dependency is not justified given the above.
 
 **Design of the script:**
-- Lives in `scripts/`, separate from package source (`src/`), and is never installed as part of the package.
+
+- Lives in `scripts/`, separate from package source (`src/`),
+  and is never installed as part of the package.
 - Uses `tomlkit` to read and write `pyproject.toml`: unlike a `tomllib` + `tomli_w` round-trip or
   `re`-based line editing, `tomlkit` is a style-preserving parser — it keeps comments, formatting,
   and quote styles intact while understanding TOML structure (quoted keys, section scoping, …).
 - Uses `packaging.version` (already a transitive dev dep via tox/pytest) to parse the current version.
 - Uses `subprocess`, `pathlib`, `datetime`, `urllib`, `json` (all stdlib) for the remaining steps.
-- Exposed via `tox -e release` (with `passenv = BGG_TOKEN`) so it runs in an isolated, reproducible environment.
+- Exposed via `tox -e release` (with `passenv = BGG_TOKEN`) so it runs in an isolated,
+  reproducible environment.
 
 ---
 
