@@ -67,6 +67,37 @@ def _check_changelog() -> None:
         raise SystemExit("Error: CHANGELOG.md [Unreleased] section has no content")
 
 
+def _check_git_remote(rel_ver: str) -> None:
+    # Fetch first so remote refs are up to date before any comparison.
+    run(["git", "fetch", "origin"])
+    # Local main must be exactly in sync with origin/main.
+    ahead = run(
+        ["git", "rev-list", "--count", "origin/main..HEAD"],
+        capture_output=True, text=True,
+    ).stdout.strip()
+    behind = run(
+        ["git", "rev-list", "--count", "HEAD..origin/main"],
+        capture_output=True, text=True,
+    ).stdout.strip()
+    if behind != "0":
+        raise SystemExit(f"Error: local main is behind origin/main by {behind} commit(s)")
+    if ahead != "0":
+        raise SystemExit(
+            f"Error: local main is unexpectedly ahead of origin/main by {ahead} commit(s)"
+        )
+    # Release tag must not already exist — locally or on the remote.
+    tag = f"version/{rel_ver}"
+    local_tags = run(["git", "tag", "--list", tag], capture_output=True, text=True).stdout.strip()
+    if local_tags:
+        raise SystemExit(f"Error: tag {tag!r} already exists locally")
+    remote_tags = run(
+        ["git", "ls-remote", "--tags", "origin", f"refs/tags/{tag}"],
+        capture_output=True, text=True,
+    ).stdout.strip()
+    if remote_tags:
+        raise SystemExit(f"Error: tag {tag!r} already exists on origin")
+
+
 def read_version() -> str:
     doc = tomlkit.parse((ROOT / "pyproject.toml").read_text())
     return str(doc["project"]["version"])
