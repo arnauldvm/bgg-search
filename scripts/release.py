@@ -204,6 +204,10 @@ def main() -> None:
     global _verbose
     args = parse_args()
     _verbose = args.verbose
+    if args.verify_pypi:
+        verify_pypi(args.verify_pypi)
+        return
+
     bgg_token = os.environ.get("BGG_TOKEN")
     trace(f"BGG_TOKEN={'set' if bgg_token else 'unset'}")
     dev_ver = read_version()
