@@ -2,17 +2,24 @@
 
 ## Step 1 — `parse_args()`
 
-`scripts/release.py`: add `argparse`-based argument parsing.
+`scripts/release.py`: add `argparse`-based argument parsing — positional `bump`,
+`--verbose` / `-v`, and the mutually exclusive group `--check-only` / `--verify-pypi VERSION`.
 
-- Positional `bump` (`major`|`minor`|`patch`, default `minor`).
-- `--verbose` / `-v`: echo each command as it runs.
-- Mutually exclusive mode group: `--check-only` and `--verify-pypi VERSION`.
+## Step 2 — Wire `--verbose`
 
-## Step 2 — Wire args into `main()`
+`scripts/release.py`: add module-level `_verbose` flag; gate command echoing in `run()` on it;
+set it from `args.verbose` in `main()`.
 
-`scripts/release.py`: use parsed arguments in `main()`.
+## Step 3 — Wire `bump`
 
-- Pass `bump` to `next_dev_version()`.
-- Gate command echoing on `--verbose`.
-- `--check-only`: call `check_preconditions()` and exit.
-- `--verify-pypi VERSION`: call `verify_pypi()` and exit.
+`scripts/release.py`: pass `args.bump` to `next_dev_version()` in `main()`.
+
+## Step 4 — Wire `--check-only`
+
+`scripts/release.py`: after `check_preconditions()`, print a confirmation and exit if
+`args.check_only`.
+
+## Step 5 — Wire `--verify-pypi`
+
+`scripts/release.py`: if `args.verify_pypi` is set, call `verify_pypi()` and exit before
+any release steps.
