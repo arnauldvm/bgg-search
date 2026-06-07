@@ -130,7 +130,16 @@ Each step (commit) must be:
 
 ## Release procedure
 
-**Precondition**: `PHASE_PLAN.md` must not exist on `main` (see development workflow step 7). The release script aborts if it does.
+**Preconditions** — the release script verifies all of the following and aborts if any fails:
+
+1. Current branch is `main`.
+2. Working tree is clean (no staged or unstaged changes).
+3. Current version in `pyproject.toml` ends in `.devN` (signals an unreleased development state).
+4. The release tag `version/X.Y.Z` does not already exist locally or on the remote.
+5. `BGG_TOKEN` environment variable is set (without it, integration tests silently skip and report success).
+6. `CHANGELOG.md` has content under `[Unreleased]` (releasing with an empty section is almost certainly a mistake).
+7. Local `main` is in sync with `origin/main` (not behind, not unexpectedly ahead).
+8. `PHASE_PLAN.md` does not exist (see development workflow step 7).
 
 1. Re-lock dependencies: `tox -e lock`
 2. Audit dependencies: `tox -e audit`
