@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `search_games(query, client)` and `get_game(game_id, client)` use-case functions.
+- `bgg-search search <query>` and `bgg-search details <id>` CLI commands.
 
 ## [0.3.1] - 2026-06-07
 
