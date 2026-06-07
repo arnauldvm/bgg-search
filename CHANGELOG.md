@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-08
+
 ### Added
 
 - `search_games(query, client)` and `get_game(game_id, client)` use-case functions.
