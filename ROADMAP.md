@@ -83,6 +83,24 @@ Deliverables:
 
 ---
 
+## Phase 0.5 — API documentation
+
+**Goal**: the public Python API is fully documented and the documentation is published and
+kept up to date automatically on every release.
+
+Deliverables:
+
+- Docstrings on all public symbols (`search_games`, `get_game`, `BggClientProtocol`,
+  `GameSummary`, `GameDetails`, all exception classes).
+- `pdoc`-based documentation generated from those docstrings.
+- GitHub Actions workflow: regenerate and publish to GitHub Pages on every `version/*` tag push.
+- GitHub Releases created automatically on every `version/*` tag push, populated with the
+  corresponding `CHANGELOG.md` section.
+- `docs/` entry-point configuration (or `pdoc` invocation in `tox`) wired into the release
+  process so documentation is never stale after a release.
+
+---
+
 ## Version map (MVP)
 
 | Version | Phase |
@@ -92,7 +110,8 @@ Deliverables:
 | `0.3.0` | HTTP client |
 | `0.3.1` | Release tool (tooling only — patch) |
 | `0.4.0` | Search use-case & CLI |
-| `1.0.0` | MVP tag (after `0.4.0`) |
+| `0.5.0` | API documentation |
+| `1.0.0` | MVP tag (after `0.5.0`) |
 
 ---
 
