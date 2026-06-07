@@ -1,6 +1,11 @@
 default: true
+# MD003 + MD018 + MD019 together guarantee that every ATX heading in this project
+# starts with exactly "## " (two hashes, one space). This makes "## [" a reliable
+# section delimiter for parsing CHANGELOG.md in release.py without regex.
 MD003:
   style: atx
+MD018: true
+MD019: true
 MD013:
   line_length: 100
   heading_line_length: 100

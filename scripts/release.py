@@ -52,6 +52,21 @@ def _check_git_local() -> None:
         raise SystemExit("Error: working tree is not clean")
 
 
+def _check_changelog() -> None:
+    text = (ROOT / "CHANGELOG.md").read_text()
+    marker = "## [Unreleased]"
+    start = text.find(marker)
+    if start == -1:
+        raise SystemExit("Error: CHANGELOG.md has no [Unreleased] section")
+    after = text[start + len(marker):]
+    # MD003+MD018+MD019 enforce "## " as the exact ATX heading prefix, so "## [" is
+    # an unambiguous section delimiter in CHANGELOG.md — no regex needed.
+    next_section = after.find("## [")
+    section_body = after[:next_section] if next_section != -1 else after
+    if not section_body.strip():
+        raise SystemExit("Error: CHANGELOG.md [Unreleased] section has no content")
+
+
 def read_version() -> str:
     doc = tomlkit.parse((ROOT / "pyproject.toml").read_text())
     return str(doc["project"]["version"])
