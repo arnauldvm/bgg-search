@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import pathlib
@@ -156,6 +157,30 @@ def write_version(new_version: str) -> None:
     doc = tomlkit.parse(path.read_text())
     doc["project"]["version"] = new_version
     path.write_text(tomlkit.dumps(doc))
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Automate the bgg-search release procedure.")
+    parser.add_argument(
+        "bump",
+        nargs="?",
+        choices=["major", "minor", "patch"],
+        default="minor",
+        help="Version component to bump after release (default: minor).",
+    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Echo each command as it runs.")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--check-only",
+        action="store_true",
+        help="Run preconditions only and exit; make no changes.",
+    )
+    mode.add_argument(
+        "--verify-pypi",
+        metavar="VERSION",
+        help="Skip the release; only poll PyPI for VERSION.",
+    )
+    return parser.parse_args()
 
 
 def main() -> None:
