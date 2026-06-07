@@ -178,3 +178,20 @@ Changes:
 - **Commands table**: add `tox -e release` row.
 - **Release procedure**: replace the 11-step manual procedure with the single command
   `BGG_TOKEN=<token> tox -e release`.
+
+---
+
+## Step 8 — `--no-publish` flag
+
+Feature branch: `feat/release-no-publish`
+
+Files modified:
+
+- `scripts/release.py` — add `--no-publish` flag to `parse_args()` and wire into `main()`
+- `AGENTS.md` — document the new flag in the release procedure section
+
+When `--no-publish` is set, the script performs all local steps (lock, audit, integ, version
+bump, CHANGELOG update, commit, tag, next-dev bump, commit) but skips pushing the tag and
+polling PyPI. `git push origin main` still runs so local commits are not left unpushed.
+
+`--no-publish` is mutually exclusive with `--check-only` and `--verify-pypi`.
