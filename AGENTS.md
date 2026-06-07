@@ -96,6 +96,7 @@ All tasks run through **tox**, which executes each step in an isolated virtualen
 | Integration tests | `BGG_TOKEN=<token> tox -e integ` |
 | Dependency audit (pip-audit) | `tox -e audit` |
 | Re-lock all dependencies | `tox -e lock` |
+| Release | `BGG_TOKEN=<token> tox -e release` |
 
 The pre-commit hook runs `tox` automatically before every commit and blocks if any check fails.
 
