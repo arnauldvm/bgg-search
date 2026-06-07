@@ -1,8 +1,10 @@
 import json
+import os
 import pathlib
 import subprocess
 import time
 import urllib.request
+from datetime import date
 from typing import Any, Literal
 
 import tomlkit
@@ -149,3 +151,36 @@ def write_version(new_version: str) -> None:
     doc = tomlkit.parse(path.read_text())
     doc["project"]["version"] = new_version
     path.write_text(tomlkit.dumps(doc))
+
+
+def main() -> None:
+    bgg_token = os.environ.get("BGG_TOKEN")
+    dev_ver = read_version()
+    rel_ver = release_version(dev_ver)
+    next_dev_ver = next_dev_version(rel_ver)
+    today = date.today().isoformat()
+
+    check_preconditions(rel_ver, bgg_token)
+
+    run(["tox", "-e", "lock"])
+    run(["tox", "-e", "audit"])
+    run(["tox", "-e", "integ"])
+
+    write_version(rel_ver)
+    update_changelog(rel_ver, today)
+    run(["git", "add", "pyproject.toml", "CHANGELOG.md"])
+    run(["git", "commit", "-m", f"chore: release {rel_ver}"])
+    run(["git", "tag", f"version/{rel_ver}"])
+
+    write_version(next_dev_ver)
+    run(["git", "add", "pyproject.toml"])
+    run(["git", "commit", "-m", f"chore(pyproject.toml): bump version to {next_dev_ver}"])
+
+    run(["git", "push", "origin", "main"])
+    run(["git", "push", "origin", f"version/{rel_ver}"])
+
+    verify_pypi(rel_ver)
+
+
+if __name__ == "__main__":
+    main()
