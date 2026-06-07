@@ -209,7 +209,7 @@ def main() -> None:
     dev_ver = read_version()
     trace(f"current version: {dev_ver}")
     rel_ver = release_version(dev_ver)
-    next_dev_ver = next_dev_version(rel_ver)
+    next_dev_ver = next_dev_version(rel_ver, bump=args.bump)
     today = date.today().isoformat()
     trace(f"releasing {rel_ver} → next dev {next_dev_ver} (date: {today})")
 
