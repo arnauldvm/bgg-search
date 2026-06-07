@@ -4,13 +4,14 @@ import time
 import pytest
 
 from bgg_search._client import BggClient
+from bgg_search._protocol import BggClientProtocol
 from bgg_search.models import GameDetails, GameSummary
 
 _CATAN_ID = 13
 
 
 @pytest.fixture(scope="module")
-def bgg_client() -> BggClient:
+def client() -> BggClientProtocol:
     token = os.getenv("BGG_TOKEN")
     if token is None:
         pytest.skip("BGG_TOKEN not set")
