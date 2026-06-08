@@ -102,6 +102,8 @@ environment variable each session.
 
 Deliverables:
 
+- Release script updated to keep the `CHANGELOG.md` ToC in sync: prepend a new version row
+  and update the date on each release.
 - Docstrings on all public symbols (`search_games`, `get_game`, `BggClientProtocol`,
   `GameSummary`, `GameDetails`, all exception classes).
 - `pdoc`-based API reference generated from those docstrings, published to GitHub Pages on
