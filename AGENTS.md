@@ -2,7 +2,8 @@
 
 ## Project context
 
-`bgg-search` is a personal Python package for querying [BoardGameGeek](https://boardgamegeek.com) (BGG).
+`bgg-search` is a personal Python package for querying
+[BoardGameGeek](https://boardgamegeek.com) (BGG).
 It wraps the BGG XML API2 and exposes:
 
 - a clean, reusable Python API for searching games, retrieving game details, and filtering results;
@@ -65,7 +66,8 @@ Transient files (not always present):
 
 ## Development environment
 
-Dependencies are managed with **uv**. Each context has its own requirements file (see `requirements/`).
+Dependencies are managed with **uv**.
+Each context has its own requirements file (see `requirements/`).
 `.in` files are the unpinned specs; `.txt` files are the locked versions generated from them.
 
 ```bash
@@ -143,12 +145,20 @@ Every change (feature, bug fix, refactoring, …) follows this process:
 
 Each step (commit) must be:
 
-- **Localized**: touch as few files as possible — ideally one; as few sections within that file as possible.
+- **Localized**: touch as few files as possible — ideally one;
+  as few sections within that file as possible.
 - **Consistent**: all changes in the step serve a single, coherent purpose.
 - **Clean**: the codebase must pass `tox` at the end of every step
   (enforced by the pre-commit hook), with no known errors left behind.
 
 `PLAN.md` is branch-local and must **not** be merged into `main` (enforced by step 5 above).
+
+### Plan file conventions
+
+All plan files (`ROADMAP.md`, `PHASE_PLAN.md`, `PLAN.md`) track completion inline.
+Mark each deliverable or step done by prepending `✓` (followed by a space) to its bullet as
+soon as the work is committed. The mark must be part of the same commit as the work it tracks
+— do not defer or batch-update plan files at the end of a step or phase.
 
 ## Release procedure
 
@@ -158,7 +168,8 @@ BGG_TOKEN=<token> tox -e release
 
 The script verifies all preconditions, runs the full quality gate, bumps versions,
 commits, tags, pushes, and polls PyPI — aborting with a clear message on any failure.
-Pass `--help` for available options (`--check-only`, `--no-publish`, `--verify-pypi`, `--verbose`, `bump`).
+Pass `--help` for available options
+(`--check-only`, `--no-publish`, `--verify-pypi`, `--verbose`, `bump`).
 
 ### Preconditions verified by the script
 
@@ -206,8 +217,10 @@ Rules:
 
 - `models.py` and `exceptions.py`: no imports from this package.
 - `_protocol.py`: imports `models.py` only; defines `BggClientProtocol` (`typing.Protocol`).
-- `_client.py`: internal (underscore prefix); never imported directly by callers; implements `BggClientProtocol`.
-- `search.py`: depends on `BggClientProtocol`, not on `_client.py`; receives a client instance via parameter.
+- `_client.py`: internal (underscore prefix); never imported directly by callers;
+  implements `BggClientProtocol`.
+- `search.py`: depends on `BggClientProtocol`, not on `_client.py`;
+  receives a client instance via parameter.
 - `cli.py`: pure I/O adapter — parse args, call `search.py`, format output; no business logic.
 - `__init__.py`: explicitly re-exports the public API;
   adding internal modules never accidentally becomes public.
@@ -255,7 +268,8 @@ not implementation details.
 - Require a BGG API token passed via the `BGG_TOKEN` environment variable;
   tests are skipped when it is absent.
 - Run only explicitly (e.g., before a release) — never triggered automatically.
-- Keep the number of requests minimal: one test must not make more API calls than strictly necessary.
+- Keep the number of requests minimal:
+  one test must not make more API calls than strictly necessary.
 - Add a `time.sleep` between requests to avoid flooding the BGG API.
 - One file per high-level scenario: `tests/integ/test_search_flow.py`, etc.
 
@@ -292,7 +306,8 @@ Use commits of the form `<action>(<scope>):<description>`, where:
 - `<scope>` is a compact spec of the files full path (relative to project root)  
   (exceptionally it may be omitted, when the commit concerns the whole project);  
   optionally followed by `> <location>` to pinpoint the change within the file  
-  (e.g. a class name, function name, or config section): `src/bgg_search/client.py > BggClient.search`
+  (e.g. a class name, function name, or config section):
+  `src/bgg_search/client.py > BggClient.search`
 - `<description>` is a short sentence describing the modification (do not repeat the action)
 
 Do not add `Co-Authored-By` trailers. AI involvement is documented once in this file.
@@ -308,10 +323,12 @@ Versions follow [Semantic Versioning](https://semver.org) (`MAJOR.MINOR.PATCH`):
 Between releases the version carries the `.dev0` suffix (PEP 440),
 signalling that the code is not yet a stable build. The canonical workflow:
 
-1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit, tag `version/X.Y.Z`.
+1. Before release: set version to `X.Y.Z` in `pyproject.toml`, update `CHANGELOG.md`, commit,
+   tag `version/X.Y.Z`.
 2. After release: immediately bump to `X.(Y+1).0.dev0` and commit.
 
-The version is declared once, in `pyproject.toml` (`version = "..."`); the package exposes it via `importlib.metadata`:
+The version is declared once, in `pyproject.toml` (`version = "..."`);
+the package exposes it via `importlib.metadata`:
 
 ```python
 from importlib.metadata import version
