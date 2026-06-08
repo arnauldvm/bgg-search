@@ -17,7 +17,7 @@ workflow in [AGENTS.md](AGENTS.md).
 
 ## Step 1 — CHANGELOG.md ToC sync in release script
 
-- `scripts/release.py`: extend `update_changelog` to also prepend a new version row to the
+- ✓ `scripts/release.py`: extend `update_changelog` to also prepend a new version row to the
   CHANGELOG.md ToC on each release, so the ToC stays in sync without manual edits.
 
 ## Step 2 — Docstrings on all public symbols

@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import pathlib
+import re
 import subprocess
 import time
 import urllib.request
@@ -153,16 +154,30 @@ def read_version() -> str:
     return str(doc["project"]["version"])
 
 
+def _changelog_anchor(version_date: str) -> str:
+    # Replicates GitHub's heading-anchor algorithm: lowercase, strip non-alphanumeric/space/hyphen,
+    # replace spaces with hyphens.
+    return re.sub(r"[^a-z0-9 -]", "", version_date.lower()).replace(" ", "-")
+
+
 def update_changelog(version: str, date: str) -> None:
     trace(f"update_changelog({version!r}, {date!r}) → CHANGELOG.md")
     path = ROOT / "CHANGELOG.md"
     text = path.read_text()
+    version_date = f"{version} - {date}"
     # MD003+MD018+MD019 guarantee "## [" is an unambiguous section prefix (see .markdownlint.yaml).
     old_heading = "## [Unreleased]"
-    new_heading = f"## [Unreleased]\n\n## [{version}] - {date}"
+    new_heading = f"## [Unreleased]\n\n## [{version_date}]"
     if old_heading not in text:
         raise SystemExit("Error: CHANGELOG.md has no [Unreleased] section")
-    path.write_text(text.replace(old_heading, new_heading, 1))
+    text = text.replace(old_heading, new_heading, 1)
+    # Keep the ToC in sync: insert a new row after the [Unreleased] ToC entry.
+    toc_unreleased = "- [Unreleased](#unreleased)"
+    toc_new_row = f"- [{version_date}](#{_changelog_anchor(version_date)})"
+    if toc_unreleased not in text:
+        raise SystemExit("Error: CHANGELOG.md ToC has no [Unreleased] entry")
+    text = text.replace(toc_unreleased, f"{toc_unreleased}\n{toc_new_row}", 1)
+    path.write_text(text)
 
 
 def write_version(new_version: str) -> None:
