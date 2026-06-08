@@ -83,21 +83,27 @@ Deliverables:
 
 ---
 
-## Phase 0.5 — API documentation
+## Phase 0.5 — Documentation & token config
 
-**Goal**: the public Python API is fully documented and the documentation is published and
-kept up to date automatically on every release.
+**Goal**: the public Python API and CLI are fully documented and published automatically on
+every release; the BGG token can be stored in a config file instead of requiring an
+environment variable each session.
 
 Deliverables:
 
 - Docstrings on all public symbols (`search_games`, `get_game`, `BggClientProtocol`,
   `GameSummary`, `GameDetails`, all exception classes).
-- `pdoc`-based documentation generated from those docstrings.
-- GitHub Actions workflow: regenerate and publish to GitHub Pages on every `version/*` tag push.
-- GitHub Releases created automatically on every `version/*` tag push, populated with the
-  corresponding `CHANGELOG.md` section.
-- `docs/` entry-point configuration (or `pdoc` invocation in `tox`) wired into the release
-  process so documentation is never stale after a release.
+- `pdoc`-based API reference generated from those docstrings, published to GitHub Pages on
+  every `version/*` tag push.
+- Auto-generated CLI reference (captured from `bgg-search --help` and sub-command `--help`
+  outputs) included in the pdoc site as a static page.
+- README "Python API reference" and "CLI reference" sections replaced with links to the
+  generated docs site; Quickstart examples remain.
+- Token config file: `~/.config/bgg-search/config.toml` (`[bgg] token = "..."`), with an
+  optional `--token-file <path>` global CLI option. Resolution order: `BGG_TOKEN` env var →
+  `--token-file` → default config file.
+- ✓ GitHub Releases created automatically on every `version/*` tag push, populated with the
+  corresponding `CHANGELOG.md` section and a PyPI link.
 
 ---
 
@@ -110,7 +116,7 @@ Deliverables:
 | `0.3.0` | HTTP client |
 | `0.3.1` | Release tool (tooling only — patch) |
 | `0.4.0` | Search use-case & CLI |
-| `0.5.0` | API documentation |
+| `0.5.0` | Documentation & token config |
 | `1.0.0` | MVP tag (after `0.5.0`) |
 
 ---
