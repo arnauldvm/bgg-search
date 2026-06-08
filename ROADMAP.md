@@ -11,13 +11,13 @@ that ship no user-facing changes are released as patch versions.
 
 Deliverables:
 
-- `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime, dev,
-  unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
-- Minimal `src/bgg_search/__init__.py` (version only).
-- `tox` passing clean with no source to check yet.
-- Remote repository configured (GitHub): branch protection, issue tracker.
-- CI pipeline (GitHub Actions): quality gate on every PR, automated package publish to PyPI on
-  version tag.
+- ✓ `pyproject.toml`, `tox.ini`, linters (`ruff`, `mypy`, `bandit`), `requirements/` (runtime,
+  dev, unit, integ, audit), `.gitignore`, `CHANGELOG.md`, `README.md` stub.
+- ✓ Minimal `src/bgg_search/__init__.py` (version only).
+- ✓ `tox` passing clean with no source to check yet.
+- ✓ Remote repository configured (GitHub): branch protection, issue tracker.
+- ✓ CI pipeline (GitHub Actions): quality gate on every PR, automated package publish to PyPI
+  on version tag.
 
 ---
 
@@ -27,12 +27,12 @@ Deliverables:
 
 Deliverables:
 
-- `models.py`: pure dataclasses for game data structures.
-- `exceptions.py`: domain exception hierarchy.
-- `_protocol.py`: `BggClientProtocol` (`typing.Protocol`) — the contract between the use-case
-  layer and the HTTP layer.
-- `__init__.py`: explicit public API surface (re-exports only).
-- Unit tests for models and exceptions.
+- ✓ `models.py`: pure dataclasses for game data structures.
+- ✓ `exceptions.py`: domain exception hierarchy.
+- ✓ `_protocol.py`: `BggClientProtocol` (`typing.Protocol`) — the contract between the
+  use-case layer and the HTTP layer.
+- ✓ `__init__.py`: explicit public API surface (re-exports only).
+- ✓ Unit tests for models and exceptions.
 
 ---
 
@@ -42,9 +42,9 @@ Deliverables:
 
 Deliverables:
 
-- `_client.py`: concrete `httpx`-based implementation of `BggClientProtocol`,
+- ✓ `_client.py`: concrete `httpx`-based implementation of `BggClientProtocol`,
   covering the `search` and `thing` endpoints.
-- Unit tests (mocked HTTP via `httpx.MockTransport`).
+- ✓ Unit tests (mocked HTTP via `httpx.MockTransport`).
 
 ---
 
@@ -55,12 +55,12 @@ a single command, with no manual file edits.
 
 Deliverables:
 
-- `scripts/release.py`: automates all release steps (lock, audit, integ, version bump,
+- ✓ `scripts/release.py`: automates all release steps (lock, audit, integ, version bump,
   CHANGELOG rename, commit, tag, dev bump, push, PyPI verification); aborts early if
   `PHASE_PLAN.md` is still present. Uses only stdlib and libraries already present in the
   dev dependency tree (`tomllib`, `tomli_w`, `packaging.version`).
-- `tox -e release` env exposing the script in an isolated, reproducible environment.
-- Updated `AGENTS.md`: release procedure reduced to `BGG_TOKEN=<token> tox -e release`.
+- ✓ `tox -e release` env exposing the script in an isolated, reproducible environment.
+- ✓ Updated `AGENTS.md`: release procedure reduced to `BGG_TOKEN=<token> tox -e release`.
 
 ---
 
@@ -73,13 +73,13 @@ with their BGG IDs; `bgg-search details <id>` fetches full details
 
 Deliverables:
 
-- `search.py`: `search_games(query)` and `get_game(id)` use-cases.
-- `cli.py`: `bgg-search search <query>` and `bgg-search details <id>` sub-commands.
-- Unit tests for `search.py`; integration tests for the end-to-end search flow.
-- Complete `README.md`: installation, quickstart, Python API reference, CLI reference.
-- `CHANGELOG.md` complete for all phases.
-- Dependency audit (`tox -e audit`) passing clean.
-- Full integration test pass.
+- ✓ `search.py`: `search_games(query)` and `get_game(id)` use-cases.
+- ✓ `cli.py`: `bgg-search search <query>` and `bgg-search details <id>` sub-commands.
+- ✓ Unit tests for `search.py`; integration tests for the end-to-end search flow.
+- ✓ Complete `README.md`: installation, quickstart, Python API reference, CLI reference.
+- ✓ `CHANGELOG.md` complete for all phases.
+- ✓ Dependency audit (`tox -e audit`) passing clean.
+- ✓ Full integration test pass.
 
 ---
 
@@ -111,11 +111,11 @@ Deliverables:
 
 | Version | Phase |
 |---------|-------|
-| `0.1.0` | Project scaffold |
-| `0.2.0` | Domain & protocol |
-| `0.3.0` | HTTP client |
-| `0.3.1` | Release tool (tooling only — patch) |
-| `0.4.0` | Search use-case & CLI |
+| ✓ `0.1.0` | Project scaffold |
+| ✓ `0.2.0` | Domain & protocol |
+| ✓ `0.3.0` | HTTP client |
+| ✓ `0.3.1` | Release tool (tooling only — patch) |
+| ✓ `0.4.0` | Search use-case & CLI |
 | `0.5.0` | Documentation & token config |
 | `1.0.0` | MVP tag (after `0.5.0`) |
 
