@@ -304,6 +304,15 @@ Common rules to observe:
 
 The pre-commit hook enforces this automatically and will block commits that violate these rules.
 
+### Spell checking
+
+All files are spell-checked with `cspell` (config: `.cspell.yaml`).
+When introducing a new technical term, proper noun, or domain-specific identifier that cspell
+does not recognize, add it to the `words` list in `.cspell.yaml` in the same commit.
+Include a short inline comment explaining what the word is.
+
+Run `npx cspell "**" --no-progress` locally to verify before committing.
+
 ### Language
 
 Use American English for text (messages, documentation, commits...)
