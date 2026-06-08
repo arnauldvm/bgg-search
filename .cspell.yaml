@@ -33,6 +33,29 @@ words:
   - pytest-cov
   - Catan
   - Pandemic
+  # Python / documentation
+  - docstrings
+  - pdoc
+  - devrelease
+  # tox keywords
+  - passenv
+  - toxinidir
+  # pytest fixtures and hooks
+  - capsys
+  - sessionfinish
+  - exitstatus
+  # BGG XML API attribute names
+  - yearpublished
+  - minplayers
+  - maxplayers
+  - minplaytime
+  - maxplaytime
+  - averageweight
+  - sortindex
+  # BGG game data (German title in test fixtures)
+  - Siedler
+  # system library in locked deps
+  - librt
 
 ignorePaths:
   - .git/**
