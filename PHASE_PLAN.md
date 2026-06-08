@@ -22,7 +22,7 @@ workflow in [AGENTS.md](AGENTS.md).
 
 ## Step 2 — Docstrings on all public symbols
 
-- `src/bgg_search/models.py`: docstrings for `GameSummary` and `GameDetails`
+- ✓ `src/bgg_search/models.py`: docstrings for `GameSummary` and `GameDetails`
   (class-level and field-level).
 - `src/bgg_search/exceptions.py`: docstrings for `BggSearchError`, `BggApiError`,
   `BggNotFoundError`, `BggParseError`.
