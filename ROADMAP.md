@@ -112,9 +112,9 @@ Deliverables:
   outputs) included in the pdoc site as a static page.
 - README "Python API reference" and "CLI reference" sections replaced with links to the
   generated docs site; Quickstart examples remain.
-- Token config file: `~/.config/bgg-search/config.toml` (`[bgg] token = "..."`), with an
-  optional `--token-file <path>` global CLI option. Resolution order: `BGG_TOKEN` env var →
-  `--token-file` → default config file.
+- Token config file: `./.bgg-token` (plain-text file containing the token), with an optional
+  `--token-file <path>` global CLI option. Resolution order: `--token-file` →
+  `BGG_TOKEN` env var → `./.bgg-token` in the working directory → error.
 - ✓ GitHub Releases created automatically on every `version/*` tag push, populated with the
   corresponding `CHANGELOG.md` section and a PyPI link.
 
