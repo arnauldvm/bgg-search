@@ -3,6 +3,17 @@
 Phases toward `1.0.0` (MVP). Each feature phase is released as `0.N.0`; tooling-only phases
 that ship no user-facing changes are released as patch versions.
 
+**Contents:**
+
+- [Phase 0.1 — Project scaffold](#phase-01--project-scaffold)
+- [Phase 0.2 — Domain & protocol](#phase-02--domain--protocol)
+- [Phase 0.3 — HTTP client](#phase-03--http-client)
+- [Phase 0.3.1 — Release tool](#phase-031--release-tool)
+- [Phase 0.4 — Search use-case & CLI](#phase-04--search-use-case--cli)
+- [Phase 0.5 — Documentation & token config](#phase-05--documentation--token-config)
+- [Version map (MVP)](#version-map-mvp)
+- [Post-MVP features](#post-mvp-features)
+
 ---
 
 ## Phase 0.1 — Project scaffold

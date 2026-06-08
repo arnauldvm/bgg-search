@@ -5,6 +5,14 @@
 by name and retrieve full game details — player counts, play time, weight, BGG rating, and
 more — from the command line or from your own Python code.
 
+**Contents:**
+
+- [Installation](#installation)
+- [Quickstart](#quickstart)
+- [Python API reference](#python-api-reference)
+- [CLI reference](#cli-reference)
+- [Development](#development)
+
 ## Installation
 
 ```bash

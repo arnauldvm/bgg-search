@@ -1,5 +1,15 @@
 # BGG Search — Agent Guide
 
+**Contents:**
+
+- [Project context](#project-context)
+- [Development environment](#development-environment)
+- [Development workflow](#development-workflow)
+- [Release procedure](#release-procedure)
+- [Architecture](#architecture)
+- [Conventions](#conventions)
+- [Reference](#reference)
+
 ## Project context
 
 `bgg-search` is a personal Python package for querying

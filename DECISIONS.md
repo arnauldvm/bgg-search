@@ -3,6 +3,21 @@
 Rationale behind key choices made in this project.
 See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions.
 
+**Contents:**
+
+- [uv as dependency manager](#uv-as-dependency-manager)
+- [Tool config files over pyproject.toml](#individual-tool-configuration-files-over-pyprojecttoml)
+- [Python 3.13 as target version](#python-313-as-target-version)
+- [Modular architecture, separation of concerns](#modular-architecture-and-separation-of-concerns)
+- [dataclasses over pydantic (default)](#dataclasses-over-pydantic-default)
+- [Package selection policy](#package-selection-policy)
+- [pytest over unittest](#pytest-over-unittest)
+- [httpx.MockTransport over pytest-httpx](#httpxmocktransport-over-pytest-httpx)
+- [httpx over requests](#httpx-over-requests)
+- [Custom release script over bump-my-version](#custom-release-script-over-bump-my-version)
+- [subprocess vs. a git library (release.py)](#subprocess-over-a-git-library-in-scriptsreleasepy)
+- [ElementTree over lxml / beautifulsoup4](#xmletreeelementtree-over-lxml--beautifulsoup4)
+
 ---
 
 ## uv as dependency manager

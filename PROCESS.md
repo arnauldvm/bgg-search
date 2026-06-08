@@ -1,5 +1,10 @@
 # Project process
 
+**Contents:**
+
+- [Project initiation workflow](#project-initiation-workflow)
+- [Branch and version map](#branch-and-version-map)
+
 ## Project initiation workflow
 
 Used once, from project creation to MVP (`1.0.0`):
