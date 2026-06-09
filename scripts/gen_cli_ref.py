@@ -2,6 +2,7 @@ import argparse
 import html
 import pathlib
 import subprocess
+from importlib.metadata import version
 from string import Template
 
 _TEMPLATE = Template("""\
@@ -10,7 +11,7 @@ _TEMPLATE = Template("""\
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>bgg-search — CLI Reference</title>
+  <title>bgg-search $version — CLI Reference</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;  # cspell:ignore Segoe Roboto
@@ -44,7 +45,7 @@ _TEMPLATE = Template("""\
 </head>
 <body>
   <nav><a href="index.html">← Documentation</a></nav>
-  <h1>CLI Reference</h1>
+  <h1>CLI Reference <small style="font-size: 0.55em; color: #888;">v$version</small></h1>
   <h2>bgg-search</h2>
   <pre>$main_help</pre>
   <h2>bgg-search search</h2>
@@ -74,6 +75,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", required=True, help="Output HTML file path.")
     args = parser.parse_args()
     content = _TEMPLATE.substitute(
+        version=version("bgg-search"),
         main_help=_capture_help(),
         search_help=_capture_help("search"),
         details_help=_capture_help("details"),
