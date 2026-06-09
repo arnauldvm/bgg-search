@@ -54,7 +54,7 @@ workflow in [AGENTS.md](AGENTS.md).
 
 ## Step 5 — README updates
 
-- `README.md`: replace the "Python API reference" and "CLI reference" sections with links
+- ✓ `README.md`: replace the "Python API reference" and "CLI reference" sections with links
   to the published GitHub Pages docs site (Quickstart examples stay); document the
   `--token-file` option, `./.bgg-token` dotfile, and the full resolution order
   (`--token-file` → `BGG_TOKEN` → `./.bgg-token` → error) in the Installation section.
