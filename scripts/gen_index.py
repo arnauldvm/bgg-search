@@ -3,6 +3,8 @@ import pathlib
 from importlib.metadata import version
 from string import Template
 
+from _styles import COMMON_CSS
+
 _REPO = "https://github.com/arnauldvm/bgg-search"
 
 _TEMPLATE = Template("""\
@@ -13,23 +15,13 @@ _TEMPLATE = Template("""\
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>bgg-search $version — Documentation</title>
   <style>
-    /* cspell:ignore Segoe Roboto */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-      color: #333;
-      line-height: 1.6;
-    }
-    h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
-    h2 { margin-top: 2rem; font-size: 1.1rem; color: #444; }
-    a { color: #0066cc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+$css
+    h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+    h2 { margin-top: 2rem; font-size: 1.1rem; color: var(--text-muted); }
     ul { line-height: 2; }
     pre {
-      background: #f5f5f5;
-      border: 1px solid #ddd;
+      background: var(--pre-bg);
+      border: 1px solid var(--pre-border);
       border-radius: 4px;
       padding: 0.6rem 1rem;
       font-size: 0.9rem;
@@ -38,7 +30,7 @@ _TEMPLATE = Template("""\
   </style>
 </head>
 <body>
-  <h1>bgg-search <small style="font-size: 0.55em; color: #888;">v$version</small></h1>
+  <h1>bgg-search <small style="font-size: 0.55em; color: var(--text-faint);">v$version</small></h1>
   <p>
     A Python package and CLI for querying the
     <a href="https://boardgamegeek.com">BoardGameGeek</a> XML API.
@@ -72,7 +64,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", required=True, help="Output HTML file path.")
     args = parser.parse_args()
     pkg_version = version("bgg-search")
-    content = _TEMPLATE.substitute(version=pkg_version, repo=_REPO)
+    content = _TEMPLATE.substitute(css=COMMON_CSS, version=pkg_version, repo=_REPO)
     pathlib.Path(args.output).write_text(content, encoding="utf-8")
     print(f"Written: {args.output}")
 

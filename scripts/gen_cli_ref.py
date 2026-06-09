@@ -5,6 +5,8 @@ import subprocess
 from importlib.metadata import version
 from string import Template
 
+from _styles import COMMON_CSS
+
 _TEMPLATE = Template("""\
 <!DOCTYPE html>
 <html lang="en">
@@ -13,22 +15,13 @@ _TEMPLATE = Template("""\
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>bgg-search $version — CLI Reference</title>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;  # cspell:ignore Segoe Roboto
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-      color: #333;
-      line-height: 1.6;
-    }
+$css
     nav { margin-bottom: 2rem; font-size: 0.9rem; }
-    nav a { color: #0066cc; text-decoration: none; }
-    nav a:hover { text-decoration: underline; }
-    h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
-    h2 { margin-top: 2rem; font-family: monospace; font-size: 1.1rem; color: #444; }
+    h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+    h2 { margin-top: 2rem; font-family: monospace; font-size: 1.1rem; color: var(--text-muted); }
     pre {
-      background: #f5f5f5;
-      border: 1px solid #ddd;
+      background: var(--pre-bg);
+      border: 1px solid var(--pre-border);
       border-radius: 4px;
       padding: 1rem;
       overflow-x: auto;
@@ -37,15 +30,15 @@ _TEMPLATE = Template("""\
     footer {
       margin-top: 3rem;
       font-size: 0.85rem;
-      color: #888;
-      border-top: 1px solid #eee;
+      color: var(--text-faint);
+      border-top: 1px solid var(--border);
       padding-top: 1rem;
     }
   </style>
 </head>
 <body>
   <nav><a href="index.html">← Documentation</a></nav>
-  <h1>CLI Reference <small style="font-size: 0.55em; color: #888;">v$version</small></h1>
+  <h1>CLI Reference <small style="font-size: 0.55em; color: var(--text-faint);">v$version</small></h1>
   <h2>bgg-search</h2>
   <pre>$main_help</pre>
   <h2>bgg-search search</h2>
@@ -75,6 +68,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", required=True, help="Output HTML file path.")
     args = parser.parse_args()
     content = _TEMPLATE.substitute(
+        css=COMMON_CSS,
         version=version("bgg-search"),
         main_help=_capture_help(),
         search_help=_capture_help("search"),
