@@ -5,7 +5,7 @@ The classifier (`3 - Alpha`) is already correct and needs no change.
 
 ## Steps
 
-1. **ROADMAP.md** — fix intro line, version table, and post-MVP section:
+1. ✓ **ROADMAP.md** — fix intro line, version table, and post-MVP section:
    - Intro: "Phases toward `1.0.0` (MVP)" →
      "Phases toward the MVP release (`0.5.0`), reached, and beyond"
    - Version table: remove the `1.0.0` row; mark `0.5.0` as MVP in its row
