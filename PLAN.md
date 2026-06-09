@@ -10,3 +10,4 @@
    (`https://arnauldvm.github.io/bgg-search/cli.html`).
 4. ✓ `README.md`: merge "Python API reference" and "CLI reference" into a single "Documentation"
    section.
+5. ✓ Move "Development" section content to `CONTRIBUTING.md`; keep a link in `README.md`.
