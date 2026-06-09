@@ -12,35 +12,12 @@ dictionaries:
   - software-terms
 
 words:
-  - bgg
+  # BGG domain terms
   - boardgame
   - boardgamegeek
-  - xmlapi
-  - httpx
-  - pydantic
-  - pytest
-  - mypy
-  - ruff
-  - pyproject
-  - editable
-  - geek
-  - conftest
-  - stdlib
-  - integ
-  - Arnauld
-  - Muysewinkel
-  - pytest-cov
   - Catan
-  - Pandemic
-  # Python / documentation
-  - docstrings
-  - pdoc
-  - devrelease
-  # tox keywords
-  - passenv
-  # pytest fixtures and hooks
-  # (capsys, sessionfinish, exitstatus declared inline in their test files)
-  # BGG XML API attribute names
+  - Siedler
+  # BGG XML API attribute names (camelCase compounds from BGG schema)
   - yearpublished
   - minplayers
   - maxplayers
@@ -48,8 +25,17 @@ words:
   - maxplaytime
   - averageweight
   - sortindex
-  # BGG game data (German title in test fixtures)
-  - Siedler
+  # Python / tooling
+  - conftest
+  - docstrings
+  - devrelease
+  - integ
+  - passenv
+  - pdoc
+  - stdlib
+  # Author
+  - Arnauld
+  - Muysewinkel
 
 ignorePaths:
   - .git/**
