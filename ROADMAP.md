@@ -7,14 +7,30 @@ that ship no user-facing changes are released as patch versions.
 
 **Contents:**
 
-- [Phase 0.1 — Project scaffold](#phase-01--project-scaffold)
-- [Phase 0.2 — Domain & protocol](#phase-02--domain--protocol)
-- [Phase 0.3 — HTTP client](#phase-03--http-client)
-- [Phase 0.3.1 — Release tool](#phase-031--release-tool)
-- [Phase 0.4 — Search use-case & CLI](#phase-04--search-use-case--cli)
-- [Phase 0.5 — Documentation & token config](#phase-05--documentation--token-config)
-- [Version map (MVP)](#version-map-mvp)
+- [MVP phases](#mvp-phases)
+  - [Version map](#version-map)
+  - [Phase 0.1 — Project scaffold](#phase-01--project-scaffold)
+  - [Phase 0.2 — Domain & protocol](#phase-02--domain--protocol)
+  - [Phase 0.3 — HTTP client](#phase-03--http-client)
+  - [Phase 0.3.1 — Release tool](#phase-031--release-tool)
+  - [Phase 0.4 — Search use-case & CLI](#phase-04--search-use-case--cli)
+  - [Phase 0.5 — Documentation & token config](#phase-05--documentation--token-config)
 - [Post-MVP features](#post-mvp-features)
+
+---
+
+## MVP phases
+
+## Version map
+
+| Version | Phase |
+|---------|-------|
+| ✓ `0.1.0` | Project scaffold |
+| ✓ `0.2.0` | Domain & protocol |
+| ✓ `0.3.0` | HTTP client |
+| ✓ `0.3.1` | Release tool (tooling only — patch) |
+| ✓ `0.4.0` | Search use-case & CLI |
+| ✓ `0.5.0` | Documentation & token config — **MVP** |
 
 ---
 
@@ -119,19 +135,6 @@ Deliverables:
   `BGG_TOKEN` env var → `./.bgg-token` in the working directory → error.
 - ✓ GitHub Releases created automatically on every `version/*` tag push, populated with the
   corresponding `CHANGELOG.md` section and a PyPI link.
-
----
-
-## Version map (MVP)
-
-| Version | Phase |
-|---------|-------|
-| ✓ `0.1.0` | Project scaffold |
-| ✓ `0.2.0` | Domain & protocol |
-| ✓ `0.3.0` | HTTP client |
-| ✓ `0.3.1` | Release tool (tooling only — patch) |
-| ✓ `0.4.0` | Search use-case & CLI |
-| ✓ `0.5.0` | Documentation & token config — **MVP** |
 
 ---
 
