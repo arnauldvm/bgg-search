@@ -1,4 +1,3 @@
-# cspell:ignore Segoe Roboto
 import argparse
 import html
 import pathlib
@@ -14,7 +13,7 @@ _TEMPLATE = Template("""\
   <title>bgg-search — CLI Reference</title>
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;  # cspell:ignore Segoe Roboto
       max-width: 900px;
       margin: 2rem auto;
       padding: 0 1.5rem;
