@@ -102,17 +102,17 @@ environment variable each session.
 
 Deliverables:
 
-- Release script updated to keep the `CHANGELOG.md` ToC in sync: prepend a new version row
+- ✓ Release script updated to keep the `CHANGELOG.md` ToC in sync: prepend a new version row
   and update the date on each release.
-- Docstrings on all public symbols (`search_games`, `get_game`, `BggClientProtocol`,
+- ✓ Docstrings on all public symbols (`search_games`, `get_game`, `BggClientProtocol`,
   `GameSummary`, `GameDetails`, all exception classes).
-- `pdoc`-based API reference generated from those docstrings, published to GitHub Pages on
+- ✓ `pdoc`-based API reference generated from those docstrings, published to GitHub Pages on
   every `version/*` tag push.
-- Auto-generated CLI reference (captured from `bgg-search --help` and sub-command `--help`
+- ✓ Auto-generated CLI reference (captured from `bgg-search --help` and sub-command `--help`
   outputs) included in the pdoc site as a static page.
-- README "Python API reference" and "CLI reference" sections replaced with links to the
+- ✓ README "Python API reference" and "CLI reference" sections replaced with links to the
   generated docs site; Quickstart examples remain.
-- Token config file: `./.bgg-token` (plain-text file containing the token), with an optional
+- ✓ Token config file: `./.bgg-token` (plain-text file containing the token), with an optional
   `--token-file <path>` global CLI option. Resolution order: `--token-file` →
   `BGG_TOKEN` env var → `./.bgg-token` in the working directory → error.
 - ✓ GitHub Releases created automatically on every `version/*` tag push, populated with the
@@ -129,7 +129,7 @@ Deliverables:
 | ✓ `0.3.0` | HTTP client |
 | ✓ `0.3.1` | Release tool (tooling only — patch) |
 | ✓ `0.4.0` | Search use-case & CLI |
-| `0.5.0` | Documentation & token config |
+| ✓ `0.5.0` | Documentation & token config |
 | `1.0.0` | MVP tag (after `0.5.0`) |
 
 ---
