@@ -1,5 +1,6 @@
 {
   "files.associations": {
-    "site/**/*.html": "plaintext"
+    "site/**/*.html": "plaintext",
+    "site/**/*.css": "plaintext"
   }
 }

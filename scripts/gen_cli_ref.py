@@ -5,8 +5,6 @@ import subprocess
 from importlib.metadata import version
 from string import Template
 
-from _styles import COMMON_CSS
-
 _TEMPLATE = Template("""\
 <!DOCTYPE html>
 <html lang="en">
@@ -14,8 +12,8 @@ _TEMPLATE = Template("""\
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>bgg-search $version — CLI Reference</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-$css
     nav { margin-bottom: 2rem; font-size: 0.9rem; }
     h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
     h2 { margin-top: 2rem; font-family: monospace; font-size: 1.1rem; color: var(--text-muted); }
@@ -68,7 +66,6 @@ def main() -> None:
     parser.add_argument("-o", "--output", required=True, help="Output HTML file path.")
     args = parser.parse_args()
     content = _TEMPLATE.substitute(
-        css=COMMON_CSS,
         version=version("bgg-search"),
         main_help=_capture_help(),
         search_help=_capture_help("search"),

@@ -3,8 +3,6 @@ import pathlib
 from importlib.metadata import version
 from string import Template
 
-from _styles import COMMON_CSS
-
 _REPO = "https://github.com/arnauldvm/bgg-search"
 
 _TEMPLATE = Template("""\
@@ -14,8 +12,8 @@ _TEMPLATE = Template("""\
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>bgg-search $version — Documentation</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-$css
     h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
     h2 { margin-top: 2rem; font-size: 1.1rem; color: var(--text-muted); }
     ul { line-height: 2; }
@@ -64,7 +62,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", required=True, help="Output HTML file path.")
     args = parser.parse_args()
     pkg_version = version("bgg-search")
-    content = _TEMPLATE.substitute(css=COMMON_CSS, version=pkg_version, repo=_REPO)
+    content = _TEMPLATE.substitute(version=pkg_version, repo=_REPO)
     pathlib.Path(args.output).write_text(content, encoding="utf-8")
     print(f"Written: {args.output}")
 
