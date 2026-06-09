@@ -43,7 +43,7 @@ _TEMPLATE = Template("""\
   </style>
 </head>
 <body>
-  <nav><a href="index.html">← API Reference</a></nav>
+  <nav><a href="index.html">← Documentation</a></nav>
   <h1>CLI Reference</h1>
   <h2>bgg-search</h2>
   <pre>$main_help</pre>

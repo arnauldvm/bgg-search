@@ -72,7 +72,7 @@ print(details.name, details.bgg_rating)
 
 ## Documentation
 
-- [Python API reference](https://arnauldvm.github.io/bgg-search/)
+- [Python API reference](https://arnauldvm.github.io/bgg-search/bgg_search.html)
 - [CLI reference](https://arnauldvm.github.io/bgg-search/cli.html)
 
 ## Development
