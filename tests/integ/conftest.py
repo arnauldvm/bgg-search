@@ -1,3 +1,4 @@
+# cspell:ignore sessionfinish exitstatus
 import pytest
 
 

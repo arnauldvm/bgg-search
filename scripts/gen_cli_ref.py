@@ -1,3 +1,4 @@
+# cspell:ignore Segoe Roboto
 import argparse
 import html
 import pathlib

@@ -1,3 +1,4 @@
+# cspell:ignore capsys
 from unittest.mock import patch
 
 import pytest

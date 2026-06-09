@@ -29,28 +29,17 @@ words:
   - integ
   - Arnauld
   - Muysewinkel
-  - coveragerc
   - pytest-cov
   - Catan
   - Pandemic
-  # CSS font names
-  - Segoe
-  - Roboto
   # Python / documentation
   - docstrings
   - pdoc
-  - mkdocs
-  - mkdocstrings
-  - autodoc
-  - intersphinx
   - devrelease
   # tox keywords
   - passenv
-  - toxinidir
   # pytest fixtures and hooks
-  - capsys
-  - sessionfinish
-  - exitstatus
+  # (capsys, sessionfinish, exitstatus declared inline in their test files)
   # BGG XML API attribute names
   - yearpublished
   - minplayers
@@ -61,8 +50,6 @@ words:
   - sortindex
   # BGG game data (German title in test fixtures)
   - Siedler
-  # system library in locked deps
-  - librt
 
 ignorePaths:
   - .git/**

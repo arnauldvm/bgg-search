@@ -1,3 +1,4 @@
+<!-- cspell:ignore mkdocs mkdocstrings autodoc intersphinx -->
 # Design decisions
 
 Rationale behind key choices made in this project.
