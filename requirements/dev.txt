@@ -21,7 +21,6 @@ identify==2.6.19
     # via pre-commit
 iniconfig==2.3.0
     # via pytest
-# cspell:ignore librt
 librt==0.11.0
     # via mypy
 markdown-it-py==4.2.0

@@ -59,6 +59,7 @@ ignorePaths:
   - dist/**
   - build/**
   - site/**
+  - requirements/**
 
 ignoreRegExpList:
   - "https?://[^\\s]+"
