@@ -19,6 +19,7 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 - [subprocess vs. a git library (release.py)](#subprocess-over-a-git-library-in-scriptsreleasepy)
 - [ElementTree over lxml / beautifulsoup4](#xmletreeelementtree-over-lxml--beautifulsoup4)
 - [API documentation generation framework](#api-documentation-generation-framework)
+- [No --token CLI argument](#no---token-cli-argument)
 
 ---
 
@@ -345,3 +346,24 @@ MkDocs + mkdocstrings is straightforward**. Docstrings are the content; they car
 unchanged. Only the build tooling changes. pdoc therefore gets the project published today
 at minimal cost, and switching to B is a well-defined, one-time effort if narrative
 documentation becomes essential later.
+
+---
+
+## No `--token` CLI argument
+
+**Decision:** the BGG API token is intentionally never accepted as a plain CLI argument
+(e.g. `bgg-search --token <value>`).
+
+**Rationale:** CLI arguments are visible in the system process list (`ps aux`) and are
+recorded in shell history. Passing a secret this way exposes it to any user on the machine
+and to any tooling that captures command lines (CI logs, audit trails, shell history files).
+
+The three supported resolution paths all avoid this:
+
+| Source | Exposure |
+|---|---|
+| `--token-file PATH` | secret stays in a file; only the path appears in the process list |
+| `BGG_TOKEN` env var | environment variables are not shown in `ps` output |
+| `.bgg-token` dotfile | secret stays in a file; never on the command line |
+
+Do not add a `--token` argument in the future, even for convenience.

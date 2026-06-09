@@ -9,6 +9,8 @@ from bgg_search.models import GameDetails
 from bgg_search.search import get_game, search_games
 
 
+# Token is never accepted as a plain CLI argument: that would expose it in `ps` output
+# and shell history. See DECISIONS.md § "No --token CLI argument".
 def _resolve_token(args: argparse.Namespace) -> str:
     if args.token_file:
         try:
