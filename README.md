@@ -22,8 +22,15 @@ pip install bgg-search
 Requires **Python ≥ 3.13**.
 
 A BGG API token is required to make requests. Obtain one by registering your application at
-<https://boardgamegeek.com/applications>, then expose it as the `BGG_TOKEN` environment
-variable.
+<https://boardgamegeek.com/applications>.
+
+The token is resolved in this order — the first source found is used:
+
+1. **`--token-file PATH`** — CLI option pointing to a file containing the token.
+2. **`BGG_TOKEN`** — environment variable.
+3. **`.bgg-token`** — plain-text file in the current working directory.
+
+If none of the above is provided, the command exits with code 1 and prints an error to stderr.
 
 ## Quickstart
 
