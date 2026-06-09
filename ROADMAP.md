@@ -1,6 +1,6 @@
 # BGG Search — Roadmap
 
-Phases toward `1.0.0` (MVP). Each feature phase is released as `0.N.0`; tooling-only phases
+Phases toward `0.5.0` (MVP). Each feature phase is released as `0.N.0`; tooling-only phases
 that ship no user-facing changes are released as patch versions.
 
 **Contents:**
@@ -129,14 +129,13 @@ Deliverables:
 | ✓ `0.3.0` | HTTP client |
 | ✓ `0.3.1` | Release tool (tooling only — patch) |
 | ✓ `0.4.0` | Search use-case & CLI |
-| ✓ `0.5.0` | Documentation & token config |
-| `1.0.0` | MVP tag (after `0.5.0`) |
+| ✓ `0.5.0` | Documentation & token config — **MVP** |
 
 ---
 
 ## Post-MVP features
 
-After `1.0.0`, development switches to the incremental workflow
+After `0.5.0` (MVP), development switches to the incremental workflow
 (one feature per release, version bump on each merge).
 
 Planned:
