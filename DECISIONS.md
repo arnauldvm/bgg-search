@@ -320,3 +320,27 @@ applying the **prefer stdlib** rule from the [Package selection policy](#package
 | 4. GitHub Pages | ★★★☆☆ | ★★★★☆ | ★★★★★ | ★★★☆☆ | ★★☆☆☆ |
 | 5. Maintenance | ★★★★★ | ★★★★★ | ★★★★☆ | ★★★☆☆ | ★★★★★ |
 | 6. Scalability | ★★★★★ | ★★★★★ | ★★★☆☆ | ★★★★☆ | ★★☆☆☆ |
+
+### Decision
+
+**Chosen: C — pdoc.** Runner-up: B — MkDocs + mkdocstrings.
+
+**Why not A (Sphinx):** eliminated by configuration overhead (★☆☆☆☆) — disproportionate
+for a project of any current or near-term size; the pay-off only materializes for very large,
+multi-package documentation sites.
+
+**Why not D (pydoc-markdown):** a two-step pipeline (generate Markdown, then render) adds
+complexity without a decisive advantage over pdoc today; maintenance activity is also weaker.
+
+**Why not E (pydoc):** eliminated by output quality and GitHub Pages criteria.
+
+**B vs. C — the key trade-off:** MkDocs + mkdocstrings wins on output quality, maintenance,
+and scalability; pdoc wins on configuration overhead, dependency weight, and GitHub Pages
+integration. Given that the API will grow and become richer over time, B's scalability
+advantage is real and significant.
+
+The argument for choosing C over B despite that tension: **migration from pdoc to
+MkDocs + mkdocstrings is straightforward**. Docstrings are the content; they carry over
+unchanged. Only the build tooling changes. pdoc therefore gets the project published today
+at minimal cost, and switching to B is a well-defined, one-time effort if narrative
+documentation becomes essential later.

@@ -36,6 +36,10 @@ words:
   # Python / documentation
   - docstrings
   - pdoc
+  - mkdocs
+  - mkdocstrings
+  - autodoc
+  - intersphinx
   - devrelease
   # tox keywords
   - passenv
