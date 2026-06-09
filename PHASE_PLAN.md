@@ -24,21 +24,21 @@ workflow in [AGENTS.md](AGENTS.md).
 
 - ✓ `src/bgg_search/models.py`: docstrings for `GameSummary` and `GameDetails`
   (class-level and field-level).
-- `src/bgg_search/exceptions.py`: docstrings for `BggSearchError`, `BggApiError`,
+- ✓ `src/bgg_search/exceptions.py`: docstrings for `BggSearchError`, `BggApiError`,
   `BggNotFoundError`, `BggParseError`.
-- `src/bgg_search/_protocol.py`: docstring for `BggClientProtocol` and its two methods.
-- `src/bgg_search/search.py`: docstrings for `search_games` and `get_game`.
+- ✓ `src/bgg_search/_protocol.py`: docstring for `BggClientProtocol` and its two methods.
+- ✓ `src/bgg_search/search.py`: docstrings for `search_games` and `get_game`.
 
 ## Step 3 — Docs publishing
 
 - ✓ Framework choice documented in `DECISIONS.md` (ADR).
-- `requirements/docs.in` + `requirements/docs.txt`: new dep group containing `pdoc`.
-- `tox.ini`: add `docs` env (`pdoc bgg_search -o docs/`); extend `lock` env to include
+- ✓ `requirements/docs.in` + `requirements/docs.txt`: new dep group containing `pdoc`.
+- ✓ `tox.ini`: add `docs` env (`pdoc bgg_search -o docs/`); extend `lock` env to include
   docs deps.
-- `scripts/gen_cli_ref.py`: capture `bgg-search --help`, `bgg-search search --help`, and
+- ✓ `scripts/gen_cli_ref.py`: capture `bgg-search --help`, `bgg-search search --help`, and
   `bgg-search details --help` output, then write a minimal HTML page for inclusion in the
   docs site.
-- `.github/workflows/pages.yml`: on every `version/*` tag push, install the package and
+- ✓ `.github/workflows/pages.yml`: on every `version/*` tag push, install the package and
   pdoc, generate the API docs site and the CLI reference page, then deploy to GitHub Pages.
   (Requires GitHub Pages source set to "GitHub Actions" in repository settings.)
 
