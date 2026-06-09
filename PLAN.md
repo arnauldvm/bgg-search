@@ -8,3 +8,5 @@
    GitHub Pages docs site (`https://arnauldvm.github.io/bgg-search/`).
 3. ✓ `README.md`: replace the "CLI reference" section with a link to the CLI reference page
    (`https://arnauldvm.github.io/bgg-search/cli.html`).
+4. ✓ `README.md`: merge "Python API reference" and "CLI reference" into a single "Documentation"
+   section.

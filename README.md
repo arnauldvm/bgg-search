@@ -9,8 +9,7 @@ more — from the command line or from your own Python code.
 
 - [Installation](#installation)
 - [Quickstart](#quickstart)
-- [Python API reference](#python-api-reference)
-- [CLI reference](#cli-reference)
+- [Documentation](#documentation)
 - [Development](#development)
 
 ## Installation
@@ -71,13 +70,10 @@ details = get_game(13, client)
 print(details.name, details.bgg_rating)
 ```
 
-## Python API reference
+## Documentation
 
-Full API reference: <https://arnauldvm.github.io/bgg-search/>
-
-## CLI reference
-
-Full CLI reference: <https://arnauldvm.github.io/bgg-search/cli.html>
+- [Python API reference](https://arnauldvm.github.io/bgg-search/)
+- [CLI reference](https://arnauldvm.github.io/bgg-search/cli.html)
 
 ## Development
 
