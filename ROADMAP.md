@@ -146,3 +146,7 @@ Planned:
   `bgg-search collection <username>` CLI command.
 - **Filtering & sorting** — filter and sort search results and collections by player count,
   play time, weight, BGG rank, …
+- **Versioned documentation** — keep published docs for each past release in a `/<version>/`
+  subdirectory on GitHub Pages (root always points to latest). Requires switching the Pages
+  source to a persistent `gh-pages` branch that accumulates version directories on each release,
+  and a version-listing section on the landing page.
