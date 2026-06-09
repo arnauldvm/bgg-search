@@ -143,9 +143,31 @@ Planned:
 - **Collection** — retrieve and display a user's owned game collection:
   `collection` endpoint, `get_collection(username)` use-case,
   `bgg-search collection <username>` CLI command.
-- **Filtering & sorting** — filter and sort search results and collections by player count,
-  play time, weight, BGG rank, …
+- **Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
+  especially relevant for bulk operations such as fetching details across a full collection.
+- **Extended game details** — enrich `details` output with additional fields: community-recommended
+  player counts, custom user tags, expansion flag, official image URL, owned version name and image
+  URL, play count.
+- **Basic search filtering** — filter search results by playing time, expansion flag, official
+  player count, weight, and minimum age.
+- **Sort results** — sort search results (and collection) by any combination of attributes
+  (player count, play time, weight, BGG rank, rating, …).
+- **Search filter: community player count** — filter by community-recommended player count
+  (requires Extended game details).
+- **Search filter: custom tags** — filter by BGG user tags (requires Extended game details).
+- **Search filter: play count** — filter by number of logged plays (requires Extended game
+  details).
+- **Boolean filter expressions** — combine any filter criteria with AND / OR / NOT and
+  parentheses for complex queries (requires Basic search filtering).
 - **Versioned documentation** — keep published docs for each past release in a `/<version>/`
   subdirectory on GitHub Pages (root always points to latest). Requires switching the Pages
   source to a persistent `gh-pages` branch that accumulates version directories on each release,
   and a version-listing section on the landing page.
+- **Rich output formatting** — render search results and game details as Markdown, HTML, or PDF
+  in addition to the default plain-text output.
+- **Image collage** — generate an N×M grid image from game cover art (e.g. "my top 9 games");
+  requires Extended game details for image URLs.
+- **Server mode** — run `bgg-search` as a long-lived HTTP process exposing a REST API
+  (`bgg-search serve`); mirrors the CLI use-cases as JSON endpoints.
+- **Web UI** — browser-based frontend served by the server mode, providing search, filtering,
+  and details views without the command line (requires Server mode).
