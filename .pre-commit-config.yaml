@@ -6,6 +6,16 @@ repos:
         language_version: "22.22.3"
   - repo: local
     hooks:
+      # cspell has no official pre-commit repo; additional_dependencies installs it
+      # into pre-commit's own managed node env (no fnm or system Node required).
+      - id: cspell
+        name: cspell
+        entry: cspell "**" --no-progress
+        language: node
+        additional_dependencies: ['cspell@^10']
+        language_version: "22.22.3"
+        pass_filenames: false
+        always_run: true
       - id: tox
         name: tox
         entry: .venv/bin/tox
