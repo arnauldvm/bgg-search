@@ -1,5 +1,7 @@
 # BGG Search — Roadmap
 
+<!-- cspell:ignore BOOL COLL EXT FILT IMG OUT RATE SORT SRV VDOC WEB -->
+
 Phases toward `0.5.0` (MVP). Each feature phase is released as `0.N.0`; tooling-only phases
 that ship no user-facing changes are released as patch versions.
 
@@ -140,34 +142,39 @@ After `0.5.0` (MVP), development switches to the incremental workflow
 
 Planned:
 
-- **Collection** — retrieve and display a user's owned game collection:
+- **[RATE] Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
+  especially relevant for bulk operations such as fetching details across a full collection.
+- **[COLL] Collection** — retrieve and display a user's owned game collection:
   `collection` endpoint, `get_collection(username)` use-case,
   `bgg-search collection <username>` CLI command.
-- **Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
-  especially relevant for bulk operations such as fetching details across a full collection.
-- **Extended game details** — enrich `details` output with additional fields: community-recommended
-  player counts, custom user tags, expansion flag, official image URL, owned version name and image
-  URL, play count.
-- **Basic search filtering** — filter search results by playing time, expansion flag, official
-  player count, weight, and minimum age.
-- **Sort results** — sort search results (and collection) by any combination of attributes
-  (player count, play time, weight, BGG rank, rating, …).
-- **Search filter: community player count** — filter by community-recommended player count
-  (requires Extended game details).
-- **Search filter: custom tags** — filter by BGG user tags (requires Extended game details).
-- **Search filter: play count** — filter by number of logged plays (requires Extended game
-  details).
-- **Boolean filter expressions** — combine any filter criteria with AND / OR / NOT and
-  parentheses for complex queries (requires Basic search filtering).
-- **Versioned documentation** — keep published docs for each past release in a `/<version>/`
-  subdirectory on GitHub Pages (root always points to latest). Requires switching the Pages
-  source to a persistent `gh-pages` branch that accumulates version directories on each release,
-  and a version-listing section on the landing page.
-- **Rich output formatting** — render search results and game details as Markdown, HTML, or PDF
-  in addition to the default plain-text output.
-- **Image collage** — generate an N×M grid image from game cover art (e.g. "my top 9 games");
-  requires Extended game details for image URLs.
-- **Server mode** — run `bgg-search` as a long-lived HTTP process exposing a REST API
+- **[EXT-T] Extended game details: thing endpoint** — enrich `details` output with fields
+  sourced from the `thing` API: expansion flag, official image URL,
+  community-recommended player counts, custom user tags.
+- **[EXT-C] Extended game details: collection endpoint** — enrich `details` output with fields
+  sourced from the collection API: owned version name and image URL, personal play count
+  (requires [COLL]).
+- **[SORT] Sort results** — sort search results (and collection) by any combination of
+  attributes (player count, play time, weight, BGG rank, rating, …).
+- **[FILT] Basic search filtering** — filter search results by playing time, expansion flag,
+  official player count, weight, and minimum age.
+- **[FILT-CP] Search filter: community player count** — filter by community-recommended player
+  count (requires [EXT-T]).
+- **[FILT-CT] Search filter: custom tags** — filter by BGG user tags (requires [EXT-T]).
+- **[FILT-PC] Search filter: play count** — filter by number of logged plays
+  (requires [EXT-C]).
+- **[BOOL] Boolean filter expressions** — combine any filter criteria with AND / OR / NOT and
+  parentheses for complex queries (requires [FILT]).
+- **[OUT-MH] Rich output: Markdown & HTML** — render search results and game details as
+  Markdown or HTML in addition to the default plain-text output.
+- **[OUT-PDF] Rich output: PDF** — render search results and game details as PDF
+  (requires a dedicated rendering library).
+- **[IMG] Image collage** — generate an N×M grid image from game cover art
+  (e.g. "my top 9 games"); requires [EXT-T] for image URLs.
+- **[VDOC] Versioned documentation** — keep published docs for each past release in a
+  `/<version>/` subdirectory on GitHub Pages (root always points to latest). Requires
+  switching the Pages source to a persistent `gh-pages` branch that accumulates version
+  directories on each release, and a version-listing section on the landing page.
+- **[SRV] Server mode** — run `bgg-search` as a long-lived HTTP process exposing a REST API
   (`bgg-search serve`); mirrors the CLI use-cases as JSON endpoints.
-- **Web UI** — browser-based frontend served by the server mode, providing search, filtering,
-  and details views without the command line (requires Server mode).
+- **[WEB] Web UI** — browser-based frontend served by the server mode, providing search,
+  filtering, and details views without the command line (requires [SRV]).
