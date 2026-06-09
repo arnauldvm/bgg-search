@@ -18,9 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Docstrings on all public API symbols (`GameSummary`, `GameDetails`, `BggClientProtocol`,
+  `search_games`, `get_game`, exception classes) — visible in IDEs and via `help()`.
+- Published API reference and CLI reference on GitHub Pages:
+  <https://arnauldvm.github.io/bgg-search/>.
 - `--token-file PATH` global option to supply the BGG API token from a file.
 - `.bgg-token` dotfile support: token is read from `./.bgg-token` in the working
   directory as a last resort. Resolution order: `--token-file` → `BGG_TOKEN` → `.bgg-token`.
+- `CONTRIBUTING.md` with development setup and test instructions.
 
 ## [0.4.0] - 2026-06-08
 
