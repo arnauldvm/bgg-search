@@ -17,6 +17,7 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 - [Custom release script over bump-my-version](#custom-release-script-over-bump-my-version)
 - [subprocess vs. a git library (release.py)](#subprocess-over-a-git-library-in-scriptsreleasepy)
 - [ElementTree over lxml / beautifulsoup4](#xmletreeelementtree-over-lxml--beautifulsoup4)
+- [API documentation generation framework](#api-documentation-generation-framework)
 
 ---
 
@@ -234,3 +235,112 @@ are already transparent and universally understood when printed to the console �
 The BGG XML API returns well-formed XML. The stdlib parser handles it without issues.
 Adding `lxml` or `beautifulsoup4` would introduce external dependencies for no gain —
 applying the **prefer stdlib** rule from the [Package selection policy](#package-selection-policy).
+
+---
+
+## API documentation generation framework
+
+### Alternatives considered
+
+| ID | Tool | Summary |
+|----|------|---------|
+| A | **Sphinx** | RST-based; `autodoc` extension extracts docstrings; the long-standing Python standard |
+| B | **MkDocs + mkdocstrings** | Markdown static site; `mkdocstrings[python]` extracts docstrings; Material theme popular |
+| C | **pdoc** | Single-command; generates HTML directly from docstrings + type annotations; zero config |
+| D | **pydoc-markdown** | Extracts docstrings to Markdown; feeds a renderer (MkDocs, Hugo, …); YAML config |
+| E | **pydoc** | Stdlib; generates basic text/HTML from docstrings; no external dependencies |
+
+### Decision criteria
+
+1. **Output quality** — does the generated site look professional enough for a published library?
+2. **Configuration overhead** — how much setup is required to get a working site?
+3. **Dependency weight** — how many external packages does the tool add?
+4. **GitHub Pages integration** — how straightforward is automated deployment?
+5. **Maintenance activity** — is the tool actively maintained with a healthy community?
+6. **Scalability** — how well does the tool handle a growing API, and does it support narrative
+   documentation alongside the auto-generated reference?
+
+### Criteria analysis
+
+#### 1. Output quality
+
+- A — Sphinx: ★★★★★ — polished, searchable, cross-referenced; the reference look for Python libs
+- B — MkDocs + mkdocstrings: ★★★★★ — beautiful with Material theme; modern, responsive
+- C — pdoc: ★★★★☆ — clean, searchable, well-formatted; fixed layout with limited customization
+- D — pydoc-markdown: ★★★★☆ — depends on the chosen renderer; good with MkDocs backend
+- E — pydoc: ★★☆☆☆ — minimal and dated; acceptable for local use, not for a published site
+
+#### 2. Configuration overhead
+
+- A — Sphinx: ★☆☆☆☆ — requires `conf.py`, RST stub files per module, and multiple extensions
+- B — MkDocs + mkdocstrings: ★★★☆☆ — `mkdocs.yml`, page stubs, plugin and theme config
+- C — pdoc: ★★★★★ — zero config; one command generates the full site
+- D — pydoc-markdown: ★★★☆☆ — `pydoc-markdown.yml` plus renderer-specific config
+- E — pydoc: ★★★★★ — zero config; runs on any installed Python
+
+#### 3. Dependency weight
+
+- A — Sphinx: ★★☆☆☆ — heavy: Sphinx core, Babel, docutils, theme, and typically several extensions
+- B — MkDocs + mkdocstrings: ★★★☆☆ — medium: mkdocs, mkdocstrings, griffe, theme
+- C — pdoc: ★★★★★ — single package with minimal transitive dependencies
+- D — pydoc-markdown: ★★★☆☆ — medium: pydoc-markdown plus the chosen renderer's dependencies
+- E — pydoc: ★★★★★ — stdlib; zero additional dependencies
+
+#### 4. GitHub Pages integration
+
+- A — Sphinx: ★★★☆☆ — possible but requires extra workflow steps (build, then upload artifact)
+- B — MkDocs + mkdocstrings: ★★★★☆ — first-class support via `mkdocs gh-deploy` or Actions
+- C — pdoc: ★★★★★ — `pdoc bgg_search -o site/` is the entire build step
+- D — pydoc-markdown: ★★★☆☆ — two-step process: generate Markdown, then render with the backend
+- E — pydoc: ★★☆☆☆ — no deployment story; output format not suited for Pages
+
+#### 5. Maintenance activity
+
+- A — Sphinx: ★★★★★ — huge, long-standing community; de-facto standard; very active
+- B — MkDocs + mkdocstrings: ★★★★★ — rapidly growing community; frequent releases; well-funded
+- C — pdoc: ★★★★☆ — actively maintained, stable, responsive to issues
+- D — pydoc-markdown: ★★★☆☆ — maintained but smaller community; less frequent releases
+- E — pydoc: ★★★★★ — stdlib; always present and supported by the Python core team
+
+#### 6. Scalability
+
+- A — Sphinx: ★★★★★ — industry standard for large projects; versioning, intersphinx, extensions
+- B — MkDocs + mkdocstrings: ★★★★★ — excellent: narrative Markdown pages, versioning, rich plugins
+- C — pdoc: ★★★☆☆ — API-only by design; adding narrative pages requires workarounds
+- D — pydoc-markdown: ★★★★☆ — supports narrative Markdown pages alongside API reference
+- E — pydoc: ★★☆☆☆ — no narrative support, no search, no versioning
+
+### Summary
+
+| Criterion | A — Sphinx | B — MkDocs | C — pdoc | D — pydoc-md | E — pydoc |
+|-----------|:----------:|:----------:|:--------:|:------------:|:---------:|
+| 1. Output quality | ★★★★★ | ★★★★★ | ★★★★☆ | ★★★★☆ | ★★☆☆☆ |
+| 2. Config overhead | ★☆☆☆☆ | ★★★☆☆ | ★★★★★ | ★★★☆☆ | ★★★★★ |
+| 3. Dependency weight | ★★☆☆☆ | ★★★☆☆ | ★★★★★ | ★★★☆☆ | ★★★★★ |
+| 4. GitHub Pages | ★★★☆☆ | ★★★★☆ | ★★★★★ | ★★★☆☆ | ★★☆☆☆ |
+| 5. Maintenance | ★★★★★ | ★★★★★ | ★★★★☆ | ★★★☆☆ | ★★★★★ |
+| 6. Scalability | ★★★★★ | ★★★★★ | ★★★☆☆ | ★★★★☆ | ★★☆☆☆ |
+
+### Decision
+
+**Chosen: C — pdoc.** Runner-up: B — MkDocs + mkdocstrings.
+
+**Why not A (Sphinx):** eliminated by configuration overhead (★☆☆☆☆) — disproportionate
+for a project of any current or near-term size; the pay-off only materializes for very large,
+multi-package documentation sites.
+
+**Why not D (pydoc-markdown):** a two-step pipeline (generate Markdown, then render) adds
+complexity without a decisive advantage over pdoc today; maintenance activity is also weaker.
+
+**Why not E (pydoc):** eliminated by output quality and GitHub Pages criteria.
+
+**B vs. C — the key trade-off:** MkDocs + mkdocstrings wins on output quality, maintenance,
+and scalability; pdoc wins on configuration overhead, dependency weight, and GitHub Pages
+integration. Given that the API will grow and become richer over time, B's scalability
+advantage is real and significant.
+
+The argument for choosing C over B despite that tension: **migration from pdoc to
+MkDocs + mkdocstrings is straightforward**. Docstrings are the content; they carry over
+unchanged. Only the build tooling changes. pdoc therefore gets the project published today
+at minimal cost, and switching to B is a well-defined, one-time effort if narrative
+documentation becomes essential later.

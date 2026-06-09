@@ -31,6 +31,7 @@ workflow in [AGENTS.md](AGENTS.md).
 
 ## Step 3 — Docs publishing
 
+- ✓ Framework choice documented in `DECISIONS.md` (ADR).
 - `requirements/docs.in` + `requirements/docs.txt`: new dep group containing `pdoc`.
 - `tox.ini`: add `docs` env (`pdoc bgg_search -o docs/`); extend `lock` env to include
   docs deps.

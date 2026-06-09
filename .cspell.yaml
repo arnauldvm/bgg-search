@@ -33,9 +33,16 @@ words:
   - pytest-cov
   - Catan
   - Pandemic
+  # CSS font names
+  - Segoe
+  - Roboto
   # Python / documentation
   - docstrings
   - pdoc
+  - mkdocs
+  - mkdocstrings
+  - autodoc
+  - intersphinx
   - devrelease
   # tox keywords
   - passenv
@@ -64,6 +71,7 @@ ignorePaths:
   - "**/*.egg-info/**"
   - dist/**
   - build/**
+  - site/**
 
 ignoreRegExpList:
   - "https?://[^\\s]+"
