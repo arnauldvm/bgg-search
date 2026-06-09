@@ -44,13 +44,13 @@ workflow in [AGENTS.md](AGENTS.md).
 
 ## Step 4 — Token config file
 
-- `src/bgg_search/cli.py`: add `--token-file <path>` global option; fall back to reading
+- ✓ `src/bgg_search/cli.py`: add `--token-file <path>` global option; fall back to reading
   the token from `./.bgg-token` in the working directory when neither `--token-file` nor
   `BGG_TOKEN` is supplied. Resolution order: `--token-file` → `BGG_TOKEN` env var →
   `./.bgg-token` → error.
-- `tests/unit/test_cli.py`: extend with unit tests covering all three resolution paths
+- ✓ `tests/unit/test_cli.py`: extend with unit tests covering all three resolution paths
   and the missing-token error case.
-- `CHANGELOG.md`: entry under `[Unreleased]`.
+- ✓ `CHANGELOG.md`: entry under `[Unreleased]`.
 
 ## Step 5 — README updates
 

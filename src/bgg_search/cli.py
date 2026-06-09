@@ -1,5 +1,6 @@
 import argparse
 import os
+import pathlib
 import sys
 
 from bgg_search._client import BggClient
@@ -8,17 +9,35 @@ from bgg_search.models import GameDetails
 from bgg_search.search import get_game, search_games
 
 
-def _get_client() -> BggClient:
+# Token is never accepted as a plain CLI argument: that would expose it in `ps` output
+# and shell history. See DECISIONS.md § "No --token CLI argument".
+def _resolve_token(args: argparse.Namespace) -> str:
+    if args.token_file:
+        try:
+            return pathlib.Path(args.token_file).read_text().strip()
+        except OSError as exc:
+            print(f"Error: cannot read token file: {exc}", file=sys.stderr)
+            sys.exit(1)
     token = os.getenv("BGG_TOKEN")
-    if not token:
-        print("Error: BGG_TOKEN environment variable is not set.", file=sys.stderr)
-        sys.exit(1)
-    return BggClient(token=token)
+    if token:
+        return token
+    dotfile = pathlib.Path(".bgg-token")
+    if dotfile.exists():
+        return dotfile.read_text().strip()
+    print(
+        "Error: no BGG token found. Provide --token-file, set BGG_TOKEN, or create .bgg-token.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
+def _get_client(args: argparse.Namespace) -> BggClient:
+    return BggClient(token=_resolve_token(args))
 
 
 def _search(args: argparse.Namespace) -> None:
     try:
-        results = search_games(args.query, _get_client())
+        results = search_games(args.query, _get_client(args))
     except BggSearchError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -28,7 +47,7 @@ def _search(args: argparse.Namespace) -> None:
 
 def _details(args: argparse.Namespace) -> None:
     try:
-        game: GameDetails = get_game(args.id, _get_client())
+        game: GameDetails = get_game(args.id, _get_client(args))
     except BggSearchError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         sys.exit(1)
@@ -47,6 +66,11 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="bgg-search",
         description="Search and inspect board games on BoardGameGeek.",
+    )
+    parser.add_argument(
+        "--token-file",
+        metavar="PATH",
+        help="Path to a file containing the BGG API token.",
     )
     subparsers = parser.add_subparsers(dest="command")
     subparsers.required = True

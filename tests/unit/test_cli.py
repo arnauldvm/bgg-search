@@ -1,4 +1,5 @@
 # cspell:ignore capsys
+import pathlib
 from unittest.mock import patch
 
 import pytest
@@ -38,10 +39,45 @@ def test_search_empty_prints_nothing(capsys: pytest.CaptureFixture[str]) -> None
     assert capsys.readouterr().out == ""
 
 
-def test_search_missing_token_exits(capsys: pytest.CaptureFixture[str]) -> None:
-    env = {k: v for k, v in __import__("os").environ.items() if k != "BGG_TOKEN"}
+def test_token_from_token_file(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: pathlib.Path,
+) -> None:
+    token_file = tmp_path / "my.token"
+    token_file.write_text("file-token")
     with (
-        patch.dict("os.environ", env, clear=True),
+        patch("bgg_search.cli.search_games", return_value=[]),
+        patch.dict("os.environ", {}, clear=True),
+        patch("sys.argv", ["bgg-search", "--token-file", str(token_file), "search", "q"]),
+    ):
+        main()
+    assert capsys.readouterr().err == ""
+
+
+def test_token_from_dotfile(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    (tmp_path / ".bgg-token").write_text("dotfile-token")
+    monkeypatch.chdir(tmp_path)
+    with (
+        patch("bgg_search.cli.search_games", return_value=[]),
+        patch.dict("os.environ", {}, clear=True),
+        patch("sys.argv", ["bgg-search", "search", "q"]),
+    ):
+        main()
+    assert capsys.readouterr().err == ""
+
+
+def test_search_missing_token_exits(
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: pathlib.Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    with (
+        patch.dict("os.environ", {}, clear=True),
         patch("sys.argv", ["bgg-search", "search", "Catan"]),
         pytest.raises(SystemExit) as exc_info,
     ):
