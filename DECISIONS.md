@@ -249,3 +249,13 @@ applying the **prefer stdlib** rule from the [Package selection policy](#package
 | C | **pdoc** | Single-command; generates HTML directly from docstrings + type annotations; zero config |
 | D | **pydoc-markdown** | Extracts docstrings to Markdown; feeds a renderer (MkDocs, Hugo, …); YAML config |
 | E | **pydoc** | Stdlib; generates basic text/HTML from docstrings; no external dependencies |
+
+### Decision criteria
+
+1. **Output quality** — does the generated site look professional enough for a published library?
+2. **Configuration overhead** — how much setup is required to get a working site?
+3. **Dependency weight** — how many external packages does the tool add?
+4. **GitHub Pages integration** — how straightforward is automated deployment?
+5. **Maintenance activity** — is the tool actively maintained with a healthy community?
+6. **Scalability** — how well does the tool handle a growing API, and does it support narrative
+   documentation alongside the auto-generated reference?
