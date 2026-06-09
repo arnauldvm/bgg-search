@@ -131,6 +131,32 @@ def check_preconditions(bgg_token: str | None, tag: str) -> None:
     _check_git_remote(tag)
 
 
+_PAGES_BASE = "https://arnauldvm.github.io/bgg-search"
+_PAGES = ["index.html", "api.html", "cli.html"]
+
+
+def _verify_page(url: str, needle: bytes, *, retries: int, delay: int) -> None:
+    for attempt in range(1, retries + 1):
+        try:
+            with urllib.request.urlopen(url) as resp:
+                body = resp.read()
+            if needle in body:
+                print(f"Published: {url}")
+                return
+            print(f"{url}: version not yet present (attempt {attempt}/{retries}); waiting {delay}s…")
+        except urllib.error.HTTPError as exc:
+            print(f"{url}: HTTP {exc.code} (attempt {attempt}/{retries}); waiting {delay}s…")
+        if attempt < retries:
+            time.sleep(delay)
+    raise SystemExit(f"Error: {url} did not show version {needle.decode()!r} after {retries} attempts")
+
+
+def verify_pages(version: str, *, retries: int = 8, delay: int = 30) -> None:
+    needle = version.encode()
+    for page in _PAGES:
+        _verify_page(f"{_PAGES_BASE}/{page}", needle, retries=retries, delay=delay)
+
+
 def verify_pypi(version: str, *, retries: int = 6, delay: int = 30) -> None:
     url = f"https://pypi.org/pypi/bgg-search/{version}/json"
     for attempt in range(1, retries + 1):
@@ -212,6 +238,11 @@ def parse_args() -> argparse.Namespace:
         help="Skip the release; only poll PyPI for VERSION.",
     )
     mode.add_argument(
+        "--verify-pages",
+        metavar="VERSION",
+        help="Skip the release; only poll GitHub Pages for VERSION.",
+    )
+    mode.add_argument(
         "--no-publish",
         action="store_true",
         help="Run the full release locally but skip PyPI publication; tag as no-publish/<version>.",
@@ -225,6 +256,9 @@ def main() -> None:
     _verbose = args.verbose
     if args.verify_pypi:
         verify_pypi(args.verify_pypi)
+        return
+    if args.verify_pages:
+        verify_pages(args.verify_pages)
         return
 
     bgg_token = os.environ.get("BGG_TOKEN")
@@ -263,6 +297,8 @@ def main() -> None:
     if not args.no_publish:
         trace(f"verify_pypi({rel_ver!r})")
         verify_pypi(rel_ver)
+        trace(f"verify_pages({rel_ver!r})")
+        verify_pages(rel_ver)
 
 
 if __name__ == "__main__":
