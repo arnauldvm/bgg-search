@@ -33,3 +33,12 @@ body {
 
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+h2 { margin-top: 2rem; font-size: 1.1rem; color: var(--text-muted); }
+
+pre {
+  background: var(--pre-bg);
+  border: 1px solid var(--pre-border);
+  border-radius: 4px;
+}

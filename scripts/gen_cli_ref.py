@@ -15,16 +15,8 @@ _TEMPLATE = Template("""\
   <link rel="stylesheet" href="styles.css">
   <style>
     nav { margin-bottom: 2rem; font-size: 0.9rem; }
-    h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
-    h2 { margin-top: 2rem; font-family: monospace; font-size: 1.1rem; color: var(--text-muted); }
-    pre {
-      background: var(--pre-bg);
-      border: 1px solid var(--pre-border);
-      border-radius: 4px;
-      padding: 1rem;
-      overflow-x: auto;
-      font-size: 0.875rem;
-    }
+    h2 { font-family: monospace; }
+    pre { padding: 1rem; overflow-x: auto; font-size: 0.875rem; }
     footer {
       margin-top: 3rem;
       font-size: 0.85rem;

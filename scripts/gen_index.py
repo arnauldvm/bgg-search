@@ -14,17 +14,8 @@ _TEMPLATE = Template("""\
   <title>bgg-search $version — Documentation</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    h1 { border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
-    h2 { margin-top: 2rem; font-size: 1.1rem; color: var(--text-muted); }
     ul { line-height: 2; }
-    pre {
-      background: var(--pre-bg);
-      border: 1px solid var(--pre-border);
-      border-radius: 4px;
-      padding: 0.6rem 1rem;
-      font-size: 0.9rem;
-      display: inline-block;
-    }
+    pre { padding: 0.6rem 1rem; font-size: 0.9rem; display: inline-block; }
   </style>
 </head>
 <body>
