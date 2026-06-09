@@ -17,5 +17,5 @@ The classifier (`3 - Alpha`) is already correct and needs no change.
    - Step 5: "tag `version/1.0.0`" → "the last phase release IS the MVP (reached at `0.5.0`)"
    - Diagram: `○ 1.0.0 ◄── MVP` → `○ 0.5.0 ◄── MVP`
 
-3. **AGENTS.md** — fix file-table description:
+3. ✓ **AGENTS.md** — fix file-table description:
    - "succession of phases toward MVP" → "succession of phases toward MVP (reached at `0.5.0`)"

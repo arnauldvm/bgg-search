@@ -70,7 +70,7 @@ Transient files (not always present):
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `ROADMAP.md` | `main` | succession of phases toward MVP |
+| `ROADMAP.md` | `main` | succession of phases toward MVP (reached at `0.5.0`) |
 | `PHASE_PLAN.md` | `main` | decomposition of the current phase |
 | `PLAN.md` | feature branch | steps for the current feature/change |
 
