@@ -7,7 +7,7 @@
 
 ## Project initiation workflow
 
-Used once, from project creation to MVP (`1.0.0`):
+Used once, from project creation to MVP (`0.5.0`, reached):
 
 1. **Prepare `AGENTS.md`** — customize for the project before writing any code.
 2. **Roadmap** — propose a succession of broad phases,
@@ -22,7 +22,7 @@ Used once, from project creation to MVP (`1.0.0`):
      (see [AGENTS.md](AGENTS.md)).
    - 4.4 Remove `PHASE_PLAN.md` in a dedicated commit on `main` before releasing.
    - 4.5 Release the phase (`0.N.0`).
-5. **Release MVP** — tag `version/1.0.0`.
+5. **Release MVP** — the last phase release IS the MVP (reached at `0.5.0`).
 
 After MVP, switch to a pure incremental workflow: one small feature at a time,
 each following the **Development workflow**.
@@ -44,7 +44,7 @@ main
  │   └────────────○ merge
  ○ 0.2.0 ◄── Phase 2 release
  │   ...
- ○ 1.0.0 ◄── MVP
+ ○ 0.5.0 ◄── MVP
  │
  │  (incremental)
  │   ┌── feat/D ──┐

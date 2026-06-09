@@ -12,7 +12,7 @@ The classifier (`3 - Alpha`) is already correct and needs no change.
    - Post-MVP section text: "After `1.0.0`, development switches…" →
      "After `0.5.0` (MVP), development switches…"
 
-2. **PROCESS.md** — fix initiation workflow and branch diagram:
+2. ✓ **PROCESS.md** — fix initiation workflow and branch diagram:
    - Step description: "from project creation to MVP (`1.0.0`)" → "from project creation to MVP (`0.5.0`)"
    - Step 5: "tag `version/1.0.0`" → "the last phase release IS the MVP (reached at `0.5.0`)"
    - Diagram: `○ 1.0.0 ◄── MVP` → `○ 0.5.0 ◄── MVP`
