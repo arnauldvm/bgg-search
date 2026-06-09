@@ -17,6 +17,7 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 - [Custom release script over bump-my-version](#custom-release-script-over-bump-my-version)
 - [subprocess vs. a git library (release.py)](#subprocess-over-a-git-library-in-scriptsreleasepy)
 - [ElementTree over lxml / beautifulsoup4](#xmletreeelementtree-over-lxml--beautifulsoup4)
+- [API documentation generation framework](#api-documentation-generation-framework)
 
 ---
 
@@ -234,3 +235,17 @@ are already transparent and universally understood when printed to the console �
 The BGG XML API returns well-formed XML. The stdlib parser handles it without issues.
 Adding `lxml` or `beautifulsoup4` would introduce external dependencies for no gain —
 applying the **prefer stdlib** rule from the [Package selection policy](#package-selection-policy).
+
+---
+
+## API documentation generation framework
+
+### Alternatives considered
+
+| ID | Tool | Summary |
+|----|------|---------|
+| A | **Sphinx** | RST-based; `autodoc` extension extracts docstrings; the long-standing Python standard |
+| B | **MkDocs + mkdocstrings** | Markdown static site; `mkdocstrings[python]` extracts docstrings; Material theme popular |
+| C | **pdoc** | Single-command; generates HTML directly from docstrings + type annotations; zero config |
+| D | **pydoc-markdown** | Extracts docstrings to Markdown; feeds a renderer (MkDocs, Hugo, …); YAML config |
+| E | **pydoc** | Stdlib; generates basic text/HTML from docstrings; no external dependencies |
