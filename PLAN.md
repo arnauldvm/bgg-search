@@ -7,5 +7,5 @@
    env, extend `lock` env), `.gitignore` (exclude `site/`).
 3. ✓ CLI reference generator: `scripts/gen_cli_ref.py`; extend the `docs` tox env in
    `tox.ini` to also run it.
-4. GitHub Pages workflow: `.github/workflows/pages.yml` — on every `version/*` tag push,
+4. ✓ GitHub Pages workflow: `.github/workflows/pages.yml` — on every `version/*` tag push,
    generate the API docs and CLI reference page, then deploy to GitHub Pages.
