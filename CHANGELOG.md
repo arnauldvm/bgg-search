@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `--token-file PATH` global option to supply the BGG API token from a file.
+- `.bgg-token` dotfile support: token is read from `./.bgg-token` in the working
+  directory as a last resort. Resolution order: `--token-file` → `BGG_TOKEN` → `.bgg-token`.
+
 ## [0.4.0] - 2026-06-08
 
 ### Added
