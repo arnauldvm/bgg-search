@@ -4,6 +4,9 @@ on:
   push:
     tags: ["version/*"]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   id-token: write
   contents: write
@@ -25,7 +28,7 @@ jobs:
         run: |
           VERSION="${{ github.ref_name }}"
           VERSION="${VERSION#version/}"
-          CHANGELOG=$(awk "/^## \[$VERSION\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
+          CHANGELOG=$(awk "/^## \[$VERSION/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md)
           NOTES=$(printf '[PyPI package](https://pypi.org/project/bgg-search/%s/)\n\n---\n\n%s' "$VERSION" "$CHANGELOG")
           gh release create "${{ github.ref_name }}" \
             --title "${{ github.ref_name }}" \

@@ -2,6 +2,7 @@ import argparse
 import html
 import pathlib
 import subprocess
+from importlib.metadata import version
 from string import Template
 
 _TEMPLATE = Template("""\
@@ -10,41 +11,24 @@ _TEMPLATE = Template("""\
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>bgg-search — CLI Reference</title>
+  <title>bgg-search $version — CLI Reference</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;  # cspell:ignore Segoe Roboto
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-      color: #333;
-      line-height: 1.6;
-    }
     nav { margin-bottom: 2rem; font-size: 0.9rem; }
-    nav a { color: #0066cc; text-decoration: none; }
-    nav a:hover { text-decoration: underline; }
-    h1 { border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
-    h2 { margin-top: 2rem; font-family: monospace; font-size: 1.1rem; color: #444; }
-    pre {
-      background: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 1rem;
-      overflow-x: auto;
-      font-size: 0.875rem;
-    }
+    h2 { font-family: monospace; }
+    pre { padding: 1rem; overflow-x: auto; font-size: 0.875rem; }
     footer {
       margin-top: 3rem;
       font-size: 0.85rem;
-      color: #888;
-      border-top: 1px solid #eee;
+      color: var(--text-faint);
+      border-top: 1px solid var(--border);
       padding-top: 1rem;
     }
   </style>
 </head>
 <body>
   <nav><a href="index.html">← Documentation</a></nav>
-  <h1>CLI Reference</h1>
+  <h1>CLI Reference <small style="font-size: 0.55em; color: var(--text-faint);">v$version</small></h1>
   <h2>bgg-search</h2>
   <pre>$main_help</pre>
   <h2>bgg-search search</h2>
@@ -74,6 +58,7 @@ def main() -> None:
     parser.add_argument("-o", "--output", required=True, help="Output HTML file path.")
     args = parser.parse_args()
     content = _TEMPLATE.substitute(
+        version=version("bgg-search"),
         main_help=_capture_help(),
         search_help=_capture_help("search"),
         details_help=_capture_help("details"),
