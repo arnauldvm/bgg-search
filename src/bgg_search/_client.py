@@ -1,5 +1,6 @@
 #   XML comes from a fixed HTTPS endpoint (boardgamegeek.com), not from user input,
 #   so entity-expansion and XXE attacks do not apply here.
+import time
 import xml.etree.ElementTree as ET  # nosec B405
 
 import httpx
@@ -17,14 +18,28 @@ class BggClient:
         base_url: str = _BASE_URL,
         timeout: float = 10.0,
         token: str | None = None,
+        requests_per_second: float | None = None,
         _transport: httpx.BaseTransport | None = None,
     ) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else {}
         self._client = httpx.Client(
             base_url=base_url, timeout=timeout, headers=headers, transport=_transport
         )
+        self._min_interval_s: float | None = (
+            1.0 / requests_per_second if requests_per_second else None
+        )
+        self._last_request_time: float = float("-inf")
+
+    def _throttle(self) -> None:
+        if self._min_interval_s is None:
+            return
+        elapsed = time.monotonic() - self._last_request_time
+        if elapsed < self._min_interval_s:
+            time.sleep(self._min_interval_s - elapsed)
+        self._last_request_time = time.monotonic()
 
     def search(self, query: str) -> list[GameSummary]:
+        self._throttle()
         response = self._client.get("search", params={"query": query, "type": "boardgame"})
         if response.status_code != 200:
             raise BggApiError(
@@ -50,6 +65,7 @@ class BggClient:
         return results
 
     def get_game(self, game_id: int) -> GameDetails:
+        self._throttle()
         response = self._client.get("thing", params={"id": game_id, "stats": 1})
         if response.status_code != 200:
             raise BggApiError(

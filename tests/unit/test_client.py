@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import httpx
 import pytest
 
@@ -6,13 +8,19 @@ from bgg_search.exceptions import BggApiError, BggNotFoundError, BggParseError
 from bgg_search.models import GameDetails, GameSummary
 
 
-def _make_client(response_text: str, status_code: int = 200, token: str | None = None) -> BggClient:
+def _make_client(
+    response_text: str,
+    status_code: int = 200,
+    token: str | None = None,
+    requests_per_second: float | None = None,
+) -> BggClient:
     def handler(_request: httpx.Request) -> httpx.Response:
         return httpx.Response(status_code, text=response_text)
 
     return BggClient(
         base_url="https://mock/",
         token=token,
+        requests_per_second=requests_per_second,
         _transport=httpx.MockTransport(handler),
     )
 
@@ -179,3 +187,48 @@ def test_search_sends_auth_header() -> None:
         _transport=httpx.MockTransport(handler),
     ).search("test")
     assert captured[0].headers["authorization"] == "Bearer test-token"
+
+
+_EMPTY_XML = '<items total="0"></items>'
+
+
+def test_throttle_disabled_when_requests_per_second_none() -> None:
+    with patch("bgg_search._client.time.sleep") as mock_sleep:
+        client = _make_client(_EMPTY_XML)
+        client.search("q1")
+        client.search("q2")
+    mock_sleep.assert_not_called()
+
+
+def test_throttle_no_sleep_on_first_call() -> None:
+    with (
+        patch("bgg_search._client.time.monotonic", return_value=0.0),
+        patch("bgg_search._client.time.sleep") as mock_sleep,
+    ):
+        client = _make_client(_EMPTY_XML, requests_per_second=2.0)
+        client.search("q")
+    mock_sleep.assert_not_called()
+
+
+def test_throttle_sleeps_on_rapid_consecutive_calls() -> None:
+    monotonic_seq = iter([100.0, 100.0, 100.1, 100.5])
+    with (
+        patch("bgg_search._client.time.monotonic", side_effect=monotonic_seq),
+        patch("bgg_search._client.time.sleep") as mock_sleep,
+    ):
+        client = _make_client(_EMPTY_XML, requests_per_second=2.0)
+        client.search("q1")
+        client.search("q2")
+    mock_sleep.assert_called_once_with(pytest.approx(0.4))
+
+
+def test_throttle_no_sleep_when_interval_elapsed() -> None:
+    monotonic_seq = iter([100.0, 100.0, 101.0, 101.0])
+    with (
+        patch("bgg_search._client.time.monotonic", side_effect=monotonic_seq),
+        patch("bgg_search._client.time.sleep") as mock_sleep,
+    ):
+        client = _make_client(_EMPTY_XML, requests_per_second=2.0)
+        client.search("q1")
+        client.search("q2")
+    mock_sleep.assert_not_called()
