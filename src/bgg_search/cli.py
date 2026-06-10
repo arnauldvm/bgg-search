@@ -32,7 +32,7 @@ def _resolve_token(args: argparse.Namespace) -> str:
 
 
 def _get_client(args: argparse.Namespace) -> BggClient:
-    return BggClient(token=_resolve_token(args))
+    return BggClient(token=_resolve_token(args), requests_per_second=args.requests_per_second)
 
 
 def _search(args: argparse.Namespace) -> None:
@@ -71,6 +71,14 @@ def _parse_args() -> argparse.Namespace:
         "--token-file",
         metavar="PATH",
         help="Path to a file containing the BGG API token.",
+    )
+    parser.add_argument(
+        "--requests-per-second",
+        type=float,
+        default=None,
+        metavar="N",
+        dest="requests_per_second",
+        help="Maximum number of BGG API requests per second (default: unlimited).",
     )
     subparsers = parser.add_subparsers(dest="command")
     subparsers.required = True

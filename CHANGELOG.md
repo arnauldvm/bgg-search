@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `BggClient(requests_per_second=N)` throttles API calls to at most N per second.
+- `--requests-per-second N` CLI option exposes the throttle setting.
+
 ## [0.5.1 - 2026-06-10]
 
 ### Added
