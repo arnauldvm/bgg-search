@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Dark mode support on the GitHub Pages documentation site.
+- Enriched docs landing page with project description, current version, and resource links.
+- Version number in the CLI reference page title and heading.
+
 ## [0.5.0 - 2026-06-09]
 
 ### Added
