@@ -1,6 +1,6 @@
 [project]
 name = "bgg-search"
-version = "0.5.1.dev0"
+version = "0.5.1"
 description = "Python client and CLI for the BoardGameGeek XML API"
 readme = "README.md"
 license = "MIT"  # SPDX expression (PEP 639)
