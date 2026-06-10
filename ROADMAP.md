@@ -1,6 +1,6 @@
 # BGG Search — Roadmap
 
-<!-- cspell:ignore BOOL COLL EXT FILT IMG OUT RATE SORT SRV VDOC WEB -->
+<!-- cspell:ignore BOOL COLL EXT FILT IMG OUT RATE RETRY SORT SRV VDOC WEB -->
 
 MVP reached at `0.5.0`. Future development follows an incremental workflow:
 one feature per release, version bump on each merge.
@@ -56,6 +56,8 @@ Planned:
   (requires a dedicated rendering library).
 - **[IMG] Image collage** — generate an N×M grid image from game cover art
   (e.g. "my top 9 games"); requires [EXT-T] for image URLs.
+- **[RETRY] Retry on HTTP 429** — automatic retry with back-off when the BGG API returns
+  HTTP 429 Too Many Requests, complementing the proactive rate limiter (see DECISIONS.md).
 - **[VDOC] Versioned documentation** — keep published docs for each past release in a
   `/<version>/` subdirectory on GitHub Pages (root always points to latest). Requires
   switching the Pages source to a persistent `gh-pages` branch that accumulates version

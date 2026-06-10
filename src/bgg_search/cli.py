@@ -3,7 +3,7 @@ import os
 import pathlib
 import sys
 
-from bgg_search._client import BggClient
+from bgg_search._client import _DEFAULT_REQUESTS_PER_SECOND, BggClient
 from bgg_search.exceptions import BggSearchError
 from bgg_search.models import GameDetails
 from bgg_search.search import get_game, search_games
@@ -75,10 +75,10 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--requests-per-second",
         type=float,
-        default=None,
+        default=_DEFAULT_REQUESTS_PER_SECOND,
         metavar="N",
         dest="requests_per_second",
-        help="Maximum number of BGG API requests per second (default: unlimited).",
+        help=f"Maximum BGG API requests per second (default: {_DEFAULT_REQUESTS_PER_SECOND}).",
     )
     subparsers = parser.add_subparsers(dest="command")
     subparsers.required = True

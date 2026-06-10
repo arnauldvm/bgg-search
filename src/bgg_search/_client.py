@@ -9,6 +9,7 @@ from bgg_search.exceptions import BggApiError, BggNotFoundError, BggParseError
 from bgg_search.models import GameDetails, GameSummary
 
 _BASE_URL = "https://boardgamegeek.com/xmlapi2/"
+_DEFAULT_REQUESTS_PER_SECOND = 2.0  # see DECISIONS.md § "Rate limiter default"
 
 
 class BggClient:
@@ -18,7 +19,7 @@ class BggClient:
         base_url: str = _BASE_URL,
         timeout: float = 10.0,
         token: str | None = None,
-        requests_per_second: float | None = None,
+        requests_per_second: float | None = _DEFAULT_REQUESTS_PER_SECOND,
         _transport: httpx.BaseTransport | None = None,
     ) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else {}
