@@ -122,3 +122,14 @@ def test_details_not_found_exits(capsys: pytest.CaptureFixture[str]) -> None:
         main()
     assert exc_info.value.code == 1
     assert "not found" in capsys.readouterr().err
+
+
+def test_requests_per_second_passed_to_client() -> None:
+    with (
+        patch("bgg_search.cli.search_games", return_value=[]),
+        patch.dict("os.environ", {"BGG_TOKEN": "tok"}),
+        patch("sys.argv", ["bgg-search", "--requests-per-second", "2.0", "search", "q"]),
+        patch("bgg_search.cli.BggClient") as mock_client,
+    ):
+        main()
+    mock_client.assert_called_once_with(token="tok", requests_per_second=2.0)

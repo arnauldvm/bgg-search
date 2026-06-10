@@ -1,6 +1,6 @@
 # BGG Search — Roadmap
 
-<!-- cspell:ignore BOOL COLL EXT FILT IMG OUT RATE SORT SRV VDOC WEB -->
+<!-- cspell:ignore BOOL COLL EXT FILT IMG OUT RATE RETRY SORT SRV VDOC WEB -->
 
 MVP reached at `0.5.0`. Future development follows an incremental workflow:
 one feature per release, version bump on each merge.
@@ -28,7 +28,7 @@ After `0.5.0` (MVP), development switches to the incremental workflow
 
 Planned:
 
-- **[RATE] Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
+- ✓ **[RATE] Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
   especially relevant for bulk operations such as fetching details across a full collection.
 - **[COLL] Collection** — retrieve and display a user's owned game collection:
   `collection` endpoint, `get_collection(username)` use-case,
@@ -56,6 +56,8 @@ Planned:
   (requires a dedicated rendering library).
 - **[IMG] Image collage** — generate an N×M grid image from game cover art
   (e.g. "my top 9 games"); requires [EXT-T] for image URLs.
+- **[RETRY] Retry on HTTP 429** — automatic retry with back-off when the BGG API returns
+  HTTP 429 Too Many Requests, complementing the proactive rate limiter (see DECISIONS.md).
 - **[VDOC] Versioned documentation** — keep published docs for each past release in a
   `/<version>/` subdirectory on GitHub Pages (root always points to latest). Requires
   switching the Pages source to a persistent `gh-pages` branch that accumulates version

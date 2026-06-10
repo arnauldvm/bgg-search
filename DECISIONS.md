@@ -20,6 +20,7 @@ See [AGENTS.md](AGENTS.md) for the actionable rules derived from these decisions
 - [ElementTree over lxml / beautifulsoup4](#xmletreeelementtree-over-lxml--beautifulsoup4)
 - [API documentation generation framework](#api-documentation-generation-framework)
 - [No --token CLI argument](#no---token-cli-argument)
+- [Rate limiter default: 2.0 requests/second](#rate-limiter-default-20-requestssecond)
 
 ---
 
@@ -367,3 +368,40 @@ The three supported resolution paths all avoid this:
 | `.bgg-token` dotfile | secret stays in a file; never on the command line |
 
 Do not add a `--token` argument in the future, even for convenience.
+
+---
+
+## Rate limiter default: 2.0 requests/second
+
+<!-- cspell:ignore bggdatadumper gogeek -->
+
+**Context:** BGG's XML API2 does not publish a numeric rate limit.
+In practice, exceeding ~2 req/s triggers HTTP 429 (Too Many Requests) responses.
+
+**Decision:** `BggClient` defaults to `_DEFAULT_REQUESTS_PER_SECOND = 2.0`.
+Pass a different value to override, or `None` to disable throttling entirely.
+
+**Why throttle by default rather than relying on callers?**
+Bulk operations (e.g., fetching details for a full collection) are the natural use-case for this
+library. A caller who forgets to throttle will hit 429 errors.
+Defaulting to a safe rate makes the common case safe without any caller action;
+disabling requires an explicit `None`.
+
+**Why 2.0 req/s?**
+BGG has never published an official limit, but community experience across multiple client
+libraries consistently identifies 2 req/s as the safe ceiling:
+
+- [bggdatadumper](https://github.com/lorriman/bggdatadumper): "BGG limits to 2 api calls per
+  second and returns an error if called too frequently."
+- [gogeek](https://github.com/kkjdaniel/gogeek): "default rate limit of **2 requests per second**
+  to comply with BoardGameGeek's API guidelines."
+- BGG forum — [*Max retry & rate limits for BGG XML API2*](https://boardgamegeek.com/thread/3253874):
+  confirms HTTP 429 as the throttle signal; no stricter official limit is documented.
+
+More conservative rates (0.5–1 req/s) exist in some libraries but are unnecessarily slow
+for typical usage.
+
+**Why proactive throttling rather than retry-on-429?**
+Retry logic handles transient errors reactively and is complementary, not a substitute.
+A proactive throttle avoids the 429 entirely, reducing latency in bulk loops and being a better
+API citizen. Retry-on-429 can be added later as a separate feature.

@@ -3,7 +3,7 @@ import os
 import pathlib
 import sys
 
-from bgg_search._client import BggClient
+from bgg_search._client import _DEFAULT_REQUESTS_PER_SECOND, BggClient
 from bgg_search.exceptions import BggSearchError
 from bgg_search.models import GameDetails
 from bgg_search.search import get_game, search_games
@@ -32,7 +32,7 @@ def _resolve_token(args: argparse.Namespace) -> str:
 
 
 def _get_client(args: argparse.Namespace) -> BggClient:
-    return BggClient(token=_resolve_token(args))
+    return BggClient(token=_resolve_token(args), requests_per_second=args.requests_per_second)
 
 
 def _search(args: argparse.Namespace) -> None:
@@ -71,6 +71,14 @@ def _parse_args() -> argparse.Namespace:
         "--token-file",
         metavar="PATH",
         help="Path to a file containing the BGG API token.",
+    )
+    parser.add_argument(
+        "--requests-per-second",
+        type=float,
+        default=_DEFAULT_REQUESTS_PER_SECOND,
+        metavar="N",
+        dest="requests_per_second",
+        help=f"Maximum BGG API requests per second (default: {_DEFAULT_REQUESTS_PER_SECOND}).",
     )
     subparsers = parser.add_subparsers(dest="command")
     subparsers.required = True

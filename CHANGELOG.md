@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `BggClient` now throttles API calls to at most `requests_per_second` per second
+  (default: 2.0); pass `None` to disable.
+- `--requests-per-second N` CLI option overrides the throttle (default: 2.0).
+
 ## [0.5.1 - 2026-06-10]
 
 ### Added
