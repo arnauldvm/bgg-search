@@ -28,7 +28,7 @@ After `0.5.0` (MVP), development switches to the incremental workflow
 
 Planned:
 
-- **[RATE] Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
+- ✓ **[RATE] Rate limiter** — built-in client-side throttle to stay within BGG API rate limits,
   especially relevant for bulk operations such as fetching details across a full collection.
 - **[COLL] Collection** — retrieve and display a user's owned game collection:
   `collection` endpoint, `get_collection(username)` use-case,

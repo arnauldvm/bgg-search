@@ -9,5 +9,5 @@
 - ✓ Default `requests_per_second` to `_DEFAULT_REQUESTS_PER_SECOND = 2.0`; document the design
   decision; update `CHANGELOG.md`
   (`_client.py`, `cli.py`, `DECISIONS.md`, `CHANGELOG.md`)
-- Mark `[RATE]` done in `ROADMAP.md`
+- ✓ Mark `[RATE]` done in `ROADMAP.md`
   (`ROADMAP.md`)
